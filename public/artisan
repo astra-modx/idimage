@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+/* @var SchedulerService $scheduler */
+define('MODX_CRONTAB_MODE', true);
+
+require_once __DIR__.'/vendor/autoload.php';
+require_once __DIR__.'/core/scheduler/index.php'; // Проверьте путь к директории core
+
+$Artisan = new \Webnitros\CronTabManager\Artisan\Builder($scheduler, $argv);
+$Artisan->run();

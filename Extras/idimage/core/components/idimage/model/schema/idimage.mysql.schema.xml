@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model package="idimage" baseClass="xPDOObject" platform="mysql" defaultEngine="InnoDB" phpdoc-package="idimage"
+       version="1.1">
+
+    <object class="idimageItem" table="idimage_items" extends="xPDOSimpleObject">
+        <field key="resource_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+        <field key="picture" dbtype="varchar" precision="500" phptype="string" null="false" default=""/>
+        <field key="tags" dbtype="text" phptype="json" null="true"/>
+
+        <field key="status" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+
+        <field key="updatedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+
+        <field key="createdon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+
+        <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
+
+        <field key="received" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="closes" dbtype="text" phptype="json" null="true"/>
+
+        <field key="total" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+        <field key="min_scope" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+
+        <index alias="resource_id" name="resource_id" primary="false" unique="false" type="BTREE">
+            <column key="resource_id" length="" collation="A" null="false"/>
+        </index>
+        <index alias="picture" name="picture" primary="false" unique="false" type="BTREE">
+            <column key="picture" length="" collation="A" null="false"/>
+        </index>
+        <index alias="active" name="active" primary="false" unique="false" type="BTREE">
+            <column key="active" length="" collation="A" null="false"/>
+        </index>
+
+        <aggregate alias="Resource" class="modResource" local="resource_id" foreign="id" cardinality="one" owner="foreign"/>
+    </object>
+
+</model>

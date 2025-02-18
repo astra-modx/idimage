@@ -5,10 +5,16 @@ x-setting: &default-setting
     - "./core/components:/var/www/html/core/components"
     - "./core/elements:/var/www/html/core/elements"
     - "./public/assets:/var/www/html/public/assets"
+    - "./core/scheduler:/var/www/html/core/scheduler"
     - "./Extras:/var/www/html/Extras"
     - "./target:/var/www/html/target"
     - "./.gitify:/var/www/html/.gitify"
+    - "./bootstrap.php:/var/www/html/bootstrap.php"
     - "./.env:/var/www/html/.env"
+    - "./vendor:/var/www/html/vendor"
+    - "./composer.json:/var/www/html/composer.json"
+    - "./composer.lock:/var/www/html/composer.lock"
+    - "./public/artisan:/var/www/html/artisan"
     - './_backup:/var/www/html/_backup'
     # Package
     - "./Extras/${PACKAGE_NAME}/core/components/${PACKAGE_NAME}:/var/www/html/core/components/${PACKAGE_NAME}:ro"
