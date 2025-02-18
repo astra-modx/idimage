@@ -1,0 +1,16 @@
+packages:
+    modstore.pro:
+        service_url: 'http://modstore.pro/extras/'
+        description: 'Repository of modstore.pro'
+        packages:
+            - ace-1.9.4-pl
+            - adminpanel-1.1.0-pl
+            - moddevtools-1.2.1-pl
+            - pdotools-2.13.2-pl
+            - miniShop2-4.3.0-pl
+            - hideSource-1.0.0-beta
+    modx.com:
+        service_url: 'https://rest.modx.com/extras/'
+        description: 'The official MODX transport provider for 3rd party components.'
+        packages:
+            - translit-1.0.0-beta

@@ -1,0 +1,72 @@
+x-setting: &default-setting
+  networks:
+    - backend
+  volumes:
+    - "./core/components:/var/www/html/core/components"
+    - "./core/elements:/var/www/html/core/elements"
+    - "./public/assets:/var/www/html/public/assets"
+    - "./Extras:/var/www/html/Extras"
+    - "./target:/var/www/html/target"
+    - "./.gitify:/var/www/html/.gitify"
+    - "./.env:/var/www/html/.env"
+    - './_backup:/var/www/html/_backup'
+    # Package
+    - "./Extras/${PACKAGE_NAME}/core/components/${PACKAGE_NAME}:/var/www/html/core/components/${PACKAGE_NAME}:ro"
+    - "./Extras/${PACKAGE_NAME}/assets/components/${PACKAGE_NAME}:/var/www/html/public/assets/components/${PACKAGE_NAME}:ro"
+
+services:
+  app:
+    image: 'webnitros/modx-app:latest'
+    env_file:
+      - ./.env # variables from the env file are exported when the container starts
+    user: '82:82'
+    <<: *default-setting
+
+  nginx:
+    image: 'webnitros/modx-nginx:latest'
+    depends_on:
+      - app
+      - mysql
+    ports:
+      - ${NGINX_PORT:-9001}:80
+    <<: *default-setting
+
+  mysql:
+    image: 'webnitros/modx-mysql:latest'
+    networks:
+      - backend
+    env_file:
+      - ./.env
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    # Enable save db base in dumps folder
+    volumes:
+      - 'modx_mysql:/var/lib/mysql'
+
+  pma:
+    image: linuxserver/phpmyadmin:latest
+    links:
+      - mysql
+    environment:
+      - PMA_ABSOLUTE_URI=/phpmyadmin/
+      - PMA_HOST=mysql
+      - PHP_INI_SESSION.gc_maxlifetime=3600
+      - SESSION_TIMEOUT=86400
+      - UPLOAD_LIMIT=100M
+    depends_on:
+      - mysql
+    restart: always
+    networks:
+      - backend
+    volumes:
+      - session_data:/var/lib/php/sessions
+
+
+networks:
+  backend:
+    external: false
+
+volumes:
+  session_data:
+  modx_mysql:
