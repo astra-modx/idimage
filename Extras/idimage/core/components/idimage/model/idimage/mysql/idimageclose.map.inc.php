@@ -1,8 +1,8 @@
 <?php
-$xpdo_meta_map['idimageItem']= array (
+$xpdo_meta_map['idImageClose']= array (
   'package' => 'idimage',
   'version' => '1.1',
-  'table' => 'idimage_items',
+  'table' => 'idimage_closes',
   'extends' => 'xPDOSimpleObject',
   'tableMeta' => 
   array (
@@ -10,21 +10,25 @@ $xpdo_meta_map['idimageItem']= array (
   ),
   'fields' => 
   array (
-    'resource_id' => 0,
+    'pid' => 0,
     'picture' => '',
+    'hash' => '',
     'tags' => NULL,
+    'version' => 0,
     'status' => 0,
+    'status_code' => 0,
+    'received' => 0,
+    'received_at' => 0,
+    'active' => 1,
+    'closes' => NULL,
+    'total_close' => 0,
+    'min_scope' => 0,
     'updatedon' => 0,
     'createdon' => 0,
-    'active' => 1,
-    'received' => 0,
-    'closes' => NULL,
-    'total' => 0,
-    'min_scope' => 0,
   ),
   'fieldMeta' => 
   array (
-    'resource_id' => 
+    'pid' => 
     array (
       'dbtype' => 'int',
       'precision' => '10',
@@ -41,13 +45,87 @@ $xpdo_meta_map['idimageItem']= array (
       'null' => false,
       'default' => '',
     ),
+    'hash' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '32',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
+    ),
     'tags' => 
     array (
       'dbtype' => 'text',
       'phptype' => 'json',
       'null' => true,
     ),
+    'version' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => true,
+      'default' => 0,
+    ),
     'status' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => true,
+      'default' => 0,
+    ),
+    'status_code' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => true,
+      'default' => 0,
+    ),
+    'received' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'phptype' => 'boolean',
+      'null' => true,
+      'default' => 0,
+    ),
+    'received_at' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '20',
+      'phptype' => 'timestamp',
+      'null' => false,
+      'default' => 0,
+    ),
+    'active' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'phptype' => 'boolean',
+      'null' => true,
+      'default' => 1,
+    ),
+    'closes' => 
+    array (
+      'dbtype' => 'text',
+      'phptype' => 'json',
+      'null' => true,
+    ),
+    'total_close' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => true,
+      'default' => 0,
+    ),
+    'min_scope' => 
     array (
       'dbtype' => 'int',
       'precision' => '10',
@@ -72,58 +150,18 @@ $xpdo_meta_map['idimageItem']= array (
       'null' => false,
       'default' => 0,
     ),
-    'active' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 1,
-    ),
-    'received' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'closes' => 
-    array (
-      'dbtype' => 'text',
-      'phptype' => 'json',
-      'null' => true,
-    ),
-    'total' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '10',
-      'attributes' => 'unsigned',
-      'phptype' => 'integer',
-      'null' => true,
-      'default' => 0,
-    ),
-    'min_scope' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '10',
-      'attributes' => 'unsigned',
-      'phptype' => 'integer',
-      'null' => true,
-      'default' => 0,
-    ),
   ),
   'indexes' => 
   array (
-    'resource_id' => 
+    'pid' => 
     array (
-      'alias' => 'resource_id',
+      'alias' => 'pid',
       'primary' => false,
       'unique' => false,
       'type' => 'BTREE',
       'columns' => 
       array (
-        'resource_id' => 
+        'pid' => 
         array (
           'length' => '',
           'collation' => 'A',
@@ -131,15 +169,31 @@ $xpdo_meta_map['idimageItem']= array (
         ),
       ),
     ),
-    'picture' => 
+    'hash' => 
     array (
-      'alias' => 'picture',
+      'alias' => 'hash',
       'primary' => false,
       'unique' => false,
       'type' => 'BTREE',
       'columns' => 
       array (
-        'picture' => 
+        'hash' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
+    ),
+    'received' => 
+    array (
+      'alias' => 'received',
+      'primary' => false,
+      'unique' => false,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'received' => 
         array (
           'length' => '',
           'collation' => 'A',
@@ -166,10 +220,10 @@ $xpdo_meta_map['idimageItem']= array (
   ),
   'aggregates' => 
   array (
-    'Resource' => 
+    'Product' => 
     array (
-      'class' => 'modResource',
-      'local' => 'resource_id',
+      'class' => 'msProduct',
+      'local' => 'pid',
       'foreign' => 'id',
       'cardinality' => 'one',
       'owner' => 'foreign',

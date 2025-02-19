@@ -11,10 +11,12 @@ x-setting: &default-setting
     - "./.gitify:/var/www/html/.gitify"
     - "./bootstrap.php:/var/www/html/bootstrap.php"
     - "./.env:/var/www/html/.env"
+    - "./.env.local:/var/www/html/.env.local"
     - "./vendor:/var/www/html/vendor"
     - "./composer.json:/var/www/html/composer.json"
     - "./composer.lock:/var/www/html/composer.lock"
     - "./public/artisan:/var/www/html/artisan"
+    - "./public/inc:/var/www/html/public/inc"
     - './_backup:/var/www/html/_backup'
     # Package
     - "./Extras/${PACKAGE_NAME}/core/components/${PACKAGE_NAME}:/var/www/html/core/components/${PACKAGE_NAME}:ro"

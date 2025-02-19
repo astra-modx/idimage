@@ -1,9 +1,9 @@
 <?php
 
-class idimageItemGetProcessor extends modObjectGetProcessor
+class idImageCloseGetProcessor extends modObjectGetProcessor
 {
-    public $objectType = 'idimageItem';
-    public $classKey = 'idimageItem';
+    public $objectType = 'idImageClose';
+    public $classKey = 'idImageClose';
     public $languageTopics = ['idimage:manager'];
     //public $permission = 'view';
 
@@ -25,4 +25,4 @@ class idimageItemGetProcessor extends modObjectGetProcessor
 
 }
 
-return 'idimageItemGetProcessor';
+return 'idImageCloseGetProcessor';

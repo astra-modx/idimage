@@ -17,15 +17,17 @@ idimage.panel.Home = function (config) {
             stateful: true,
             stateId: 'idimage-panel-home',
             stateEvents: ['tabchange'],
-            getState: function () {return {activeTab: this.items.indexOf(this.getActiveTab())}},
+            getState: function () {
+                return {activeTab: this.items.indexOf(this.getActiveTab())}
+            },
             items: [{
-                title: _('idimage_items'),
+                title: _('idimage_closes'),
                 layout: 'anchor',
                 items: [{
                     html: _('idimage_intro_msg'),
                     cls: 'panel-desc',
                 }, {
-                    xtype: 'idimage-grid-items',
+                    xtype: 'idimage-grid-closes',
                     cls: 'main-wrapper',
                 }]
             }]
@@ -55,7 +57,9 @@ Ext.onReady(function () {
             loadPaneURl: function (b) {
                 var url = b.url;
                 var text = b.text;
-                if (!url || !url.length) { return false }
+                if (!url || !url.length) {
+                    return false
+                }
                 if (url.substring(0, 4) !== 'http') {
                     url = MODx.config.base_help_url + url
                 }

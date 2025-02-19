@@ -1,10 +1,11 @@
 <?php
-class idimageItemRemoveProcessor extends modObjectRemoveProcessor
+
+class idImageCloseRemoveProcessor extends modObjectRemoveProcessor
 {
-    public $objectType = 'idimageItem';
-    public $classKey = 'idimageItem';
+    public $objectType = 'idImageClose';
+    public $classKey = 'idImageClose';
     public $languageTopics = ['idimage:manager'];
-    #public $permission = 'remove';
+    public $permission = 'remove';
 
     /**
      * @return bool|null|string
@@ -14,8 +15,9 @@ class idimageItemRemoveProcessor extends modObjectRemoveProcessor
         if (!$this->modx->hasPermission($this->permission)) {
             return $this->modx->lexicon('access_denied');
         }
+
         return parent::initialize();
     }
 }
 
-return 'idimageItemRemoveProcessor';
+return 'idImageCloseRemoveProcessor';

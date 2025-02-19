@@ -8,8 +8,7 @@ idimage.utils.formatDate = function (string) {
             ? new Date(string * 1000)
             : new Date(string.replace(/(\d+)-(\d+)-(\d+)/, '$2/$3/$1'));
         return date.strftime(idimage.config['date_format']);
-    }
-    else {
+    } else {
         return '&nbsp;';
     }
 };
@@ -36,8 +35,7 @@ idimage.utils.getMenu = function (actions, grid, selected) {
                 menu.push('-');
             }
             continue;
-        }
-        else if (menu.length > 0 && !has_delete && (/^remove/i.test(a['action']) || /^delete/i.test(a['action']))) {
+        } else if (menu.length > 0 && !has_delete && (/^remove/i.test(a['action']) || /^delete/i.test(a['action']))) {
             menu.push('-');
             has_delete = true;
         }
@@ -45,19 +43,17 @@ idimage.utils.getMenu = function (actions, grid, selected) {
         if (selected.length > 1) {
             if (!a['multiple']) {
                 continue;
-            }
-            else if (typeof(a['multiple']) == 'string') {
+            } else if (typeof (a['multiple']) == 'string') {
                 a['title'] = a['multiple'];
             }
         }
 
         icon = a['icon'] ? a['icon'] : '';
-        if (typeof(a['cls']) == 'object') {
-            if (typeof(a['cls']['menu']) != 'undefined') {
+        if (typeof (a['cls']) == 'object') {
+            if (typeof (a['cls']['menu']) != 'undefined') {
                 icon += ' ' + a['cls']['menu'];
             }
-        }
-        else {
+        } else {
             cls = a['cls'] ? a['cls'] : '';
         }
         title = a['title'] ? a['title'] : a['title'];
@@ -89,12 +85,11 @@ idimage.utils.renderActions = function (value, props, row) {
         }
 
         icon = a['icon'] ? a['icon'] : '';
-        if (typeof(a['cls']) == 'object') {
-            if (typeof(a['cls']['button']) != 'undefined') {
+        if (typeof (a['cls']) == 'object') {
+            if (typeof (a['cls']['button']) != 'undefined') {
                 icon += ' ' + a['cls']['button'];
             }
-        }
-        else {
+        } else {
             cls = a['cls'] ? a['cls'] : '';
         }
         action = a['action'] ? a['action'] : '';
@@ -118,14 +113,28 @@ idimage.utils.renderActions = function (value, props, row) {
 idimage.utils.userLink = function (value, id, blank) {
     if (!value) {
         return '';
-    }
-    else if (!id) {
+    } else if (!id) {
         return value;
     }
 
     return String.format(
         '<a href="?a=security/user/update&id={0}" class="ms2-link" target="{1}">{2}</a>',
         id,
+        (blank ? '_blank' : '_self'),
+        value
+    );
+};
+
+idimage.utils.resourceLink = function (value, id, blank) {
+    if (!value) {
+        return '';
+    } else if (!id) {
+        return value;
+    }
+
+    return String.format(
+        '<a href="?a=resource/update&id={0}" class="ms2-link" target="{1}">{2}</a>',
+        value,
         (blank ? '_blank' : '_self'),
         value
     );

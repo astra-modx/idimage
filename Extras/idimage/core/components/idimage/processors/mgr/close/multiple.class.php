@@ -1,8 +1,7 @@
 <?php
 
-class idimageMultipleProcessor extends modProcessor
+class idImageMultipleProcessor extends modProcessor
 {
-
 
     /**
      * @return array|string
@@ -21,9 +20,7 @@ class idimageMultipleProcessor extends modProcessor
         $idimage = $this->modx->getService('idimage');
         foreach ($ids as $id) {
             /** @var modProcessorResponse $response */
-            $response = $idimage->runProcessor('mgr/item/' . $method, array('id' => $id), array(
-                'processors_path' => MODX_CORE_PATH . 'components/idimage/processors/mgr/'
-            ));
+            $response = $idimage->runProcessor('mgr/close/'.$method, array('id' => $id));
             if ($response->isError()) {
                 return $response->getResponse();
             }
@@ -35,4 +32,4 @@ class idimageMultipleProcessor extends modProcessor
 
 }
 
-return 'idimageMultipleProcessor';
+return 'idImageMultipleProcessor';

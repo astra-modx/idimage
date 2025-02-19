@@ -1,16 +1,15 @@
 <?php
 
-class idimageOfficeItemUpdateProcessor extends modObjectUpdateProcessor
+class idImageCloseUpdateProcessor extends modObjectUpdateProcessor
 {
-    public $objectType = 'idimageItem';
-    public $classKey = 'idimageItem';
-    public $languageTopics = ['idimage'];
-    //public $permission = 'save';
-
+    public $objectType = 'idImageClose';
+    public $classKey = 'idImageClose';
+    public $languageTopics = ['idimage:manager'];
+    public $permission = 'save';
 
     /**
-     * We do a special check of permission
-     * because our objects is not an instances of modAccessibleObject
+     * We doing special check of permission
+     * because of our objects is not an instances of modAccessibleObject
      *
      * @return bool|string
      */
@@ -45,4 +44,4 @@ class idimageOfficeItemUpdateProcessor extends modObjectUpdateProcessor
     }
 }
 
-return 'idimageOfficeItemUpdateProcessor';
+return 'idImageCloseUpdateProcessor';

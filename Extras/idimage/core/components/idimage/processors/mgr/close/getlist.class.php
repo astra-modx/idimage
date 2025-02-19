@@ -1,9 +1,9 @@
 <?php
 
-class idimageItemGetListProcessor extends modObjectGetListProcessor
+class idImageCloseGetListProcessor extends modObjectGetListProcessor
 {
-    public $objectType = 'idimageItem';
-    public $classKey = 'idimageItem';
+    public $objectType = 'idImageClose';
+    public $classKey = 'idImageClose';
     public $defaultSortField = 'id';
     public $defaultSortDirection = 'DESC';
     public $languageTopics = ['idimage:manager'];
@@ -27,7 +27,7 @@ class idimageItemGetListProcessor extends modObjectGetListProcessor
 
 
     /**
-     * @param xPDOQuery $c
+     * @param  xPDOQuery  $c
      *
      * @return xPDOQuery
      */
@@ -36,24 +36,27 @@ class idimageItemGetListProcessor extends modObjectGetListProcessor
         $query = trim($this->getProperty('query'));
         if ($query) {
             $c->where([
-                'name:LIKE' => "%{$query}%",
-                'OR:description:LIKE' => "%{$query}%",
+                'picture:LIKE' => "%{$query}%",
+                'OR:hash:LIKE' => "%{$query}%",
             ]);
         }
-        $active = $this->getProperty('active');
-        if ($active != '') {
-            $c->where("{$this->objectType}.active={$active}");
+
+        $received = $this->getProperty('received');
+        if ($received != '') {
+            $c->where("{$this->objectType}.received={$received}");
         }
-        $resource = trim($this->getProperty('resource'));
-        if (!empty($resource)) {
-            $c->where("{$this->objectType}.resource_id={$resource}");
+
+        $pid = trim($this->getProperty('pid'));
+        if (!empty($pid)) {
+            $c->where("{$this->objectType}.pid={$pid}");
         }
+
         return $c;
     }
 
 
     /**
-     * @param xPDOObject $object
+     * @param  xPDOObject  $object
      *
      * @return array
      */
@@ -108,8 +111,9 @@ class idimageItemGetListProcessor extends modObjectGetListProcessor
             'button' => true,
             'menu' => true,
         ];
+
         return $array;
     }
 }
 
-return 'idimageItemGetListProcessor';
+return 'idImageCloseGetListProcessor';

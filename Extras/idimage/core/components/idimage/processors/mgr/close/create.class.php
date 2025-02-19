@@ -1,11 +1,11 @@
 <?php
 
-class idimageItemCreateProcessor extends modObjectCreateProcessor
+class idImageCloseCreateProcessor extends modObjectCreateProcessor
 {
-    public $objectType = 'idimageItem';
-    public $classKey = 'idimageItem';
+    public $objectType = 'idImageClose';
+    public $classKey = 'idImageClose';
     public $languageTopics = ['idimage:manager'];
-    //public $permission = 'create';
+    public $permission = 'create';
 
     /**
      * @return bool
@@ -19,9 +19,10 @@ class idimageItemCreateProcessor extends modObjectCreateProcessor
             $this->modx->error->addField('name', $this->modx->lexicon('idimage_item_err_ae'));
         }
         $this->setProperty('mode', 'new');
+
         return parent::beforeSet();
     }
 
 }
 
-return 'idimageItemCreateProcessor';
+return 'idImageCloseCreateProcessor';
