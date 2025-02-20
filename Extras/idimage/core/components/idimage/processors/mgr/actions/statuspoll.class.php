@@ -62,8 +62,6 @@ class idImageStatusPollProcessor extends idImageActionsProcessor
                 }
             });
 
-        sleep(2);
-
         return $this->success('', [
             'total' => $total,
         ]);
