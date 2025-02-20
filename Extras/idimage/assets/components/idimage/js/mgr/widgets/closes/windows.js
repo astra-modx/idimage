@@ -32,26 +32,61 @@ Ext.extend(idimage.window.CreateClose, idimage.window.Default, {
             {xtype: 'hidden', name: 'id', id: config.id + '-id'},
             {
                 xtype: 'textfield',
-                fieldLabel: _('idimage_close_name'),
-                name: 'name',
-                id: config.id + '-name',
+                fieldLabel: _('idimage_close_picture'),
+                name: 'picture',
+                id: config.id + '-picture',
                 anchor: '99%',
                 allowBlank: false,
-            }, {
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: _('idimage_close_pid'),
+                name: 'pid',
+                id: config.id + '-pid',
+                anchor: '99%',
+                allowBlank: false,
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: _('idimage_close_hash'),
+                name: 'hash',
+                id: config.id + '-hash',
+                anchor: '99%',
+                allowBlank: false,
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: _('idimage_close_version'),
+                name: 'version',
+                id: config.id + '-version',
+                anchor: '99%',
+                allowBlank: false,
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: _('idimage_close_status'),
+                name: 'status',
+                id: config.id + '-status',
+                anchor: '99%',
+                allowBlank: false,
+            },
+            {
                 xtype: 'textarea',
                 fieldLabel: _('idimage_close_description'),
                 name: 'description',
                 id: config.id + '-description',
                 height: 150,
                 anchor: '99%'
-            }, {
+            }
+            , {
                 xtype: 'idimage-combo-filter-resource',
                 fieldLabel: _('idimage_close_resource_id'),
                 name: 'resource_id',
                 id: config.id + '-resource_id',
                 height: 150,
                 anchor: '99%'
-            }, {
+            }
+            , {
                 xtype: 'xcheckbox',
                 boxLabel: _('idimage_close_active'),
                 name: 'active',

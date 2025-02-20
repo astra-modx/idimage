@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 use Symfony\Component\Dotenv\Dotenv;
 define('BASE_DIR', dirname(__FILE__) . '/');

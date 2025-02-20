@@ -10,10 +10,29 @@ class idImageClose extends xPDOSimpleObject
     const STATUS_PROCESS = 1;
     const STATUS_BUILD = 3;
     const STATUS_DONE = 4;
-    const STATUS_ERROR = 5;
+    const STATUS_FAILED = 5;
     const STATUS_DELETED = 6;
     const STATUS_UNKNOWN = 7;
 
+    static $statusMap = [
+        self::STATUS_NEW => 'new',
+        self::STATUS_PROCESS => 'process',
+        self::STATUS_BUILD => 'build',
+        self::STATUS_DONE => 'done',
+        self::STATUS_FAILED => 'failed',
+        self::STATUS_DELETED => 'deleted',
+        self::STATUS_UNKNOWN => 'unknown',
+    ];
+
+    static $statusMapComparison = [
+        'new' => self::STATUS_NEW,
+        'process' => self::STATUS_PROCESS,
+        'build' => self::STATUS_BUILD,
+        'completed' => self::STATUS_DONE,
+        'failed' => self::STATUS_FAILED,
+        'deleted' => self::STATUS_DELETED,
+        'unknown' => self::STATUS_UNKNOWN,
+    ];
 
     public function save($cacheFlag = null)
     {

@@ -33,6 +33,7 @@ idimage.grid.Closes = function (config) {
         autoHeight: true,
     });
     idimage.grid.Closes.superclass.constructor.call(this, config);
+
 };
 Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
 
@@ -46,7 +47,7 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
         return [
             {header: _('idimage_close_id'), dataIndex: 'id', width: 20, sortable: true},
             {header: _('idimage_close_pid'), dataIndex: 'pid', width: 70, sortable: true, renderer: idimage.utils.resourceLink},
-            {header: _('idimage_close_status'), dataIndex: 'status', width: 70, sortable: true},
+            {header: _('idimage_close_status'), dataIndex: 'status', width: 70, sortable: true, renderer: idimage.utils.statusClose},
             {header: _('idimage_close_picture'), dataIndex: 'picture', sortable: false, width: 70, hidden: true},
             {header: _('idimage_close_min_scope'), dataIndex: 'min_scope', sortable: true, width: 70, hidden: true},
             {header: _('idimage_close_total_close'), dataIndex: 'total_close', sortable: true, width: 70},
@@ -69,47 +70,79 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
     },
 
     getTopBar: function () {
-        return [{
-            text: '<i class="icon icon-plus"></i>&nbsp;' + _('idimage_close_create'),
-            handler: this.createItem,
-            scope: this
-        }, {
-            xtype: 'idimage-combo-filter-active',
-            name: 'received',
-            width: 210,
-            custm: true,
-            clear: true,
-            addall: true,
-            value: '',
-            listeners: {
-                select: {
-                    fn: this._filterByCombo,
-                    scope: this
-                },
-                afterrender: {
-                    fn: this._filterByCombo,
-                    scope: this
+        return [
+            /*     {
+                     text: '<i class="icon icon-plus"></i>&nbsp;' + _('idimage_close_create'),
+                     handler: this.createItem,
+                     scope: this
+                 },*/
+            {
+                text: '<i class="icon icon-plus"></i>&nbsp;' + _('idimage_actions_bulk'),
+                handler: this.actionsBulk,
+                scope: this
+            },
+            {
+                text: '<i class="icon icon-plus"></i>&nbsp;' + _('idimage_actions_clear_all'),
+                handler: this.actionsClearAll,
+                scope: this
+            },
+            {
+                text: '<i class="icon icon-upload"></i>&nbsp;' + _('idimage_actions_upload'),
+                handler: this.actionsUpload,
+                scope: this
+            },
+            {
+                text: '<i class="icon icon-upload"></i>&nbsp;' + _('idimage_actions_reindex'),
+                handler: this.actionsReIndex,
+                scope: this
+            },
+            {
+                text: '<i class="icon icon-upload"></i>&nbsp;' + _('idimage_actions_upversion'),
+                handler: this.actionsUpVersion,
+                scope: this
+            },
+            {
+                text: '<i class="icon icon-upload"></i>&nbsp;' + _('idimage_actions_status_poll'),
+                handler: this.actionsStatusPoll,
+                scope: this
+            },
+            {
+                xtype: 'idimage-combo-filter-active',
+                name: 'received',
+                width: 210,
+                custm: true,
+                clear: true,
+                addall: true,
+                value: '',
+                listeners: {
+                    select: {
+                        fn: this._filterByCombo,
+                        scope: this
+                    },
+                    afterrender: {
+                        fn: this._filterByCombo,
+                        scope: this
+                    }
                 }
-            }
-        }, {
-            xtype: 'idimage-combo-filter-resource',
-            name: 'pid',
-            width: 210,
-            custm: true,
-            clear: true,
-            addall: true,
-            value: '',
-            listeners: {
-                select: {
-                    fn: this._filterByCombo,
-                    scope: this
-                },
-                afterrender: {
-                    fn: this._filterByCombo,
-                    scope: this
+            }, {
+                xtype: 'idimage-combo-filter-resource',
+                name: 'pid',
+                width: 210,
+                custm: true,
+                clear: true,
+                addall: true,
+                value: '',
+                listeners: {
+                    select: {
+                        fn: this._filterByCombo,
+                        scope: this
+                    },
+                    afterrender: {
+                        fn: this._filterByCombo,
+                        scope: this
+                    }
                 }
-            }
-        },
+            },
             '->', this.getSearchField()];
     },
 
@@ -185,6 +218,126 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
     },
     enableItem: function () {
         this.action('enable')
+    },
+    statusPoll: function () {
+        this.action('statuspoll')
+    },
+    actionsReIndex: function () {
+        this.actions('reindex')
+    },
+    actionsUpVersion: function () {
+        this.actions('upversion')
+    },
+    actionsBulk: function () {
+        this.actions('bulk')
+    },
+    actionsClearAll: function () {
+        this.actions('clearall')
+    },
+    actionsStatusPoll: function () {
+        this.actions('statuspoll')
+    },
+    actions: function (name) {
+        MODx.Ajax.request({
+            url: this.config.url,
+            params: {
+                action: 'mgr/actions/' + name,
+            },
+            listeners: {
+                success: {
+                    fn: function () {
+                        this.refresh()
+                    }, scope: this
+                },
+                failure: {
+                    fn: function (r) {
+                        MODx.msg.alert(_('error'), r.message);
+                        this.refresh()
+                    }, scope: this
+                }
+            }
+        })
+    },
+
+    totalRecords: 0,
+    iterations: null,
+    iterationNext: 0,
+    iterationPrevTotal: 0,
+
+    actionsCall: function () {
+
+        if (this.iterations[this.iterationNext] && this.iterations[this.iterationNext].length > 0) {
+
+            var ids = this.iterations[this.iterationNext];
+            delete this.iterations[this.iterationNext]
+            this.iterationNext++;
+            this.iterationPrevTotal += ids.length;
+
+            this.actionsAjax({
+                action: 'mgr/actions/upload',
+                ids: Ext.util.JSON.encode(ids)
+            }, function (grid, response) {
+                if (response.success) {
+                    idimage.progress.updateText('Обработано ' + grid.iterationPrevTotal + ' из ' + grid.totalRecords)
+                    grid.actionsCall()
+                }
+            })
+
+        } else {
+            idimage.progress.hide()
+            this.refresh()
+        }
+
+    },
+    progress: null,
+
+    actionsUpload: function () {
+
+        idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
+        this.actionsAjax({
+                action: 'mgr/actions/upload',
+                count_iteration: true
+            },
+            function (grid, response) {
+                if (response.success) {
+
+                    grid.totalRecords = response.object.total
+                    grid.iterationPrevTotal = 0;
+                    grid.iterationNext = 0;
+                    grid.iterations = response.object.iterations;
+
+                    if (grid.totalRecords === 0) {
+                        MODx.msg.alert(_('success'), 'Изменений не найдено')
+                    } else {
+                        idimage.progress.updateText('В обработке 0 из ' + grid.totalRecords)
+
+                        grid.actionsCall()
+                    }
+
+                }
+            })
+    },
+    actionsAjax: function (params, callback) {
+        //this.actions('upload')
+
+        MODx.Ajax.request({
+            url: this.config.url,
+            params: params,
+            listeners: {
+                success: {
+                    fn: function (response) {
+                        callback(this, response);
+                        //this.refresh()
+                    }, scope: this
+                },
+                failure: {
+                    fn: function (r) {
+                        MODx.msg.alert(_('error'), r.message);
+                        this.refresh()
+                    }, scope: this
+                }
+            }
+        })
     },
 });
 Ext.reg('idimage-grid-closes', idimage.grid.Closes);

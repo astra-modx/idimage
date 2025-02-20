@@ -95,6 +95,32 @@ a.idimage-btn.disabled, fieldset[disabled] a.idimage-btn { pointer-events: none 
 .idimage-btn-block { display: block; width: 100% }
 .idimage-btn-block + .idimage-btn-block { margin-top: 5px }
 
+.idimage-status {
+
+}
+.idimage-status-color-done {
+    color: green;
+}
+
+.idimage-status-color-new {
+    color: darkblue;
+}
+.idimage-status-color-process {
+    color: #985f0d;
+}
+.idimage-status-color-build {
+    color: #6f42c1;
+}
+.idimage-status-color-error {
+    color: red;
+}
+.idimage-status-color-deleted {
+    color: gray;
+}
+.idimage-status-color-unknown {
+    color: gray;
+}
+
 /* resourcer field */
 .x-field-idimage-resource-clear,
 .x-field-idimage-resource-go {border-left: 1px solid #e4e4e4 !important;}

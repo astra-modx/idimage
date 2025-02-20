@@ -56,6 +56,7 @@ class idimageHomeManagerController extends modExtraManagerController
         $this->addJavascript($this->idimage->config['jsUrl'] . 'mgr/idimage.js');
         $this->addJavascript($this->idimage->config['jsUrl'] . 'mgr/misc/utils.js');
         $this->addJavascript($this->idimage->config['jsUrl'] . 'mgr/misc/combo.js');
+        $this->addJavascript($this->idimage->config['jsUrl'] . 'mgr/misc/default.cyclic.js');
         $this->addJavascript($this->idimage->config['jsUrl'] . 'mgr/misc/default.grid.js');
         $this->addJavascript($this->idimage->config['jsUrl'] . 'mgr/misc/default.window.js');
         $this->addJavascript($this->idimage->config['jsUrl'] . 'mgr/widgets/closes/grid.js');
@@ -67,6 +68,7 @@ class idimageHomeManagerController extends modExtraManagerController
 
         $this->idimage->config['date_format'] = $this->modx->getOption('idimage_date_format', null, '%d.%m.%y <span class="gray">%H:%M</span>');
         $this->idimage->config['help_buttons'] = ($buttons = $this->getButtons()) ? $buttons : '';
+        $this->idimage->config['status_map'] = $this->idimage->statusMap();
 
         $this->addHtml('<script type="text/javascript">
         idimage.config = ' . json_encode($this->idimage->config) . ';

@@ -139,3 +139,15 @@ idimage.utils.resourceLink = function (value, id, blank) {
         value
     );
 };
+
+idimage.utils.statusClose = function (value) {
+    if (!value) {
+        return '';
+    }
+
+    var status = idimage.config.status_map[value]
+    return String.format(
+        '<span class="idimage-status idimage-status-color-{0}">{0}</span>',
+        status
+    );
+};

@@ -55,6 +55,29 @@ class idImage
         if (!class_exists('idImageHander')) {
             include_once $corePath.'model/idimagehander.class.php';
         }
+        if (!class_exists('idImageOperation')) {
+            include_once $corePath.'model/idimageoperation.class.php';
+        }
+        if (!class_exists('xPDOQueryIdImage')) {
+            include_once $corePath.'helpers/xpdoqueryidimage.class.php';
+        }
+
+        $this->modx->loadClass('idImageClose');
+    }
+
+    public function query()
+    {
+        return new xPDOQueryIdImage($this->modx, 'idImageClose');
+    }
+
+    public function statusMap()
+    {
+        return idImageClose::$statusMap;
+    }
+
+    public function statusMapComparison()
+    {
+        return idImageClose::$statusMapComparison;
     }
 
     /**
@@ -312,5 +335,16 @@ class idImage
     public function handler()
     {
         return new idImageHander($this);
+    }
+
+    protected $operation;
+
+    public function operation()
+    {
+        if (is_null($this->operation)) {
+            $this->operation = new idImageOperation($this);
+        }
+
+        return $this->operation;
     }
 }

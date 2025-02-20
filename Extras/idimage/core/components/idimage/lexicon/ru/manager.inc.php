@@ -50,6 +50,16 @@ $_lang['idimage_close_updatedon'] = 'Дата обновления';
 $_lang['idimage_close_description'] = 'Описание';
 $_lang['idimage_close_active'] = 'Активно';
 
+
+# Actions
+$_lang['idimage_actions_bulk'] = 'Создать близкие';
+$_lang['idimage_actions_clear_all'] = 'Удалить все';
+$_lang['idimage_actions_upload'] = 'Начать загрузку';
+$_lang['idimage_actions_status_poll'] = 'Опросить статус';
+$_lang['idimage_actions_reindex'] = 'Переиндексировать';
+$_lang['idimage_actions_upversion'] = 'Поднять версию';
+
+
 $_lang['idimage_close_create'] = 'Создать близкое изображение';
 $_lang['idimage_close_update'] = 'Изменить близкое изображение';
 $_lang['idimage_close_enable'] = 'Включить близкое изображение';

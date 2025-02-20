@@ -69,6 +69,16 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
         $lexicon_key_action = 'Item';
 
 
+        $array['actions'][] = [
+            'cls' => '',
+            'icon' => 'icon icon-play action-green',
+            'title' => $this->modx->lexicon('idimage_'.$lexicon_key.'_status_poll'),
+            'multiple' => $this->modx->lexicon('idimage_'.$lexicon_key.'s_status_poll'),
+            'action' => 'statusPoll',
+            'button' => true,
+            'menu' => true,
+        ];
+
         // Edit
         $array['actions'][] = [
             'cls' => '',
@@ -78,6 +88,7 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
             'button' => true,
             'menu' => true,
         ];
+
 
         if (!$array['active']) {
             $array['actions'][] = [

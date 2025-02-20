@@ -78,6 +78,25 @@ class idImageClient
         return $this->get('images')->setData(['limit' => $limit]);
     }
 
+    public function statusPollOffer(int $offerId)
+    {
+        return $this->get("images")->setData([
+            'offers' => [
+                $offerId,
+            ],
+        ]);
+    }
+
+    public function reindex()
+    {
+        return $this->setUrl("images/service/reindex");
+    }
+
+    public function upVersion()
+    {
+        return $this->setUrl("images/service/upVersion");
+    }
+
     public function get(string $url)
     {
         return $this->setMethod('get')->setUrl($url);
