@@ -30,8 +30,14 @@ class idImageClient
 
     public function __construct(modX $modx)
     {
-        $this->token = $modx->getOption('idimage_token', null, getenv('ID_IMAGE_TOKEN'));
-        $this->apiUrl = $modx->getOption('idimage_token', null, getenv('ID_IMAGE_API_URL'));
+        $this->token = $modx->getOption('idimage_token', null, null);
+        if (empty($this->token)) {
+            throw new Exception('Token not set, setting idimage_token');
+        }
+        $this->apiUrl = $modx->getOption('idimage_api_url', null, null);
+        if (empty($this->apiUrl)) {
+            throw new Exception('apiUrl not set, setting idimage_api_url');
+        }
     }
 
     public function offer(int $offerId, string $picture)
