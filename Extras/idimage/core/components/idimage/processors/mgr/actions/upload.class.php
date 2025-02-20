@@ -15,7 +15,7 @@ class idImageUploadProcessor extends idImageActionsProcessor
         $chunk = 10;
 
         $Handler = $this->idImage->handler();
-        $query = $Handler->queryStatusProgress();
+        $query = $Handler->query();
         if ($this->setCheckbox('count_iteration')) {
             $ids = $query->ids();
             $total = count($ids);

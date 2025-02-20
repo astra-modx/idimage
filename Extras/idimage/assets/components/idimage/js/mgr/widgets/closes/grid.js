@@ -82,7 +82,7 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
                 scope: this
             },
             {
-                text: '<i class="icon icon-plus"></i>&nbsp;' + _('idimage_actions_clear_all'),
+                text: '<i class="icon icon-trash"></i>&nbsp;' + _('idimage_actions_clear_all'),
                 handler: this.actionsClearAll,
                 scope: this
             },
@@ -96,11 +96,11 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
                 handler: this.actionsReIndex,
                 scope: this
             },
-            {
+            /*{
                 text: '<i class="icon icon-upload"></i>&nbsp;' + _('idimage_actions_upversion'),
                 handler: this.actionsUpVersion,
                 scope: this
-            },
+            },*/
             {
                 text: '<i class="icon icon-upload"></i>&nbsp;' + _('idimage_actions_status_poll'),
                 handler: this.actionsStatusPoll,
@@ -238,7 +238,11 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
         this.actions('statuspoll')
     },
     actions: function (name) {
-        MODx.Ajax.request({
+
+        //MODx.Ajax.request({
+        MODx.msg.confirm({
+            title: _('idiamge_actions_confirm_title'),
+            text: _('idiamge_actions_confirm_text') + ': ' + name,
             url: this.config.url,
             params: {
                 action: 'mgr/actions/' + name,

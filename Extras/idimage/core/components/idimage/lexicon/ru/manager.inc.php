@@ -2,7 +2,7 @@
 
 include_once 'setting.inc.php';
 
-$_lang['idimage'] = 'idimage';
+$_lang['idimage'] = 'Id Image';
 $_lang['idimage_menu_desc'] = 'Близкие изображения';
 $_lang['idimage_intro_msg'] = 'Вы можете выделять сразу несколько предметов при помощи Shift или Ctrl.';
 
@@ -78,3 +78,5 @@ $_lang['idimage_close_err_nf'] = 'Изображение не найден.';
 $_lang['idimage_close_err_ns'] = 'Изображение не указан.';
 $_lang['idimage_close_err_remove'] = 'Ошибка при удалении изображения.';
 $_lang['idimage_close_err_save'] = 'Ошибка при сохранении изображения.';
+$_lang['idiamge_actions_confirm_title'] = 'Массовое действие';
+$_lang['idiamge_actions_confirm_text'] = 'Вы уверены что хотите выполнить это действие?';

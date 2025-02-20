@@ -47,7 +47,7 @@ class idImageClose extends xPDOSimpleObject
 
     public function change(string $imagePath)
     {
-        if ($this->isNew()) {
+        if ($this->isNew() || !$this->get('received')) {
             return true;
         }
 

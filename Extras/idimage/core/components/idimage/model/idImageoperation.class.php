@@ -17,7 +17,8 @@ class idImageOperation
 
     public function statusPoll(idImageClose $Close, array $item, $save = true)
     {
-        $status = $item['status'] ?? idImageClose::STATUS_ERROR;
+
+        $status = $item['status'] ?? idImageClose::STATUS_FAILED;
         $version = $item['version'] ?? 0;
         $total_close = $item['total_close'] ?? 0;
         $min_scope = $item['min_scope'] ?? 0;
@@ -46,13 +47,13 @@ class idImageOperation
         // Проверяем наличие файла на диске
         $imagePath = MODX_BASE_PATH.$Close->get('picture');
         if (!file_exists($imagePath)) {
-            $Close->set('status', idImageClose::STATUS_ERROR);
+            $Close->set('status', idImageClose::STATUS_FAILED);
 
             return false;
         }
 
         if ($check) {
-            if ($Close->change($imagePath)) {
+            if (!$Close->change($imagePath)) {
                 return true;
             }
         }
@@ -64,7 +65,7 @@ class idImageOperation
                 $response = $this->idImage->client()->upload($id, $path)->send();
                 // Записываем ответ
 
-                $status = $response->isOk() ? idImageClose::STATUS_BUILD : idImageClose::STATUS_ERROR;
+                $status = $response->isOk() ? idImageClose::STATUS_BUILD : idImageClose::STATUS_FAILED;
 
                 $Close->set('status', $status);
                 $Close->set('status_code', $response->getStatus());
@@ -76,7 +77,7 @@ class idImageOperation
                 $Close->set('received_at', time());
             });
         } catch (Exception $e) {
-            $Close->set('status', idImageClose::STATUS_ERROR);
+            $Close->set('status', idImageClose::STATUS_FAILED);
         }
 
 

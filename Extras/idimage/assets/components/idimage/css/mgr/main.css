@@ -111,7 +111,7 @@ a.idimage-btn.disabled, fieldset[disabled] a.idimage-btn { pointer-events: none 
 .idimage-status-color-build {
     color: #6f42c1;
 }
-.idimage-status-color-error {
+.idimage-status-color-failed {
     color: red;
 }
 .idimage-status-color-deleted {
