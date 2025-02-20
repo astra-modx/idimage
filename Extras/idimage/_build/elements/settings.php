@@ -16,4 +16,9 @@ return [
         'value' => '',
         'area' => 'idimage_main',
     ],
+    'mode_upload' => [
+        'xtype' => 'textfield',
+        'value' => 'picture',
+        'area' => 'idimage_main',
+    ],
 ];

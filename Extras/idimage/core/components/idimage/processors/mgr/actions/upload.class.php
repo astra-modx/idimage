@@ -12,12 +12,14 @@ class idImageUploadProcessor extends idImageActionsProcessor
      */
     public function process()
     {
-        $chunk = 10;
+        $chunk = $this->idImage->mode() === 'picture' ? 100 : 10;
 
         $Handler = $this->idImage->handler();
         $query = $Handler->query();
         if ($this->setCheckbox('count_iteration')) {
-            $ids = $query->ids();
+            $ids = $query->where([
+                'status:!=' => idImageClose::STATUS_BUILD,
+            ])->ids();
             $total = count($ids);
             $ids = array_chunk($ids, $chunk);
 
@@ -45,14 +47,20 @@ class idImageUploadProcessor extends idImageActionsProcessor
         $ids = array_filter(array_map('intval', $ids));
 
 
-        $query
-            ->where([
-                'id:IN' => $ids,
-            ])
-            ->each(function (idImageClose $close) use (&$total) {
-                $this->idImage->operation()->upload($close, true);
-                $total++;
-            });
+        $query->where(['id:IN' => $ids]);
+        switch ($this->idImage->mode()) {
+            case 'picture':
+                $this->idImage->operation()->picture($query);
+                break;
+            case 'image':
+                $query->each(function (idImageClose $close) use (&$total) {
+                    $this->idImage->operation()->upload($close, true);
+                    $total++;
+                });
+                break;
+            default:
+                break;
+        }
 
 
         return $this->success('upload');

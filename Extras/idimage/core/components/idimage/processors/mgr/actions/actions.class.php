@@ -2,7 +2,8 @@
 
 abstract class idImageActionsProcessor extends modProcessor
 {
-    public idImage $idImage;
+    /* @var idImage $idImage */
+    public $idImage;
 
     public function initialize()
     {

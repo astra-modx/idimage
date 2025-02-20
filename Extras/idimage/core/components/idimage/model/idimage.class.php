@@ -38,6 +38,7 @@ class idImage
             'assetsUrl' => $assetsUrl,
             'cssUrl' => $assetsUrl.'css/',
             'jsUrl' => $assetsUrl.'js/',
+            'mode_upload' => $this->modx->getOption('idimage_mode_upload', $config, 'picture'),
         ], $config);
 
         $this->modx->addPackage('idimage', $this->config['modelPath']);
@@ -48,7 +49,7 @@ class idImage
             $this->pdoTools->setConfig($this->config);
         }
 
-        if (!class_exists('idimageResponse')) {
+        if (!class_exists('idImageResponse')) {
             include_once $corePath.'model/idimageclient.class.php';
         }
 
@@ -346,5 +347,10 @@ class idImage
         }
 
         return $this->operation;
+    }
+
+    public function mode()
+    {
+        return $this->config['mode_upload'];
     }
 }

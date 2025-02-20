@@ -8,8 +8,8 @@
 
 class idImageHander
 {
-
-    private idImage $idImage;
+    /* @var idImage $idImage */
+    private $idImage;
 
     public function __construct(idImage $idImage)
     {
@@ -104,6 +104,33 @@ class idImageHander
     }
 
     public function bulk($callback = null)
+    {
+
+        $total = 0;
+        $q = $this->idImage->modx->newQuery('msProductFile');
+        $q->select('msProductFile.product_id as id, msProductFile.url as image, msProductFile.path as path');
+        $q->leftJoin('idImageClose', 'Close', 'Close.pid = msProductFile.product_id');
+        $q->where([
+            'msProductFile.active' => true,
+            'Close.pid:IS' => null,
+        ]);
+        if ($q->prepare() && $q->stmt->execute()) {
+            while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
+                // Get all image is path not indexed field mysql
+                if (strripos($row['path'], '/small/') !== false) {
+                    $total++;
+                    $success = $this->idImage->operation()->create((int)$row['id'], MODX_BASE_PATH.ltrim($row['image'], '/'));
+                    if (is_callable($callback)) {
+                        $callback($total, $success);
+                    }
+                }
+            }
+        }
+
+        return $total;
+    }
+
+    public function bulkProduct($callback = null)
     {
         $total = 0;
         $q = $this->idImage->modx->newQuery('msProduct');

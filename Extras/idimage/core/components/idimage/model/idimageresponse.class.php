@@ -8,8 +8,8 @@
 
 class idImageResponse
 {
-    private int $status;
-    private string $content;
+    private $status;
+    private $content;
 
     /* @var string|null $msg */
     private $msg;

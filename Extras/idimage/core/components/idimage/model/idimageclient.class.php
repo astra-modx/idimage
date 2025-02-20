@@ -56,6 +56,18 @@ class idImageClient
             ]);
     }
 
+
+    public function create(array $items)
+    {
+        return $this->post('images')
+            ->setHeaders([
+                'Content-Type: application/json',
+            ])
+            ->setData([
+                'items' => $items,
+            ]);
+    }
+
     public function upload(int $offerId, string $imagePath)
     {
         $size = @getimagesize($imagePath);
@@ -108,6 +120,11 @@ class idImageClient
         return $this->setMethod('get')->setUrl($url);
     }
 
+    public function post(string $url)
+    {
+        return $this->setMethod('post')->setUrl($url);
+    }
+
     public function toArray()
     {
         return [
@@ -147,7 +164,6 @@ class idImageClient
                 $postData = json_encode($postData);
             }
         }
-
 
         // Инициализируем cURL
         $ch = curl_init();
