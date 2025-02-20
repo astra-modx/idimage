@@ -234,9 +234,7 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
     actionsClearAll: function () {
         this.actions('clearall')
     },
-    actionsStatusPoll: function () {
-        this.actions('statuspoll')
-    },
+
     actions: function (name) {
 
         //MODx.Ajax.request({
@@ -263,12 +261,21 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
         })
     },
 
+    actionsUpload: function () {
+        this.actionsProgress('upload')
+    },
+
+    actionsStatusPoll: function () {
+        this.actionsProgress('statuspoll')
+    },
+
     totalRecords: 0,
     iterations: null,
     iterationNext: 0,
     iterationPrevTotal: 0,
+    progress: null,
 
-    actionsCall: function () {
+    actionsCall: function (controller) {
 
         if (this.iterations[this.iterationNext] && this.iterations[this.iterationNext].length > 0) {
 
@@ -278,12 +285,12 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
             this.iterationPrevTotal += ids.length;
 
             this.actionsAjax({
-                action: 'mgr/actions/upload',
+                action: 'mgr/actions/' + controller,
                 ids: Ext.util.JSON.encode(ids)
             }, function (grid, response) {
                 if (response.success) {
                     idimage.progress.updateText('Обработано ' + grid.iterationPrevTotal + ' из ' + grid.totalRecords)
-                    grid.actionsCall()
+                    grid.actionsCall(controller)
                 }
             })
 
@@ -291,15 +298,13 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
             idimage.progress.hide()
             this.refresh()
         }
-
     },
-    progress: null,
 
-    actionsUpload: function () {
+    actionsProgress: function (controller) {
 
         idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
         this.actionsAjax({
-                action: 'mgr/actions/upload',
+                action: 'mgr/actions/' + controller,
                 count_iteration: true
             },
             function (grid, response) {
@@ -315,7 +320,7 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
                     } else {
                         idimage.progress.updateText('В обработке 0 из ' + grid.totalRecords)
 
-                        grid.actionsCall()
+                        grid.actionsCall(controller)
                     }
 
                 }

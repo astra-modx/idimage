@@ -91,9 +91,9 @@ class idImageClient
             ]);
     }
 
-    public function statusPoll(int $limit = 10)
+    public function statusPoll(array $OfferIds)
     {
-        return $this->get('images')->setData(['limit' => $limit]);
+        return $this->get('images')->setData(['offers' => $OfferIds]);
     }
 
     public function statusPollOffer(int $offerId)
@@ -164,6 +164,8 @@ class idImageClient
                 $postData = json_encode($postData);
             }
         }
+
+
 
         // Инициализируем cURL
         $ch = curl_init();

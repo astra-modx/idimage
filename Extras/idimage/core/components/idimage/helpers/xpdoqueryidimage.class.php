@@ -25,13 +25,13 @@ class xPDOQueryIdImage extends xPDOQuery_mysql
     }
 
 
-    public function ids()
+    public function ids(string $field = 'id')
     {
         $ids = [];
-        $this->select('id');
+        $this->select($field);
         if ($this->prepare() && $this->stmt->execute()) {
             while ($row = $this->stmt->fetch(PDO::FETCH_ASSOC)) {
-                $ids[] = (int)$row['id'];
+                $ids[] = (int)$row[$field];
             }
         }
 

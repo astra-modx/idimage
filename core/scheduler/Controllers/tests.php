@@ -13,6 +13,14 @@ class CrontabControllerTests extends modCrontabController
         $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
 
 
+        $Response = $idImage->handler()->statusPoll([170]);
+
+        $items = $idImage->handler()->extractorItems($Response);
+        dd($items);
+
+        dd($Response->toArray());
+
+
         $handler = $idImage->handler();
 
         $query = $handler->queryStatusProgress();

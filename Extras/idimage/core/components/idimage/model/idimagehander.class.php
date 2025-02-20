@@ -57,9 +57,9 @@ class idImageHander
         return $total;
     }
 
-    public function statusPoll(int $limit = 1000)
+    public function statusPoll(array $OfferIds)
     {
-        $Response = $this->idImage->client()->statusPoll($limit)->send();
+        $Response = $this->idImage->client()->statusPoll($OfferIds)->send();
         if (!$Response->isOk()) {
             throw new Exception($Response->getMsg());
         }
@@ -105,7 +105,6 @@ class idImageHander
 
     public function bulk($callback = null)
     {
-
         $total = 0;
         $q = $this->idImage->modx->newQuery('msProductFile');
         $q->select('msProductFile.product_id as id, msProductFile.url as image, msProductFile.path as path');
