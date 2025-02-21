@@ -11,56 +11,25 @@ class idImageStatusPollProcessor extends idImageActionsProcessor
      */
     public function process()
     {
-        $chunk = 100;
-        if ($this->setCheckbox('count_iteration')) {
-            $ids = $this->idImage->handler()->query()->where([
-                'status:!=' => idImageClose::STATUS_DONE,
-            ])->ids();
-
-            return $this->success('', [
-                'iterations' => array_chunk($ids, $chunk),
-                'total' => count($ids),
-            ]);
+        if (!$items = $this->idImage->handler()->lastVersion()) {
+            return $this->failure('No items');
         }
-
-        $ids = $this->getProperty('ids');
-        if (empty($ids)) {
-            return $this->success('upload', ['total' => 0]);
-        }
-        $ids = json_decode($ids, true);
-
-        if (!is_array($ids)) {
-            return $this->success('upload', [
-                'total' => 0,
-            ]);
-        }
-        $ids = array_filter(array_map('intval', $ids));
-
-
-        $pids = $this->idImage->handler()->query(null)->where([
-            'id:IN' => $ids,
-            'status:!=' => idImageClose::STATUS_DONE,
-        ])->ids('pid');
-
-        // Get offers status
-        $Response = $this->idImage->handler()->statusPoll($pids);
-
-        // extract items
-        $items = $this->idImage->handler()->extractorItems($Response);
+        $items = $this->idImage->handler()->extractorItems($items);
         $total = 0;
 
         // set status
         $this->idImage->handler()->query(null)
             ->where([
-                'id:IN' => $ids,
-                'status:!=' => idImageClose::STATUS_DONE,
+                'status:!=' => idImageClose::STATUS_COMPLETED,
             ])
             ->each(function (idImageClose $close) use (&$total, $items) {
-                if (isset($items[$close->pid])) {
-                    $this->idImage->operation()->statusPoll($close, $items[$close->pid]);
+                $pid = $close->pid;
+                if (isset($items[$pid])) {
+                    $this->idImage->operation()->statusPoll($close, $items[$pid]);
                     $total++;
                 }
             });
+
 
         return $this->success('', [
             'total' => $total,

@@ -76,11 +76,6 @@ class idImage
         return idImageClose::$statusMap;
     }
 
-    public function statusMapComparison()
-    {
-        return idImageClose::$statusMapComparison;
-    }
-
     /**
      * Initializes component into different contexts.
      *

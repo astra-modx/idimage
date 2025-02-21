@@ -22,36 +22,37 @@ class idImageResponse
     }
 
 
-    public function isOk(): bool
+    public function isOk()
     {
         return ($this->status === 200 || $this->status === 204);
     }
 
-    public function isFail(): bool
+    public function isFail()
     {
         return !$this->isOk();
     }
 
     public function getStatus(): int
     {
-        return $this->status;
+        return !empty($this->status) ? $this->status : 0;
     }
 
-    public function getContent(): string
+    public function getContent()
     {
-        return $this->content;
+        return !empty($this->content) ? $this->content : null;
     }
 
-    public function getMsg(): ?string
+    public function getMsg()
     {
-        return $this->msg;
+        return !empty($this->msg) ? $this->msg : '';
     }
 
     public function json()
     {
-        $content = $this->getContent();
-        if (substr($content, 0, 1) === '{') {
-            return json_decode($this->getContent(), 1) ?? null;
+        if ($content = $this->getContent()) {
+            if (substr($content, 0, 1) === '{') {
+                return json_decode($this->getContent(), 1) ?? null;
+            }
         }
 
         return null;

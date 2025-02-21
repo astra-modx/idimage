@@ -9,9 +9,31 @@ class CrontabControllerTests extends modCrontabController
 
     public function process()
     {
+        /* @var modProcessorResponse $response */
+        $response = $this->modx->runProcessor('actions/statuspoll', [], array(
+            'processors_path' => MODX_CORE_PATH.'components/idimage/processors/mgr/',
+        ));
+        if ($response->isError()) {
+            return $response->getAllErrors();
+        }
+
+        dd($response->response);
+
+        dd($item);
+
+        return $response->response;
+
+
         /* @var idImage $idImage */
         $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
-
+        $Response = $idImage->handler()->lastVersion();
+        $data = $Response->json();
+        if (!empty($data['closes_url'])) {
+            $content = file_get_contents($data['closes_url']);
+            $data = json_decode($content, true);
+            dd($data);
+        }
+        dd($Response->toArray());
 
         $Response = $idImage->handler()->statusPoll([170]);
 

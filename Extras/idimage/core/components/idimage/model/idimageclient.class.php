@@ -31,10 +31,10 @@ class idImageClient
     public function __construct(modX $modx)
     {
         $this->token = $modx->getOption('idimage_token', null, null);
+        $this->apiUrl = $modx->getOption('idimage_api_url', null, null);
         if (empty($this->token)) {
             throw new Exception('Token not set, setting idimage_token');
         }
-        $this->apiUrl = $modx->getOption('idimage_api_url', null, null);
         if (empty($this->apiUrl)) {
             throw new Exception('apiUrl not set, setting idimage_api_url');
         }
@@ -96,13 +96,9 @@ class idImageClient
         return $this->get('images')->setData(['offers' => $OfferIds]);
     }
 
-    public function statusPollOffer(int $offerId)
+    public function lastVersion()
     {
-        return $this->get("images")->setData([
-            'offers' => [
-                $offerId,
-            ],
-        ]);
+        return $this->get('images/last/version');
     }
 
     public function reindex()
@@ -157,15 +153,15 @@ class idImageClient
         $method = $this->getMethod();
 
         if ($method === 'get') {
-            $url = $url.'?'.http_build_query($postData);
+            if (!empty($postData)) {
+                $url = $url.'?'.http_build_query($postData);
+            }
             $postData = null;
         } else {
             if (!$upload) {
                 $postData = json_encode($postData);
             }
         }
-
-
 
         // Инициализируем cURL
         $ch = curl_init();
@@ -226,7 +222,7 @@ class idImageClient
 
     protected function setUrl(string $url)
     {
-        $this->url = $this->apiUrl.'/'.ltrim($url, '/');
+        $this->url = rtrim($this->apiUrl, '/').'/'.ltrim($url, '/');
 
         return $this;
     }

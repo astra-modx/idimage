@@ -39,7 +39,7 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
 
     getFields: function () {
         return [
-            'id', 'pid', 'status_code', 'min_scope', 'version', 'total_close', 'status', 'picture', 'tags', 'received_at', 'received', 'createdon', 'updatedon', 'active', 'actions'
+            'id', 'pid', 'status_code', 'min_scope', 'total_close', 'status', 'picture', 'tags', 'received_at', 'received', 'createdon', 'updatedon', 'active', 'actions'
         ];
     },
 
@@ -52,7 +52,6 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
             {header: _('idimage_close_min_scope'), dataIndex: 'min_scope', sortable: true, width: 70, hidden: true},
             {header: _('idimage_close_total_close'), dataIndex: 'total_close', sortable: true, width: 70},
             {header: _('idimage_close_status_code'), dataIndex: 'status_code', sortable: true, width: 70},
-            {header: _('idimage_close_version'), dataIndex: 'version', sortable: true, width: 70},
             {header: _('idimage_close_tags'), dataIndex: 'tags', sortable: true, width: 150},
             {header: _('idimage_close_received'), dataIndex: 'received', sortable: true, width: 75, renderer: idimage.utils.renderBoolean},
             {header: _('idimage_close_received_at'), dataIndex: 'received_at', sortable: true, width: 75, renderer: idimage.utils.formatDate},
@@ -71,11 +70,6 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
 
     getTopBar: function () {
         return [
-            /*     {
-                     text: '<i class="icon icon-plus"></i>&nbsp;' + _('idimage_close_create'),
-                     handler: this.createItem,
-                     scope: this
-                 },*/
             {
                 text: '<i class="icon icon-plus"></i>&nbsp;' + _('idimage_actions_bulk'),
                 handler: this.actionsBulk,
@@ -84,6 +78,10 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
             {
                 text: '<i class="icon icon-trash"></i>&nbsp;' + _('idimage_actions_clear_all'),
                 handler: this.actionsClearAll,
+                scope: this
+            }, {
+                text: '<i class="icon icon-trash"></i>&nbsp;' + _('idimage_actions_put_status_proccessing'),
+                handler: this.actionsPutStatusProccessing,
                 scope: this
             },
             {
@@ -96,11 +94,7 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
                 handler: this.actionsReIndex,
                 scope: this
             },
-            /*{
-                text: '<i class="icon icon-upload"></i>&nbsp;' + _('idimage_actions_upversion'),
-                handler: this.actionsUpVersion,
-                scope: this
-            },*/
+
             {
                 text: '<i class="icon icon-upload"></i>&nbsp;' + _('idimage_actions_status_poll'),
                 handler: this.actionsStatusPoll,
@@ -219,20 +213,19 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
     enableItem: function () {
         this.action('enable')
     },
-    statusPoll: function () {
-        this.action('statuspoll')
-    },
+
     actionsReIndex: function () {
         this.actions('reindex')
     },
-    actionsUpVersion: function () {
-        this.actions('upversion')
-    },
+
     actionsBulk: function () {
         this.actions('bulk')
     },
     actionsClearAll: function () {
         this.actions('clearall')
+    },
+    actionsPutStatusProccessing: function () {
+        this.actions('status/processing')
     },
 
     actions: function (name) {
@@ -266,7 +259,7 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
     },
 
     actionsStatusPoll: function () {
-        this.actionsProgress('statuspoll')
+        this.actions('statuspoll')
     },
 
     totalRecords: 0,

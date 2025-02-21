@@ -26,14 +26,12 @@ class idImageOperation
 
     public function statusPoll(idImageClose $Close, array $item, $save = true)
     {
-        $status = $item['status'] ?? idImageClose::STATUS_FAILED;
-        $version = $item['version'] ?? 0;
-        $total_close = $item['total_close'] ?? 0;
-        $min_scope = $item['min_scope'] ?? 0;
-        $closes = $item['closes'] ?? [];
+        $status = !empty($item['status']) ? $item['status'] : idImageClose::STATUS_FAILED;
+        $total_close = !empty($item['total_close']) ? $item['total_close'] : 0;
+        $min_scope = !empty($item['min_scope']) ? $item['min_scope'] : 0;
+        $closes = (!empty($item['closes']) && is_array($item['closes'])) ? $item['closes'] : [];
 
         $Close->set('status', $status);
-        $Close->set('version', $version);
         $Close->set('total_close', $total_close);
         $Close->set('min_scope', $min_scope);
         $Close->set('closes', $closes);
@@ -53,7 +51,7 @@ class idImageOperation
     public function fromResult(idImageClose $Close, idimageResponse $response, $status = null)
     {
         if (empty($status)) {
-            $status = $response->isOk() ? idImageClose::STATUS_BUILD : idImageClose::STATUS_FAILED;
+            $status = $response->isOk() ? idImageClose::STATUS_PROCESSING : idImageClose::STATUS_FAILED;
         }
 
         $Close->set('status', $status);
@@ -92,7 +90,7 @@ class idImageOperation
 
 
             $query->each(function (idImageClose $close) use ($items, $response) {
-                $status = !empty($items[$close->get('pid')]) ? idImageClose::STATUS_BUILD : idImageClose::STATUS_FAILED;
+                $status = !empty($items[$close->get('pid')]) ? idImageClose::STATUS_PROCESSING : idImageClose::STATUS_FAILED;
                 $this->fromResult($close, $response, $status);
                 $close->save();
             });
@@ -208,7 +206,7 @@ class idImageOperation
         $Close->set('hash', $Close->createHash($imagePath));
         $Close->set('pid', $id);
         $Close->set('picture', str_ireplace(MODX_BASE_PATH, '', $imagePath));
-        $Close->set('status', idImageClose::STATUS_PROCESS);
+        $Close->set('status', idImageClose::STATUS_CREATE);
 
         return $Close->save();
     }

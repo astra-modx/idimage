@@ -18,7 +18,7 @@ class idImageUploadProcessor extends idImageActionsProcessor
         $query = $Handler->query();
         if ($this->setCheckbox('count_iteration')) {
             $ids = $query->where([
-                'status:!=' => idImageClose::STATUS_BUILD,
+                'status:!=' => idImageClose::STATUS_PROCESSING,
             ])->ids();
             $total = count($ids);
             $ids = array_chunk($ids, $chunk);
@@ -62,6 +62,7 @@ class idImageUploadProcessor extends idImageActionsProcessor
                 break;
         }
 
+        sleep(1); // otherwise it blocks due to a large number of requests
 
         return $this->success('upload');
     }

@@ -21,4 +21,9 @@ return [
         'value' => 'picture',
         'area' => 'idimage_main',
     ],
+    'crop_size' => [
+        'xtype' => 'textfield',
+        'value' => 'small',
+        'area' => 'idimage_main',
+    ],
 ];

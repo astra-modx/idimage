@@ -1,5 +1,5 @@
 Ext.Loader.load([
-    MODx.config.assets_url + 'components/minishop2/js/mgr/misc/strftime-min-1.3.js'
+    MODx.config.assets_url + 'components/idimage/js/mgr/misc/strftime-min-1.3.js'
 ]);
 
 idimage.utils.formatDate = function (string) {
@@ -141,10 +141,6 @@ idimage.utils.resourceLink = function (value, id, blank) {
 };
 
 idimage.utils.statusClose = function (value) {
-    if (!value) {
-        return '';
-    }
-
     var status = idimage.config.status_map[value]
     return String.format(
         '<span class="idimage-status idimage-status-color-{0}">{0}</span>',
