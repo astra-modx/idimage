@@ -1,9 +1,9 @@
 <?php
 
-class idImageCloseGetListProcessor extends modObjectGetListProcessor
+class idImageIndexedGetListProcessor extends modObjectGetListProcessor
 {
-    public $objectType = 'idImageClose';
-    public $classKey = 'idImageClose';
+    public $objectType = 'idImageIndexed';
+    public $classKey = 'idImageIndexed';
     public $defaultSortField = 'id';
     public $defaultSortDirection = 'DESC';
     public $languageTopics = ['idimage:manager'];
@@ -35,10 +35,6 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
     {
         $query = trim($this->getProperty('query'));
         if ($query) {
-            $c->where([
-                'picture:LIKE' => "%{$query}%",
-                'OR:hash:LIKE' => "%{$query}%",
-            ]);
             $id = (int)$query;
             if ($id > 0) {
                 $c->where([
@@ -46,16 +42,6 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
                     'OR:pid:=' => $id,
                 ]);
             }
-        }
-
-        $received = $this->getProperty('received');
-        if ($received != '') {
-            $c->where("{$this->objectType}.received={$received}");
-        }
-
-        $pid = trim($this->getProperty('pid'));
-        if (!empty($pid)) {
-            $c->where("{$this->objectType}.pid={$pid}");
         }
 
         return $c;
@@ -73,8 +59,10 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
         $array['actions'] = [];
 
         $currentFolder = basename(__DIR__);
+
         $lexicon_key = $currentFolder;
         $lexicon_key_action = ucfirst($currentFolder);
+
 
         // Edit
         $array['actions'][] = [
@@ -124,4 +112,4 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
     }
 }
 
-return 'idImageCloseGetListProcessor';
+return 'idImageIndexedGetListProcessor';

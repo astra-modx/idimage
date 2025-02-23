@@ -31,7 +31,7 @@ $_lang['idimage_grid_actions'] = 'Действия';
 
 
 ////////////////////////
-//// Items
+//// Closes
 ////////////////////////
 $_lang['idimage_closes'] = 'Близкие изображения';
 $_lang['idimage_close_id'] = 'Id';
@@ -41,7 +41,9 @@ $_lang['idimage_close_version'] = 'Версия';
 $_lang['idimage_close_min_scope'] = 'Мин бал';
 $_lang['idimage_close_status_code'] = 'HTTP статус';
 $_lang['idimage_close_pid'] = 'Pid';
+$_lang['idimage_close_errors'] = 'Ошибки';
 $_lang['idimage_close_picture'] = 'Изображение';
+$_lang['idimage_close_picture_cloud'] = 'Временная ссылка для изображения';
 $_lang['idimage_close_tags'] = 'Теги фильтрации';
 $_lang['idimage_close_received'] = 'Доставлено в сервис';
 $_lang['idimage_close_received_at'] = 'Дата доставки';
@@ -52,13 +54,21 @@ $_lang['idimage_close_active'] = 'Активно';
 
 
 # Actions
-$_lang['idimage_actions_bulk'] = 'Создать близкие';
-$_lang['idimage_actions_clear_all'] = 'Удалить все';
-$_lang['idimage_actions_put_status_proccessing'] = 'Установить статус "ожидание"';
-$_lang['idimage_actions_upload'] = 'Начать загрузку';
-$_lang['idimage_actions_status_poll'] = 'Опросить статус';
+$_lang['crontabmanager_actions_dropdown'] = 'Действия';
+$_lang['crontabmanager_actions_dropdown_status'] = 'Смена статусов';
+$_lang['idimage_actions_creation'] = 'Найти изображения';
+$_lang['idimage_actions_destroy'] = 'Удалить все';
+$_lang['idimage_actions_upload'] = 'Начать загрузку в cloud';
+$_lang['idimage_actions_poll'] = 'Опросить статус';
 $_lang['idimage_actions_reindex'] = 'Переиндексировать';
 $_lang['idimage_actions_upversion'] = 'Поднять версию';
+$_lang['idimage_actions_queue_add'] = 'Добавить в очередь';
+$_lang['idimage_actions_queue_delete'] = 'Удалить из очереди';
+
+
+$_lang['idimage_actions_status_upload'] = 'Установить статус "Загрузка в cloud"';
+$_lang['idimage_actions_status_proccessing'] = 'Установить статус "ожидание"';
+$_lang['idimage_actions_status_queue'] = 'Установить статус "В очереди"';
 
 
 $_lang['idimage_close_create'] = 'Создать близкое изображение';
@@ -79,5 +89,31 @@ $_lang['idimage_close_err_nf'] = 'Изображение не найден.';
 $_lang['idimage_close_err_ns'] = 'Изображение не указан.';
 $_lang['idimage_close_err_remove'] = 'Ошибка при удалении изображения.';
 $_lang['idimage_close_err_save'] = 'Ошибка при сохранении изображения.';
-$_lang['idiamge_actions_confirm_title'] = 'Массовое действие';
-$_lang['idiamge_actions_confirm_text'] = 'Вы уверены что хотите выполнить это действие?';
+$_lang['idimage_actions_confirm_title'] = 'Массовое действие';
+$_lang['idimage_actions_confirm_text'] = 'Вы уверены что хотите выполнить это действие?';
+
+
+////////////////////////
+//// Indexed
+////////////////////////
+$_lang['idimage_indexeds'] = 'Индексация';
+$_lang['idimage_indexed_id'] = 'Id';
+$_lang['idimage_indexed_version'] = 'Версия';
+$_lang['idimage_indexed_cloud_upload'] = 'Доступен';
+$_lang['idimage_indexed_cloud_size'] = 'Размер файла';
+$_lang['idimage_indexed_current_version'] = 'Размер файла';
+$_lang['idimage_indexed_status_code'] = 'HTTP статус';
+$_lang['idimage_indexed_images'] = 'Кол-во изображений';
+$_lang['idimage_indexed_closes'] = 'Кол-во близких';
+$_lang['idimage_indexed_completed'] = 'Завершен';
+$_lang['idimage_indexed_sealed'] = 'Запечатан';
+$_lang['idimage_indexed_use_version'] = 'Используется';
+$_lang['idimage_indexed_start_at'] = 'Дата начала индексации';
+$_lang['idimage_indexed_finished_at'] = 'Дата завершения индексации';
+$_lang['idimage_indexed_upload_at'] = 'Дата загрузки файла';
+$_lang['idimage_indexed_upload'] = 'Загружен';
+$_lang['idimage_indexed_processed'] = 'Обработан';
+$_lang['idimage_indexed_createdon'] = 'Дата создания';
+$_lang['idimage_indexed_updatedon'] = 'Дата обновления';
+$_lang['idimage_indexed_description'] = 'Описание';
+$_lang['idimage_indexed_active'] = 'Активно';

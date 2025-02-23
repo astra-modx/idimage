@@ -11,7 +11,7 @@ class idImageUpVersionProcessor extends idImageActionsProcessor
      */
     public function process()
     {
-        $Response = $this->idImage->client()->upVersion()->send();
+        $Response = $this->idimage()->client()->upVersion()->send();
         if (!$Response->isOk()) {
             return $this->failure($Response->getMsg());
         }

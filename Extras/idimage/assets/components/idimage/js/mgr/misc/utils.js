@@ -147,3 +147,13 @@ idimage.utils.statusClose = function (value) {
         status
     );
 };
+
+idimage.utils.jsonDataTags = function (value) {
+    v = value ? value.join(", ") : '';
+    return v !== '' ? '<span>' + v + '</span>' : '<span class="idimage-gray">---</span>';
+};
+
+idimage.utils.jsonDataError = function (value) {
+    v = value ?  JSON.stringify(value) : '';
+    return v !== '' ? '<span class="red">' + v + '</span>' : '<span class="idimage-gray">---</span>';
+};

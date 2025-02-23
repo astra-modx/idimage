@@ -61,6 +61,8 @@ class idimageHomeManagerController extends modExtraManagerController
         $this->addJavascript($this->idimage->config['jsUrl'] . 'mgr/misc/default.window.js');
         $this->addJavascript($this->idimage->config['jsUrl'] . 'mgr/widgets/closes/grid.js');
         $this->addJavascript($this->idimage->config['jsUrl'] . 'mgr/widgets/closes/windows.js');
+        $this->addJavascript($this->idimage->config['jsUrl'] . 'mgr/widgets/indexeds/grid.js');
+        $this->addJavascript($this->idimage->config['jsUrl'] . 'mgr/widgets/indexeds/windows.js');
         $this->addJavascript($this->idimage->config['jsUrl'] . 'mgr/widgets/home.panel.js');
         $this->addJavascript($this->idimage->config['jsUrl'] . 'mgr/sections/home.js');
 

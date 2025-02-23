@@ -4,9 +4,22 @@ idimage.grid.Closes = function (config) {
         config.id = 'idimage-grid-closes';
     }
 
-    if (!config.multiple) {
-        config.multiple = 'close'
-    }
+    config.multiple = 'close'
+
+    this.exp = new Ext.grid.RowExpander({
+        expandOnDblClick: false,
+        tpl: new Ext.Template('<p class="desc">{description} <br>{message}</p>'),
+        getRowClass: function (rec) {
+            if (!rec.data.active) {
+                return 'idimage-row-disabled'
+            }
+            return ''
+        },
+        renderer: function (v, p, record) {
+            return record.data.description !== '' && record.data.description != null ? '<div class="x-grid3-row-expander">&#160;</div>' : '&#160;'
+        }
+    })
+
 
     Ext.applyIf(config, {
         baseParams: {
@@ -14,6 +27,7 @@ idimage.grid.Closes = function (config) {
             sort: 'id',
             dir: 'DESC'
         },
+        plugins: this.exp,
         stateful: true,
         stateId: config.id,
         viewConfig: {
@@ -39,7 +53,7 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
 
     getFields: function () {
         return [
-            'id', 'pid', 'status_code', 'min_scope', 'total_close', 'status', 'picture', 'tags', 'received_at', 'received', 'createdon', 'updatedon', 'active', 'actions'
+            'id', 'pid', 'status_code', 'min_scope', 'total_close', 'status', 'picture', 'picture_cloud', 'tags', 'errors', 'received_at', 'received', 'createdon', 'updatedon', 'active', 'actions'
         ];
     },
 
@@ -48,11 +62,13 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
             {header: _('idimage_close_id'), dataIndex: 'id', width: 20, sortable: true},
             {header: _('idimage_close_pid'), dataIndex: 'pid', width: 70, sortable: true, renderer: idimage.utils.resourceLink},
             {header: _('idimage_close_status'), dataIndex: 'status', width: 70, sortable: true, renderer: idimage.utils.statusClose},
-            {header: _('idimage_close_picture'), dataIndex: 'picture', sortable: false, width: 70, hidden: true},
+            {header: _('idimage_close_picture'), dataIndex: 'picture', sortable: true, width: 70, hidden: true},
+            {header: _('idimage_close_picture_cloud'), dataIndex: 'picture_cloud', sortable: true, width: 70, hidden: true},
             {header: _('idimage_close_min_scope'), dataIndex: 'min_scope', sortable: true, width: 70, hidden: true},
+            {header: _('idimage_close_errors'), dataIndex: 'errors', sortable: true, width: 70, hidden: true, renderer: idimage.utils.jsonDataError},
             {header: _('idimage_close_total_close'), dataIndex: 'total_close', sortable: true, width: 70},
             {header: _('idimage_close_status_code'), dataIndex: 'status_code', sortable: true, width: 70},
-            {header: _('idimage_close_tags'), dataIndex: 'tags', sortable: true, width: 150},
+            {header: _('idimage_close_tags'), dataIndex: 'tags', sortable: true, width: 150, renderer: idimage.utils.jsonDataTags},
             {header: _('idimage_close_received'), dataIndex: 'received', sortable: true, width: 75, renderer: idimage.utils.renderBoolean},
             {header: _('idimage_close_received_at'), dataIndex: 'received_at', sortable: true, width: 75, renderer: idimage.utils.formatDate},
             {header: _('idimage_close_createdon'), dataIndex: 'createdon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
@@ -68,38 +84,58 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
         ];
     },
 
+    action: function (action, icon, one) {
+        var lex = action.replace('/', '_'); // Заменяет первый слэш
+
+        var label = _('idimage_actions_' + lex);
+
+        label = label === undefined ? action : label;
+
+        icon = icon !== undefined ? '<i class="icon ' + icon + '"></i>&nbsp;' : '';
+
+        var handlerFunction = () => this.actions(action);
+        if (one !== true) {
+            handlerFunction = () => this.actionsProgress(action);
+        }
+
+        return {
+            cls: 'idimage-context-menu',
+            text: icon + '' + label,
+            handler: handlerFunction,
+            scope: this
+        };
+    },
     getTopBar: function () {
         return [
+
+            this.actionMenu('creation', 'icon-plus'),
             {
-                text: '<i class="icon icon-plus"></i>&nbsp;' + _('idimage_actions_bulk'),
-                handler: this.actionsBulk,
-                scope: this
-            },
-            {
-                text: '<i class="icon icon-trash"></i>&nbsp;' + _('idimage_actions_clear_all'),
-                handler: this.actionsClearAll,
-                scope: this
-            }, {
-                text: '<i class="icon icon-trash"></i>&nbsp;' + _('idimage_actions_put_status_proccessing'),
-                handler: this.actionsPutStatusProccessing,
-                scope: this
-            },
-            {
-                text: '<i class="icon icon-upload"></i>&nbsp;' + _('idimage_actions_upload'),
-                handler: this.actionsUpload,
-                scope: this
-            },
-            {
-                text: '<i class="icon icon-upload"></i>&nbsp;' + _('idimage_actions_reindex'),
-                handler: this.actionsReIndex,
-                scope: this
+                text: '<i class="icon icon-cogs"></i> ' + _('crontabmanager_actions_dropdown'),
+                cls: 'primary-button',
+                menu: [
+
+                    this.actionMenu('reindex', 'icon-refresh', true),
+                    '-',
+                    this.actionMenu('queue/add', 'icon-refresh'),
+                    this.actionMenu('queue/delete', 'icon-refresh'),
+                    '-',
+                    this.actionMenu('upload', 'icon-upload'),
+                    '-',
+                    this.actionMenu('destroy', 'icon-trash action-red'),
+                ]
             },
 
             {
-                text: '<i class="icon icon-upload"></i>&nbsp;' + _('idimage_actions_status_poll'),
-                handler: this.actionsStatusPoll,
-                scope: this
+                text: '<i class="icon icon-cogs"></i> ' + _('crontabmanager_actions_dropdown_status'),
+                cls: 'primary-button',
+                menu: [
+                    this.actionMenu('status/proccessing', 'icon-refresh'),
+                    this.actionMenu('status/queue', 'icon-refresh'),
+                    this.actionMenu('status/upload', 'icon-refresh'),
+                ]
             },
+
+            this.actionMenu('poll', 'icon-refresh', true),
             {
                 xtype: 'idimage-combo-filter-active',
                 name: 'received',
@@ -218,40 +254,8 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
         this.actions('reindex')
     },
 
-    actionsBulk: function () {
-        this.actions('bulk')
-    },
-    actionsClearAll: function () {
-        this.actions('clearall')
-    },
-    actionsPutStatusProccessing: function () {
-        this.actions('status/processing')
-    },
-
-    actions: function (name) {
-
-        //MODx.Ajax.request({
-        MODx.msg.confirm({
-            title: _('idiamge_actions_confirm_title'),
-            text: _('idiamge_actions_confirm_text') + ': ' + name,
-            url: this.config.url,
-            params: {
-                action: 'mgr/actions/' + name,
-            },
-            listeners: {
-                success: {
-                    fn: function () {
-                        this.refresh()
-                    }, scope: this
-                },
-                failure: {
-                    fn: function (r) {
-                        MODx.msg.alert(_('error'), r.message);
-                        this.refresh()
-                    }, scope: this
-                }
-            }
-        })
+    actionsCreation: function () {
+        this.actionsProgress('creation')
     },
 
     actionsUpload: function () {
@@ -262,84 +266,5 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
         this.actions('statuspoll')
     },
 
-    totalRecords: 0,
-    iterations: null,
-    iterationNext: 0,
-    iterationPrevTotal: 0,
-    progress: null,
-
-    actionsCall: function (controller) {
-
-        if (this.iterations[this.iterationNext] && this.iterations[this.iterationNext].length > 0) {
-
-            var ids = this.iterations[this.iterationNext];
-            delete this.iterations[this.iterationNext]
-            this.iterationNext++;
-            this.iterationPrevTotal += ids.length;
-
-            this.actionsAjax({
-                action: 'mgr/actions/' + controller,
-                ids: Ext.util.JSON.encode(ids)
-            }, function (grid, response) {
-                if (response.success) {
-                    idimage.progress.updateText('Обработано ' + grid.iterationPrevTotal + ' из ' + grid.totalRecords)
-                    grid.actionsCall(controller)
-                }
-            })
-
-        } else {
-            idimage.progress.hide()
-            this.refresh()
-        }
-    },
-
-    actionsProgress: function (controller) {
-
-        idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
-        this.actionsAjax({
-                action: 'mgr/actions/' + controller,
-                count_iteration: true
-            },
-            function (grid, response) {
-                if (response.success) {
-
-                    grid.totalRecords = response.object.total
-                    grid.iterationPrevTotal = 0;
-                    grid.iterationNext = 0;
-                    grid.iterations = response.object.iterations;
-
-                    if (grid.totalRecords === 0) {
-                        MODx.msg.alert(_('success'), 'Изменений не найдено')
-                    } else {
-                        idimage.progress.updateText('В обработке 0 из ' + grid.totalRecords)
-
-                        grid.actionsCall(controller)
-                    }
-
-                }
-            })
-    },
-    actionsAjax: function (params, callback) {
-        //this.actions('upload')
-
-        MODx.Ajax.request({
-            url: this.config.url,
-            params: params,
-            listeners: {
-                success: {
-                    fn: function (response) {
-                        callback(this, response);
-                        //this.refresh()
-                    }, scope: this
-                },
-                failure: {
-                    fn: function (r) {
-                        MODx.msg.alert(_('error'), r.message);
-                        this.refresh()
-                    }, scope: this
-                }
-            }
-        })
-    },
 });
 Ext.reg('idimage-grid-closes', idimage.grid.Closes);

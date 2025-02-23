@@ -5,6 +5,7 @@
     <object class="idImageClose" table="idimage_closes" extends="xPDOSimpleObject">
         <field key="pid" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
         <field key="picture" dbtype="varchar" precision="500" phptype="string" null="false" default=""/>
+        <field key="picture_cloud" dbtype="varchar" precision="500" phptype="string" null="false" default=""/>
         <field key="hash" dbtype="varchar" precision="32" phptype="string" null="false" default=""/>
         <field key="tags" dbtype="text" phptype="json" null="true"/>
 
@@ -18,6 +19,7 @@
         <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
 
         <field key="closes" dbtype="text" phptype="json" null="true"/>
+        <field key="errors" dbtype="text" phptype="json" null="true"/>
 
         <field key="total_close" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
         <field key="min_scope" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
@@ -41,6 +43,40 @@
         </index>
 
         <aggregate alias="Product" class="msProduct" local="pid" foreign="id" cardinality="one" owner="foreign"/>
+    </object>
+
+    <object class="idImageIndexed" table="idimage_indexeds" extends="xPDOSimpleObject">
+        <field key="version" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+
+        <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
+        <field key="cloud_upload" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="cloud_size" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+        <field key="current_version" dbtype="varchar" precision="500" phptype="string" null="true" default=""/>
+
+        <field key="images" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+        <field key="closes" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+
+        <field key="completed" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="sealed" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+
+        <field key="use_version" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+
+        <field key="start_at" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+        <field key="finished_at" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+        <field key="upload_at" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+        <field key="upload" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="processed" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+
+        <field key="status_code" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+
+        <field key="updatedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+
+        <field key="createdon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+
+        <index alias="version" name="version" primary="false" unique="false" type="BTREE">
+            <column key="version" length="" collation="A" null="false"/>
+        </index>
+
     </object>
 
 </model>

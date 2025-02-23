@@ -1,70 +1,68 @@
 <?php
 
+use IdImage\Entities\EntityClose;
+
 if (!class_exists('idImageActionsProcessor')) {
     include_once __DIR__.'/actions.class.php';
 }
 
-class idImageUploadProcessor extends idImageActionsProcessor
+class idImageUploadProcessor extends idImageActionsProcessor implements \IdImage\Interfaces\ActionProgressBar
 {
+    public function stepChunk()
+    {
+        return 5;
+    }
+
+    public function withProgressIds()
+    {
+        return $this->query()->closes()->where([
+            'status' => idImageClose::STATUS_UPLOAD,
+        ])->ids();
+    }
 
     /**
      * @return array|string
      */
     public function process()
     {
-        $chunk = $this->idImage->mode() === 'picture' ? 100 : 10;
+        return $this->withProgressBar(function (array $ids) {
+            $PhpThumb = new \IdImage\Helpers\PhpThumb($this->modx);
+            $this->query()
+                ->closes()
+                ->where(['id:IN' => $ids])
+                ->each(function (idImageClose $close) use ($PhpThumb) {
+                    $ImagePath = $close->picturePath();
 
-        $Handler = $this->idImage->handler();
-        $query = $Handler->query();
-        if ($this->setCheckbox('count_iteration')) {
-            $ids = $query->where([
-                'status:!=' => idImageClose::STATUS_PROCESSING,
-            ])->ids();
-            $total = count($ids);
-            $ids = array_chunk($ids, $chunk);
+                    // Загружаем картинку
+                    $PhpThumb->makeThumbnail($ImagePath, function ($pathTmp) use ($close) {
+                        $Response = $this->idImage->operation()->upload($close->offerId(), $pathTmp);
 
-            return $this->success('', [
-                'iterations' => $ids,
-                'total' => $total,
-            ]);
-        }
+                        $status = idImageClose::STATUS_QUEUE;
+                        $errors = null;
+                        if ($Response->isOk()) {
+                            $data = $Response->json();
+                            if (!empty($data['url'])) {
+                                $close->set('picture_cloud', $data['url']);
+                            }
+                        } else {
+                            $status = idImageClose::STATUS_FAILED;
+                            $errors = $Response->json();
+                        }
 
-        $ids = $this->getProperty('ids');
+                        $close->set('errors', $errors);
+                        $close->set('status', $status);
+                        $close->set('status_code', $Response->getStatus());
 
-        if (empty($ids)) {
-            return $this->success('upload', [
-                'total' => 0,
-            ]);
-        }
+                        $close->save();
+                    });
 
-        $ids = json_decode($ids, true);
-
-        if (!is_array($ids)) {
-            return $this->success('upload', [
-                'total' => 0,
-            ]);
-        }
-        $ids = array_filter(array_map('intval', $ids));
-
-
-        $query->where(['id:IN' => $ids]);
-        switch ($this->idImage->mode()) {
-            case 'picture':
-                $this->idImage->operation()->picture($query);
-                break;
-            case 'image':
-                $query->each(function (idImageClose $close) use (&$total) {
-                    $this->idImage->operation()->upload($close, true);
-                    $total++;
+                    $this->pt();
                 });
-                break;
-            default:
-                break;
-        }
 
-        sleep(1); // otherwise it blocks due to a large number of requests
+            sleep(1);
 
-        return $this->success('upload');
+            return $this->total();
+        });
     }
 
 }

@@ -4,13 +4,12 @@ if (!class_exists('idImageStatusProcessor')) {
     include_once __DIR__.'/default.class.php';
 }
 
-class idImageStatusProcessing extends idImageStatusProcessor
+class idImageStatusQueue extends idImageStatusProcessor
 {
     public function status()
     {
-        return idImageClose::STATUS_PROCESSING;
+        return idImageClose::STATUS_QUEUE;
     }
-
 }
 
-return 'idImageStatusProcessing';
+return 'idImageStatusQueue';

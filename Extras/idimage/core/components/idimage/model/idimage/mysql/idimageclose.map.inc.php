@@ -12,6 +12,7 @@ $xpdo_meta_map['idImageClose']= array (
   array (
     'pid' => 0,
     'picture' => '',
+    'picture_cloud' => '',
     'hash' => '',
     'tags' => NULL,
     'version' => 0,
@@ -21,6 +22,7 @@ $xpdo_meta_map['idImageClose']= array (
     'received_at' => 0,
     'active' => 1,
     'closes' => NULL,
+    'errors' => NULL,
     'total_close' => 0,
     'min_scope' => 0,
     'updatedon' => 0,
@@ -38,6 +40,14 @@ $xpdo_meta_map['idImageClose']= array (
       'default' => 0,
     ),
     'picture' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '500',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
+    ),
+    'picture_cloud' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '500',
@@ -111,6 +121,12 @@ $xpdo_meta_map['idImageClose']= array (
       'default' => 1,
     ),
     'closes' => 
+    array (
+      'dbtype' => 'text',
+      'phptype' => 'json',
+      'null' => true,
+    ),
+    'errors' => 
     array (
       'dbtype' => 'text',
       'phptype' => 'json',

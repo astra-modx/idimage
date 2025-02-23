@@ -288,5 +288,150 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
             }
         })
     },
+
+    actionMenu: function (action, icon, one) {
+        var lex = action.replace('/', '_'); // Заменяет первый слэш
+
+        var label = _('idimage_actions_' + lex);
+
+        label = label === undefined ? action : label;
+
+        icon = icon !== undefined ? '<i class="icon ' + icon + '"></i>&nbsp;' : '';
+
+        var handlerFunction = () => this.actions(action);
+        if (one !== true) {
+            handlerFunction = () => this.actionsProgress(action);
+        }
+
+        return {
+            cls: 'idimage-context-menu',
+            text: icon + '' + label,
+            handler: handlerFunction,
+            scope: this
+        };
+    },
+
+    actions: function (name) {
+
+
+        var grid = this;
+        Ext.Msg.confirm(_('idimage_actions_confirm_title'), _('idimage_actions_confirm_text'), function (e) {
+
+            if (e == 'yes') {
+
+                idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
+                MODx.Ajax.request({
+                    url: grid.config.url,
+                    params: {
+                        action: 'mgr/actions/' + name,
+                    },
+                    listeners: {
+                        success: {
+                            fn: function () {
+                                idimage.progress.hide()
+                                grid.refresh()
+                            }, scope: this
+                        },
+                        failure: {
+                            fn: function (r) {
+                                idimage.progress.hide()
+                                MODx.msg.alert(_('error'), r.message);
+                                grid.refresh()
+                            }, scope: this
+                        }
+                    }
+                })
+            }
+        });
+
+    },
+
+    totalRecords: 0,
+    iterations: null,
+    iterationNext: 0,
+    iterationPrevTotal: 0,
+    progress: null,
+
+    actionsCall: function (controller) {
+
+        if (this.iterations[this.iterationNext] && this.iterations[this.iterationNext].length > 0) {
+
+            var ids = this.iterations[this.iterationNext];
+            delete this.iterations[this.iterationNext]
+            this.iterationNext++;
+            this.iterationPrevTotal += ids.length;
+
+            this.actionsAjax({
+                action: 'mgr/actions/' + controller,
+                ids: Ext.util.JSON.encode(ids)
+            }, function (grid, response) {
+                if (response.success) {
+                    idimage.progress.updateText('Обработано ' + grid.iterationPrevTotal + ' из ' + grid.totalRecords)
+                    grid.actionsCall(controller)
+                }
+            })
+
+        } else {
+            idimage.progress.hide()
+            this.refresh()
+        }
+    },
+
+    actionsProgress: function (controller) {
+
+        var grid = this;
+        Ext.Msg.confirm(_('idimage_actions_confirm_title'), _('idimage_actions_confirm_text'), function (e) {
+
+            if (e == 'yes') {
+
+                idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
+                grid.actionsAjax({
+                        action: 'mgr/actions/' + controller,
+                        steps: true
+                    },
+                    function (grid, response) {
+                        if (response.success) {
+
+                            grid.totalRecords = response.object.total
+                            grid.iterationPrevTotal = 0;
+                            grid.iterationNext = 0;
+                            grid.iterations = response.object.iterations;
+
+                            if (grid.totalRecords === 0) {
+                                MODx.msg.alert(_('success'), 'Изменений не найдено')
+                            } else {
+                                idimage.progress.updateText('В обработке 0 из ' + grid.totalRecords)
+
+                                grid.actionsCall(controller)
+                            }
+
+                        }
+                    })
+
+            }
+        });
+    },
+    actionsAjax: function (params, callback) {
+        //this.actions('upload')
+
+        MODx.Ajax.request({
+            url: this.config.url,
+            params: params,
+            listeners: {
+                success: {
+                    fn: function (response) {
+                        callback(this, response);
+                        //this.refresh()
+                    }, scope: this
+                },
+                failure: {
+                    fn: function (r) {
+                        MODx.msg.alert(_('error'), r.message);
+                        this.refresh()
+                    }, scope: this
+                }
+            }
+        })
+    },
 });
 Ext.reg('idimage-grid-default', idimage.grid.Default);

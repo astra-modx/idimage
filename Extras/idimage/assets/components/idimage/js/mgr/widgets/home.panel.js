@@ -30,6 +30,16 @@ idimage.panel.Home = function (config) {
                     xtype: 'idimage-grid-closes',
                     cls: 'main-wrapper',
                 }]
+            }, {
+                title: _('idimage_indexeds'),
+                layout: 'anchor',
+                items: [{
+                    html: _('idimage_intro_msg'),
+                    cls: 'panel-desc',
+                }, {
+                    xtype: 'idimage-grid-indexeds',
+                    cls: 'main-wrapper',
+                }]
             }]
         }]
     })

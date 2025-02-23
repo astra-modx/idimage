@@ -14,6 +14,9 @@ class idImageClose extends xPDOSimpleObject
     const STATUS_REVIEW = 5;
     const STATUS_PROCESSING = 6; # review
     const STATUS_UNKNOWN = 7;
+    const STATUS_INVALID = 8;
+    const STATUS_DELETED = 9;
+    const STATUS_UPLOAD = 10;
 
     static $statusMap = [
         self::STATUS_CREATE => 'create',
@@ -24,6 +27,9 @@ class idImageClose extends xPDOSimpleObject
         self::STATUS_REVIEW => 'review',
         self::STATUS_PROCESSING => 'processing',
         self::STATUS_UNKNOWN => 'unknown',
+        self::STATUS_INVALID => 'invalid',
+        self::STATUS_DELETED => 'deleted',
+        self::STATUS_UPLOAD => 'upload',
     ];
 
 
@@ -65,5 +71,33 @@ class idImageClose extends xPDOSimpleObject
         $sizes['size'] = filesize($imagePath);
 
         return md5(json_encode($sizes));
+    }
+
+    public function url()
+    {
+        // Использование временной ссылки
+        $picture_cloud = $this->get('picture_cloud');
+        if (!empty($picture_cloud)) {
+            return $picture_cloud;
+        }
+
+        $picture = $this->get('picture');
+        if (empty($picture)) {
+            return null;
+        }
+
+        $site_url = rtrim($this->xpdo->getOption('site_url'), '/');
+
+        return $site_url.'/'.ltrim($picture, '/');
+    }
+
+    public function offerId()
+    {
+        return (string)$this->get('pid');
+    }
+
+    public function picturePath()
+    {
+        return MODX_BASE_PATH.ltrim($this->get('picture'), '/');
     }
 }

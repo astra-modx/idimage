@@ -1,17 +1,19 @@
 <?php
 
+namespace IdImage;
+
+use CURLFile;
+use Exception;
+use IdImage\Helpers\Response;
+use modX;
+
 /**
  * Created by Andrey Stepanenko.
  * User: webnitros
  * Date: 19.02.2025
  * Time: 23:48
  */
-
-if (!class_exists('idImageResponse')) {
-    include_once MODX_CORE_PATH.'components/idimage/model/idimageresponse.class.php';
-}
-
-class idImageClient
+class Client
 {
     /* @var null|array $data */
     private $data = null;
@@ -40,48 +42,36 @@ class idImageClient
         }
     }
 
-    public function offer(int $offerId, string $picture)
+
+    public function get(string $url, $params = null)
     {
-        return $this->setUrl('images')
+        return $this->setMethod('get')->setData($params)->setUrl($url);
+    }
+
+    public function post(string $url, $params = null)
+    {
+        return $this->setMethod('post')
+            ->setData($params)
+            ->setUrl($url)
             ->setHeaders([
                 'Content-Type: application/json',
-            ])
-            ->setData([
-                'items' => [
-                    [
-                        'picture' => $picture,
-                        'offer_id' => (string)$offerId,
-                    ],
-                ],
             ]);
     }
 
-
-    public function create(array $items)
+    public function delete(string $url, $params = null)
     {
-        return $this->post('images')
+        return $this->setMethod('delete')
             ->setHeaders([
                 'Content-Type: application/json',
             ])
-            ->setData([
-                'items' => $items,
-            ]);
+            ->setData($params)
+            ->setUrl($url);
     }
 
-    public function upload(int $offerId, string $imagePath)
+    public function upload(string $offerId, $imagePath)
     {
-        $size = @getimagesize($imagePath);
-
-        if ($size[0] !== 224 || $size[1] !== 224) {
-            throw new Exception('Неверный размер изображения, должно быть 224х224');
-        }
-
-        if ($size['mime'] !== 'image/jpeg') {
-            throw new Exception('Неверный формат изображения, должно быть jpeg');
-        }
-
-
-        return $this->setUrl('images/service/upload')
+        return $this
+            ->setUrl('images/service/upload')
             ->setHeaders([
                 'Accept: application/json',
             ])
@@ -89,36 +79,6 @@ class idImageClient
                 'offer_id' => $offerId,
                 'image' => new CURLFile($imagePath, 'image/jpeg', basename($imagePath)),
             ]);
-    }
-
-    public function statusPoll(array $OfferIds)
-    {
-        return $this->get('images')->setData(['offers' => $OfferIds]);
-    }
-
-    public function lastVersion()
-    {
-        return $this->get('images/last/version');
-    }
-
-    public function reindex()
-    {
-        return $this->setUrl("images/service/reindex");
-    }
-
-    public function upVersion()
-    {
-        return $this->setUrl("images/service/upVersion");
-    }
-
-    public function get(string $url)
-    {
-        return $this->setMethod('get')->setUrl($url);
-    }
-
-    public function post(string $url)
-    {
-        return $this->setMethod('post')->setUrl($url);
     }
 
     public function toArray()
@@ -141,14 +101,12 @@ class idImageClient
             'Authorization: Bearer '.$this->token,
         ]);
 
-
         $upload = false;
         foreach ($headers as $key => $value) {
             if ($value === 'Accept: application/json') {
                 $upload = true;
             }
         }
-
 
         $method = $this->getMethod();
 
@@ -169,10 +127,22 @@ class idImageClient
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-        if ($method === 'post') {
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+
+        switch ($method) {
+            case 'post':
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+                break;
+            case 'delete':
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+                if (!empty($postData)) {
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+                }
+                break;
+            default:
+                break;
         }
+
 
         // Выполняем запрос
         $response = curl_exec($ch);
@@ -187,12 +157,14 @@ class idImageClient
         // Закрываем соединение
         curl_close($ch);
 
-        return new idimageResponse($status, $response, $error);
+        return new Response($status, $response, $error);
     }
 
-    protected function setData(array $data)
+    protected function setData($data = null)
     {
-        $this->data = $data;
+        if (is_array($data)) {
+            $this->data = $data;
+        }
 
         return $this;
     }

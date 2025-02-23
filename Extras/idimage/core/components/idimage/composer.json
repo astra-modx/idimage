@@ -1,0 +1,19 @@
+{
+  "name": "astraw/idimage",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "astep",
+      "email": "info@bustep.ru"
+    }
+  ],
+  "require": {
+  },
+  "autoload": {
+    "psr-4": {
+      "IdImage\\": "src/"
+    }
+  }
+}
