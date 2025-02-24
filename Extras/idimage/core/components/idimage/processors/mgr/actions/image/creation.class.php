@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('idImageActionsProcessor')) {
-    include_once __DIR__.'/actions.class.php';
+    include_once __DIR__.'/../../actions.class.php';
 }
 
 class idImageCreationProcessor extends idImageActionsProcessor implements \IdImage\Interfaces\ActionProgressBar
@@ -38,7 +38,7 @@ class idImageCreationProcessor extends idImageActionsProcessor implements \IdIma
                 }
 
 
-                $status = idImageClose::STATUS_CREATE;
+                $status = idImageClose::STATUS_QUEUE;
                 $errors = null;
                 if (!file_exists($imagePath)) {
                     $status = idImageClose::STATUS_FAILED;

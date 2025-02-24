@@ -2,6 +2,8 @@
 
 abstract class idImageActionsProcessor extends modProcessor
 {
+    public $languageTopics = ['idimage:manager'];
+
     /* @var idImage $idImage */
     public $idImage;
 
@@ -58,7 +60,9 @@ abstract class idImageActionsProcessor extends modProcessor
     public function withProgressBar($callback)
     {
         if ($this->setCheckbox('steps')) {
-            $ids = $this->withProgressIds();
+            if (!$ids = $this->ids()) {
+                $ids = $this->withProgressIds();
+            }
 
             return $this->success('', [
                 'total' => count($ids),
@@ -91,5 +95,18 @@ abstract class idImageActionsProcessor extends modProcessor
     public function total()
     {
         return $this->total;
+    }
+
+    public function marker($field, string $value, $ids)
+    {
+        if (count($ids) === 0) {
+            return 0;
+        }
+        $ids = implode(',', $ids);
+        $value = "'{$value}'";
+        $table = $this->modx->getTableName('idImageClose');
+        $sql = "UPDATE {$table} SET {$field} = {$value} WHERE id IN ({$ids})";
+
+        return $this->modx->exec($sql);
     }
 }

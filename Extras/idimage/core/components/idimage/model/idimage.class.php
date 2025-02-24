@@ -30,6 +30,9 @@ class idImage
     /* @var \IdImage\Extractor $extractor */
     protected $extractor = null;
 
+    /* @var \IdImage\Helpers\PhpThumb $phpThumb */
+    protected $phpThumb = null;
+
 
     /**
      * @param  modX  $modx
@@ -52,7 +55,15 @@ class idImage
             'cssUrl' => $assetsUrl.'css/',
             'jsUrl' => $assetsUrl.'js/',
             'mode_upload' => $this->modx->getOption('idimage_mode_upload', $config, 'picture'),
+            'path_versions' => MODX_CORE_PATH.'cache/idimage/versions/',
+            'site_url' => $this->modx->getOption('idimage_site_url', $config, null),
+            'cloud' => $this->modx->getOption('idimage_cloud', $config, false),
         ], $config);
+
+
+        if (empty($this->config['site_url'])) {
+            $this->config['site_url'] = $this->modx->getOption('site_url');
+        }
 
         $this->modx->addPackage('idimage', $this->config['modelPath']);
         $this->modx->lexicon->load('idimage:default');
@@ -60,9 +71,53 @@ class idImage
         $this->modx->loadClass('idImageClose');
     }
 
+    public function pathVersions()
+    {
+        return $this->config['path_versions'];
+    }
+
+    public function hasToken()
+    {
+        return !empty($this->modx->getOption('idimage_token'));
+    }
+
     public function statusMap()
     {
         return idImageClose::$statusMap;
+    }
+
+    public function statusMapService()
+    {
+        return idImageClose::$statusServiceMap;
+    }
+
+    public function siteUrl()
+    {
+        return rtrim($this->config['site_url'], '/');
+    }
+
+    public function validateSiteUrl()
+    {
+        $siteUrl = $this->siteUrl();
+        $parsedUrl = parse_url($siteUrl);
+
+        if (!$parsedUrl || !isset($parsedUrl['host'])) {
+            return 'Not local address';
+        }
+
+        $host = strtolower($parsedUrl['host']);
+
+        // Проверяем, является ли хост локальным
+        if ($host === 'localhost' || $host === '127.0.0.1') {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function isCloudUpload()
+    {
+        return (bool)$this->config['cloud'];
     }
 
     /**
@@ -158,6 +213,15 @@ class idImage
         }
 
         return $this->extractor;
+    }
+
+    public function phpThumb()
+    {
+        if (is_null($this->phpThumb)) {
+            $this->phpThumb = new \IdImage\Helpers\PhpThumb($this->modx);
+        }
+
+        return $this->phpThumb;
     }
 
 }

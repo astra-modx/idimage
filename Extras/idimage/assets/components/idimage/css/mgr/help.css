@@ -1,0 +1,226 @@
+
+.idimage_readonly {
+    opacity: 0.5;
+}
+
+.idimage-wrapper-help {
+    display: flex;
+    width: 100%;
+    position: relative;
+}
+
+.idimage-row-help {
+    flex: 0 0 65%; /* Первый блок занимает 70% */
+}
+
+.idimage-row-help-check {
+    flex: 0 0 30%; /* Второй блок занимает 30% */
+}
+
+.idimage_creat_new_controller {
+
+}
+
+
+.idimage-status {
+    color: #5cb85c;
+    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #5cb85c;
+    margin: 0 0;
+    width: auto;
+    display: inline-block;
+}
+
+.idimage-status.success {
+    color: green;
+    border: 1px solid green;
+}
+
+.idimage-status.error {
+    color: darkred;
+    border: 1px solid darkred;
+}
+
+
+.idimage-scroll-button {
+    position: absolute;
+    bottom: 14px;
+    right: 19px;
+    opacity: 0.5;
+}
+
+.idimage-scroll-button button {
+    font-size: 11px;
+    padding: 3px 5px;
+}
+
+.idimage-scroll-button span {
+    padding: 5px 8px;
+}
+
+.idimage-scroll-button:hover {
+    opacity: 0.9;
+}
+
+#idimage-button-panel {
+    position: fixed;
+    top: 35px;
+    background-color: #fff;
+    height: 42px;
+    padding: 10px 13px;
+    border-bottom: 1px solid #ccc;
+    left: 0;
+    right: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#idimage-grid-tasksruntask .x-window-body {
+    padding-top: 70px;
+}
+
+.idimage_area_reading {
+    padding-bottom: 10px;
+}
+
+
+#idimage-grid-tasksruntask .comment {
+    color: #666;
+}
+
+#idimage-grid-tasksreadlog .info {
+    color: #5cb85c;
+}
+
+#idimage-grid-tasksreadlog .error {
+    color: darkred;
+}
+
+#cidimage-grid-tasksreadlog .comment {
+    color: #666;
+}
+
+
+.idimage_help_command_wrapper {
+    display: block;
+}
+
+.idimage_help_command {
+    background-color: #e4e4e4;
+    border-radius: 5px;
+    margin-top: 5px;
+    display: inline-block;
+    max-width: 800px;
+}
+
+.idimage_help_command_pre {
+    padding: 10px 20px;
+    overflow: auto;
+    word-break: normal !important;
+    word-wrap: normal !important;
+    white-space: pre !important;
+}
+
+.idimage_help_command_help {
+    margin-left: 0;
+}
+
+.idimage-method-crontab {
+    margin: 20px 20px;
+}
+
+
+.idimage-method-crontab.not_available {
+    opacity: 0.5;
+}
+
+
+.idimage_time_crontab {
+    padding: 0 5px;
+    margin-top: 0;
+    border: 0;
+}
+
+.idimage_time_crontab .x-fieldset-body {
+    padding: 0 0;
+}
+
+.idimage_time_crontab .x-form-item.x-tab-item {
+    display: inline-block;
+}
+
+.idimage_time_crontab .x-form-item.x-tab-item:nth-child(2) {
+    position: absolute;
+    top: 12px;
+    left: 190px;
+}
+
+.idimage-availability {
+    padding: 5px 0;
+}
+
+.idimage-availability .idimage-availability-name {
+    width: 250px;
+    display: inline-block;
+}
+
+
+.idimage-status-color-queue {
+    color: darkblue;
+    border-color: darkblue;
+}
+
+.idimage-status-color-completed {
+    color: green;
+    border-color: green;
+}
+
+.idimage-status-color-failed {
+    color: red;
+    border-color: red;
+}
+
+.idimage-status-color-no_launch {
+    color: gray;
+    border-color: gray;
+}
+
+.idimage-status-color-review {
+    color: gray;
+    border-color: gray;
+}
+
+.idimage-status-color-processing {
+    color: #985f0d;
+    border-color: #985f0d;
+}
+
+.idimage-status-color-unknown {
+    color: gray;
+    border-color: gray;
+}
+
+.idimage-status-color-invalid {
+    color: red;
+    border-color: red;
+}
+
+.idimage-status-color-upload {
+    color: #985f0d;
+    border-color: #985f0d;
+}
+
+.idimage-status-color-manual {
+    color: gray;
+    border-color: gray;
+}
+
+.idimage-contacts div {
+    margin: 5px 0;
+}
+
+.idimage-contacts a {
+    color: #6f42c1 !important;
+}
+

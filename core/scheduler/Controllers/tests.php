@@ -12,6 +12,44 @@ class CrontabControllerTests extends modCrontabController
         /* @var idImage $idImage */
         $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
 
+        /* @var idImageIndexed $Indexed */
+
+        $Indexed = $this->modx->getObject('idImageIndexed', 7);
+
+
+        $Entity = $Indexed->entity()->fromArray($Indexed->toArray());
+
+
+        $path = MODX_CORE_PATH.'cache/idimage/versions/';
+
+
+        try {
+            $data = $Entity->downloader()->read($path);
+
+            dd(count($data));
+        } catch (Exception $e) {
+            dd($e->getMessage());
+        }
+
+
+        dd($data);
+
+
+        /*  $Entity = $Indexed->entity()
+              ->setDownloadLink($Indexed->get('download_link'))
+              ->setVersion($Indexed->get('version'))
+              ->setRun($Indexed->get('run'))
+              ->setLaunch($Indexed->get('launch'))
+              ->setCompleted($Indexed->get('completed'))
+              ->setUpload($Indexed->get('upload'))
+              ->setSize($Indexed->get('size'))
+              ->setImages($Indexed->get('images'))
+              ->setCloses($Indexed->get('closes'))
+              ->setSealed($Indexed->get('sealed'))
+              ->setStartAt($Indexed->get('start_at'))
+              ->setFinishedAt($Indexed->get('finished_at'))
+              ->setUploadAt($Indexed->get('upload_at'));*/
+
 
         $version = $idImage->operation()->lastVersion();
 

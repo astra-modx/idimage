@@ -402,3 +402,65 @@ idimage.combo.DateTime = function (config) {
 };
 Ext.extend(idimage.combo.DateTime, Ext.ux.form.DateTime);
 Ext.reg('idimage-xdatetime', idimage.combo.DateTime);
+
+
+
+
+/**
+ * Status
+ * @param config
+ * @constructor
+ */
+idimage.combo.Status = function (config) {
+    config = config || {};
+    Ext.applyIf(config, {
+        name: 'status',
+        hiddenName: 'status',
+        displayField: 'name',
+        valueField: 'value',
+        editable: true,
+        fields: ['value', 'name'],
+        pageSize: 20,
+        emptyText: _('idimage_combo_select'),
+        hideMode: 'offsets',
+        url: idimage.config['connector_url'],
+        baseParams: {
+            action: 'mgr/misc/status/getlist',
+            combo: true,
+            addall: true
+        }
+    });
+    idimage.combo.Status.superclass.constructor.call(this, config);
+};
+Ext.extend(idimage.combo.Status, MODx.combo.ComboBox);
+Ext.reg('idimage-combo-status', idimage.combo.Status);
+
+
+/**
+ * Filed Resource
+ * @param config
+ * @constructor
+ */
+idimage.combo.StatusService = function (config) {
+    config = config || {};
+    Ext.applyIf(config, {
+        name: 'status_service',
+        hiddenName: 'status_service',
+        displayField: 'name',
+        valueField: 'value',
+        editable: true,
+        fields: ['value', 'name'],
+        pageSize: 20,
+        emptyText: _('idimage_combo_select'),
+        hideMode: 'offsets',
+        url: idimage.config['connector_url'],
+        baseParams: {
+            action: 'mgr/misc/status/service/getlist',
+            combo: true,
+            addall: true
+        }
+    });
+    idimage.combo.StatusService.superclass.constructor.call(this, config);
+};
+Ext.extend(idimage.combo.StatusService, MODx.combo.ComboBox);
+Ext.reg('idimage-combo-status-service', idimage.combo.StatusService);

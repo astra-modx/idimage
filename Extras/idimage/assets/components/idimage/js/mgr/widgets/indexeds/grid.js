@@ -24,7 +24,7 @@ idimage.grid.Indexeds = function (config) {
     Ext.applyIf(config, {
         baseParams: {
             action: 'mgr/indexed/getlist',
-            sort: 'id',
+            sort: 'version',
             dir: 'DESC'
         },
         plugins: this.exp,
@@ -37,7 +37,8 @@ idimage.grid.Indexeds = function (config) {
             showPreview: true,
             scrollOffset: 0,
             getRowClass: function (rec) {
-                return !rec.data.active
+                console.log(rec.data.use_version);
+                return (!rec.data.active && !rec.data.use_version)
                     ? 'idimage-grid-row-disabled'
                     : '';
             }
@@ -53,7 +54,7 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
 
     getFields: function () {
         return [
-            'id', 'version', 'cloud_upload', 'cloud_size', 'current_version', 'images', 'closes', 'completed', 'sealed', 'use_version', 'start_at', 'finished_at', 'upload_at', 'upload', 'processed', 'status_code', 'createdon', 'updatedon', 'active', 'actions'
+            'id', 'version', 'upload', 'size', 'download_link', 'images', 'active', 'run', 'closes', 'launch', 'completed', 'sealed', 'use_version', 'upload', 'createdon', 'updatedon', 'active', 'actions'
         ];
     },
 
@@ -61,21 +62,22 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
         return [
             {header: _('idimage_indexed_id'), dataIndex: 'id', width: 20, sortable: true},
             {header: _('idimage_indexed_version'), dataIndex: 'version', width: 20, sortable: true},
+            {header: _('idimage_indexed_launch'), dataIndex: 'launch', width: 20, sortable: true, renderer: idimage.utils.renderBoolean},
+            {header: _('idimage_indexed_completed'), dataIndex: 'completed', sortable: true, width: 70, hidden: true, renderer: idimage.utils.renderBoolean},
             {
-                header: _('idimage_indexed_cloud_upload'),
-                dataIndex: 'cloud_upload',
+                header: _('idimage_indexed_upload'),
+                dataIndex: 'upload',
                 sortable: true,
                 width: 70,
                 hidden: true,
                 renderer: idimage.utils.renderBoolean
             },
-            {header: _('idimage_indexed_cloud_size'), dataIndex: 'cloud_size', sortable: true, width: 70, hidden: true},
-            {header: _('idimage_indexed_current_version'), dataIndex: 'current_version', sortable: true, width: 70, hidden: true},
+            {header: _('idimage_indexed_run'), dataIndex: 'run', sortable: true, width: 70, hidden: false, renderer: idimage.utils.renderBoolean},
+            {header: _('idimage_indexed_download_link'), dataIndex: 'download_link', sortable: true, width: 70, hidden: true},
             {header: _('idimage_indexed_images'), dataIndex: 'images', sortable: true, width: 70, hidden: true},
             {header: _('idimage_indexed_closes'), dataIndex: 'closes', sortable: true, width: 70, hidden: true},
 
-            {header: _('idimage_indexed_status_code'), dataIndex: 'status_code', sortable: true, width: 70, hidden: true},
-            {header: _('idimage_indexed_completed'), dataIndex: 'completed', sortable: true, width: 70, hidden: true, renderer: idimage.utils.renderBoolean},
+            {header: _('idimage_indexed_size'), dataIndex: 'size', sortable: true, width: 70, hidden: true},
             {
                 header: _('idimage_indexed_use_version'),
                 dataIndex: 'use_version',
@@ -88,9 +90,6 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
             {header: _('idimage_indexed_processed'), dataIndex: 'processed', sortable: true, width: 70, hidden: true, renderer: idimage.utils.renderBoolean},
             {header: _('idimage_indexed_sealed'), dataIndex: 'processed', sortable: true, width: 70, hidden: true, renderer: idimage.utils.renderBoolean},
 
-            {header: _('idimage_indexed_start_at'), dataIndex: 'start_at', width: 75, renderer: idimage.utils.formatDate, hidden: true},
-            {header: _('idimage_indexed_finished_at'), dataIndex: 'finished_at', width: 75, renderer: idimage.utils.formatDate, hidden: true},
-            {header: _('idimage_indexed_upload_at'), dataIndex: 'upload_at', width: 75, renderer: idimage.utils.formatDate, hidden: true},
             {header: _('idimage_indexed_updatedon'), dataIndex: 'updatedon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
             {header: _('idimage_indexed_active'), dataIndex: 'active', width: 75, renderer: idimage.utils.renderBoolean, hidden: true},
             {
@@ -104,15 +103,21 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
     },
 
 
-    getTopBar: function () {
+    getTopBar: function (config) {
         return [
 
-            this.actionMenu('indexed/poll', 'icon-refresh', true),
-
             {
-                text: '<i class="icon icon-cogs"></i> ' + _('crontabmanager_actions_dropdown'),
+                text: '<i class="icon icon-cogs"></i> ' + _('idimage_actions_dropdown'),
                 cls: 'primary-button',
-                menu: []
+                menu: [
+                    {
+                        text: '<i class="icon icon-plus"></i>&nbsp;' + _('idimage_indexed_action_create_version'),
+                        handler: this.createIndexed,
+                        scope: this,
+                        cls: 'primary-button idimage-context-menu',
+                    },
+                    this.actionMenu('indexed/poll', 'icon-refresh', true),
+                ]
             },
 
             {
@@ -134,33 +139,65 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
                     }
                 }
             },
-            '->', this.getSearchField()];
+            '->',
+            this.widgetTotal(config.id), this.getSearchField()];
     },
 
-    getListeners: function () {
-        return {
-            rowDblClick: function (grid, rowIndex, e) {
-                var row = grid.store.getAt(rowIndex);
-                this.updateItem(grid, e, row);
-            },
-        };
-    },
 
     createIndexed: function (btn, e) {
-        var w = MODx.load({
-            xtype: 'idimage-indexed-window-create',
-            id: Ext.id(),
+
+        MODx.Ajax.request({
+            url: this.config.url,
+            params: {
+                action: 'mgr/indexed/stat',
+            },
             listeners: {
                 success: {
-                    fn: function () {
-                        this.refresh();
+                    fn: function (r) {
+
+
+                        if (r.success) {
+
+
+                            var w = MODx.load({
+                                xtype: 'idimage-indexed-window-create',
+                                id: Ext.id(),
+                                listeners: {
+                                    success: {
+                                        fn: function () {
+                                            this.refresh();
+                                        }, scope: this
+                                    }
+                                }
+                            });
+                            w.reset();
+                            w.setValues(r.object);
+                            w.show(e.target);
+                        } else {
+                            MODx.msg.alert(_('idimage_error'), 'error')
+                        }
+
+                        /*   var w = MODx.load({
+                               xtype: 'idimage-indexed-window-create',
+                               id: Ext.id(),
+                               record: r,
+                               listeners: {
+                                   success: {
+                                       fn: function () {
+                                           this.refresh();
+                                       }, scope: this
+                                   }
+                               }
+                           });
+                           w.reset();
+                           w.setValues(r.object);
+                           w.show(e.target);*/
                     }, scope: this
                 }
             }
         });
-        w.reset();
-        w.setValues({active: true});
-        w.show(e.target);
+
+
     },
 
     updateIndexed: function (btn, e, row) {
@@ -199,6 +236,62 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
                 }
             }
         });
+    },
+
+    useVersionIndexed: function () {
+        var ids = this._getSelectedIds()
+        if (!ids.length) {
+            return false
+        }
+        var grid = this
+        Ext.Msg.confirm(_('idimage_actions_confirm_title'), _('idimage_actions_confirm_text'), function (e) {
+
+            if (e == 'yes') {
+                /* idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
+                 grid.actionsAjax({
+                     action: 'mgr/' + grid.config.multiple + '/multiple',
+                     method: 'action/useversion',
+                     ids: Ext.util.JSON.encode(ids),
+                 }, function (response) {
+
+                     console.log(response);
+                     idimage.progress.hide()
+                     MODx.msg.alert(_('success'), 'Загрузка завершена')
+                 })*/
+
+                idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
+                MODx.Ajax.request({
+                    url: grid.config.url,
+                    params: {
+                        action: 'mgr/' + grid.config.multiple + '/multiple',
+                        method: 'action/useversion',
+                        ids: Ext.util.JSON.encode(ids),
+                    },
+                    listeners: {
+                        success: {
+                            fn: function (res) {
+                                MODx.msg.alert(_('success'), 'Загрузка завершена')
+                                grid.refresh()
+                                idimage.progress.hide()
+                            }, scope: this
+                        },
+                        failure: {
+                            fn: function (r) {
+                                MODx.msg.alert(_('error'), r.message);
+                                grid.refresh()
+                                idimage.progress.hide()
+                            }, scope: this
+                        }
+                    }
+                })
+
+            }
+        });
+
+    },
+
+    launchIndexed: function () {
+        this.action('action/launch')
     },
 
     removeIndexed: function () {

@@ -10,22 +10,18 @@ $xpdo_meta_map['idImageIndexed']= array (
   ),
   'fields' => 
   array (
-    'version' => 0,
+    'version' => 1,
     'active' => 1,
-    'cloud_upload' => 0,
-    'cloud_size' => 0,
-    'current_version' => '',
+    'upload' => 0,
+    'size' => NULL,
+    'download_link' => NULL,
     'images' => 0,
     'closes' => 0,
+    'launch' => 0,
+    'run' => 0,
     'completed' => 0,
     'sealed' => 0,
     'use_version' => 0,
-    'start_at' => 0,
-    'finished_at' => 0,
-    'upload_at' => 0,
-    'upload' => 0,
-    'processed' => 0,
-    'status_code' => 0,
     'updatedon' => 0,
     'createdon' => 0,
   ),
@@ -37,8 +33,8 @@ $xpdo_meta_map['idImageIndexed']= array (
       'precision' => '10',
       'attributes' => 'unsigned',
       'phptype' => 'integer',
-      'null' => true,
-      'default' => 0,
+      'null' => false,
+      'default' => 1,
     ),
     'active' => 
     array (
@@ -48,7 +44,7 @@ $xpdo_meta_map['idImageIndexed']= array (
       'null' => true,
       'default' => 1,
     ),
-    'cloud_upload' => 
+    'upload' => 
     array (
       'dbtype' => 'tinyint',
       'precision' => '1',
@@ -56,22 +52,20 @@ $xpdo_meta_map['idImageIndexed']= array (
       'null' => true,
       'default' => 0,
     ),
-    'cloud_size' => 
+    'size' => 
     array (
       'dbtype' => 'int',
       'precision' => '10',
       'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => true,
-      'default' => 0,
     ),
-    'current_version' => 
+    'download_link' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '500',
       'phptype' => 'string',
       'null' => true,
-      'default' => '',
     ),
     'images' => 
     array (
@@ -79,7 +73,6 @@ $xpdo_meta_map['idImageIndexed']= array (
       'precision' => '10',
       'attributes' => 'unsigned',
       'phptype' => 'integer',
-      'null' => true,
       'default' => 0,
     ),
     'closes' => 
@@ -88,6 +81,21 @@ $xpdo_meta_map['idImageIndexed']= array (
       'precision' => '10',
       'attributes' => 'unsigned',
       'phptype' => 'integer',
+      'default' => 0,
+    ),
+    'launch' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'phptype' => 'boolean',
+      'null' => true,
+      'default' => 0,
+    ),
+    'run' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'phptype' => 'boolean',
       'null' => true,
       'default' => 0,
     ),
@@ -112,55 +120,6 @@ $xpdo_meta_map['idImageIndexed']= array (
       'dbtype' => 'tinyint',
       'precision' => '1',
       'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'start_at' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '20',
-      'phptype' => 'timestamp',
-      'null' => false,
-      'default' => 0,
-    ),
-    'finished_at' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '20',
-      'phptype' => 'timestamp',
-      'null' => false,
-      'default' => 0,
-    ),
-    'upload_at' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '20',
-      'phptype' => 'timestamp',
-      'null' => false,
-      'default' => 0,
-    ),
-    'upload' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'processed' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'status_code' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '10',
-      'attributes' => 'unsigned',
-      'phptype' => 'integer',
       'null' => true,
       'default' => 0,
     ),

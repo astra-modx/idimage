@@ -3,10 +3,10 @@
 use IdImage\Entities\EntityClose;
 
 if (!class_exists('idImageActionsProcessor')) {
-    include_once __DIR__.'/../actions.class.php';
+    include_once __DIR__.'/../../../actions.class.php';
 }
 
-class idImageQueueAddProcessor extends idImageActionsProcessor implements \IdImage\Interfaces\ActionProgressBar
+class idImageActionsImageQueueAddProcessor extends idImageActionsProcessor implements \IdImage\Interfaces\ActionProgressBar
 {
 
     public function stepChunk()
@@ -17,8 +17,7 @@ class idImageQueueAddProcessor extends idImageActionsProcessor implements \IdIma
     public function withProgressIds()
     {
         return $this->query()->closes()->where([
-            'status:!=' => idImageClose::STATUS_PROCESSING,
-            'OR:status:=' => idImageClose::STATUS_QUEUE,
+            'status:=' => idImageClose::STATUS_QUEUE,
         ])->ids();
     }
 
@@ -27,6 +26,13 @@ class idImageQueueAddProcessor extends idImageActionsProcessor implements \IdIma
      */
     public function process()
     {
+        // Check cloud
+        if (!$this->idImage->isCloudUpload()) {
+            if ($this->idImage->validateSiteUrl() !== true) {
+                return $this->failure($this->modx->lexicon('idimage_site_url_invalid', ['url' => $this->idImage->siteUrl()]));
+            }
+        }
+
         return $this->withProgressBar(function (array $ids) {
             $total = 0;
 
@@ -34,7 +40,6 @@ class idImageQueueAddProcessor extends idImageActionsProcessor implements \IdIma
 
 
             $Offers = new \IdImage\Offers();
-
 
             $closes = null;
             $this->query()
@@ -46,12 +51,20 @@ class idImageQueueAddProcessor extends idImageActionsProcessor implements \IdIma
 
                     // create entity
                     $EntityClose = new EntityClose();
-                    if (!$url = $close->url()) {
+
+
+                    # Cloud upload
+                    if ($this->idImage->isCloudUpload()) {
+                        $url = $close->uploadLink();
+                    } else {
+                        $url = $close->link($this->idImage->siteUrl());
+                    }
+
+                    if (empty($url)) {
                         $EntityClose->setError([
                             'url' => 'url not found',
                         ]);
                     }
-                    //$url = 'https://platon.site/assets/images/products/27173/0cd44484e38711efb180e89c25dff007-0cd44485e38711efb180e89c25dff007.jpg';
 
                     $EntityClose
                         ->setOfferId($close->offerId())
@@ -77,14 +90,12 @@ class idImageQueueAddProcessor extends idImageActionsProcessor implements \IdIma
                 $received = $entity->getReceived();
 
                 // Ставим метку о доставке
-                $Close->set('status_code', $entity->getStatusCode());
                 $Close->set('received', $received);
                 $Close->set('received_at', time());
 
                 // Пишем дату доставки
                 $status = idImageClose::STATUS_PROCESSING;
                 $errors = null;
-
 
                 if ($entity->isError()) {
                     $status = idImageClose::STATUS_FAILED;
@@ -106,4 +117,4 @@ class idImageQueueAddProcessor extends idImageActionsProcessor implements \IdIma
 
 }
 
-return 'idImageQueueAddProcessor';
+return 'idImageActionsImageQueueAddProcessor';

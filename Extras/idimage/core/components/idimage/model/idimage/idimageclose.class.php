@@ -1,35 +1,47 @@
 <?php
 
+use IdImage\Helpers\XpdoQueryIdImage;
+
 /**
  * @package idimage
  */
 class idImageClose extends xPDOSimpleObject
 {
 
-    const STATUS_CREATE = 0;
     const STATUS_QUEUE = 1;
-    const STATUS_COMPLETED = 2;
-    const STATUS_FAILED = 3;
-    const STATUS_NO_LAUNCH = 4;
-    const STATUS_REVIEW = 5;
-    const STATUS_PROCESSING = 6; # review
+    const STATUS_PROCESSING = 2;
+    const STATUS_INVALID = 3;
+    const STATUS_FAILED = 4;
+    const STATUS_COMPLETED = 5;
+    const STATUS_DELETED = 6;
     const STATUS_UNKNOWN = 7;
-    const STATUS_INVALID = 8;
-    const STATUS_DELETED = 9;
-    const STATUS_UPLOAD = 10;
+
+    const STATUS_SERVICE_MANUAL = 1;
+    const STATUS_SERVICE_QUEUE = 2;
+    const STATUS_SERVICE_PENDING = 3;
+    const STATUS_SERVICE_RUNNING = 4;
+    const STATUS_SERVICE_WAITING = 5;
+    const STATUS_SERVICE_FAILED = 6;
+    const STATUS_SERVICE_COMPLETED = 7;
 
     static $statusMap = [
-        self::STATUS_CREATE => 'create',
         self::STATUS_QUEUE => 'queue',
-        self::STATUS_COMPLETED => 'completed',
-        self::STATUS_FAILED => 'failed',
-        self::STATUS_NO_LAUNCH => 'no_launch',
-        self::STATUS_REVIEW => 'review',
         self::STATUS_PROCESSING => 'processing',
-        self::STATUS_UNKNOWN => 'unknown',
+        self::STATUS_FAILED => 'failed',
+        self::STATUS_COMPLETED => 'completed',
         self::STATUS_INVALID => 'invalid',
+        self::STATUS_UNKNOWN => 'unknown',
         self::STATUS_DELETED => 'deleted',
-        self::STATUS_UPLOAD => 'upload',
+    ];
+
+    static $statusServiceMap = [
+        self::STATUS_SERVICE_MANUAL => 'manual',
+        self::STATUS_SERVICE_QUEUE => 'queue',
+        self::STATUS_SERVICE_PENDING => 'pending',
+        self::STATUS_SERVICE_RUNNING => 'running',
+        self::STATUS_SERVICE_WAITING => 'waiting',
+        self::STATUS_SERVICE_FAILED => 'failed',
+        self::STATUS_SERVICE_COMPLETED => 'completed',
     ];
 
 
@@ -73,22 +85,20 @@ class idImageClose extends xPDOSimpleObject
         return md5(json_encode($sizes));
     }
 
-    public function url()
+    public function uploadLink()
     {
         // Использование временной ссылки
-        $picture_cloud = $this->get('picture_cloud');
-        if (!empty($picture_cloud)) {
-            return $picture_cloud;
-        }
+        return $this->get('upload_link');
+    }
 
+    public function link(string $host)
+    {
         $picture = $this->get('picture');
         if (empty($picture)) {
             return null;
         }
 
-        $site_url = rtrim($this->xpdo->getOption('site_url'), '/');
-
-        return $site_url.'/'.ltrim($picture, '/');
+        return rtrim($host, '/').'/'.ltrim($picture, '/');
     }
 
     public function offerId()
@@ -100,4 +110,5 @@ class idImageClose extends xPDOSimpleObject
     {
         return MODX_BASE_PATH.ltrim($this->get('picture'), '/');
     }
+
 }

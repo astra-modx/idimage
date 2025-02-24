@@ -36,30 +36,17 @@ class Actions
         return $this->client->upload($offerId, $imagePath);
     }
 
-    public function poll(array $OfferIds)
-    {
-        return $this->client->get('images', ['offers' => $OfferIds]);
-    }
-
     public function lastVersion()
     {
         return $this->client->get('images/last/version');
     }
 
-    public function reindex()
-    {
-        return $this->client->post("images/service/reindex");
-    }
-
-    public function upVersion()
-    {
-        return $this->client->get("images/service/upVersion");
-    }
 
     public function indexed()
     {
         return $this->client->get('indexed');
     }
+
     public function indexedLatest()
     {
         return $this->client->get('indexed/latest');
@@ -68,6 +55,18 @@ class Actions
     public function indexedCreate()
     {
         return $this->client->post('indexed');
+    }
+
+    public function indexedLaunch(int $version)
+    {
+        return $this->client->post('indexed/launch', [
+            'version' => $version,
+        ]);
+    }
+
+    public function info()
+    {
+        return $this->client->get('token/info');
     }
 
 

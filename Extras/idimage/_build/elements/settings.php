@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'cloud' => [
+        'xtype' => 'combo-boolean',
+        'value' => false,
+        'area' => 'idimage_main',
+    ],
     'enable' => [
         'xtype' => 'combo-boolean',
         'value' => true,
@@ -19,6 +24,11 @@ return [
     'crop_size' => [
         'xtype' => 'textfield',
         'value' => 'small',
+        'area' => 'idimage_main',
+    ],
+    'site_url' => [
+        'xtype' => 'textfield',
+        'value' => '',
         'area' => 'idimage_main',
     ],
 ];

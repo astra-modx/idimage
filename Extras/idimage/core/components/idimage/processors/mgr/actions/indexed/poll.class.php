@@ -3,7 +3,7 @@
 use IdImage\Entities\EntityClose;
 
 if (!class_exists('idImageActionsProcessor')) {
-    include_once __DIR__.'/../actions.class.php';
+    include_once __DIR__.'/../../actions.class.php';
 }
 
 class idImageIndexedPollProcessor extends idImageActionsProcessor
@@ -13,25 +13,19 @@ class idImageIndexedPollProcessor extends idImageActionsProcessor
      */
     public function process()
     {
-        /* $this->idImage->query()->indexeds()->collection(function (idImageIndexed $indexed){
-
-         });*/
-
         $Response = $this->idImage->operation()->indexed();
+        $Response->items(function ($item) {
+            $Entity = new \IdImage\Entities\EntityIndexed();
 
-        $status_code = $Response->getStatus();
-        $Response->items(function ($item) use ($status_code) {
-            unset($item['id']);
+            $Entity->fromArray($item);
 
-            $version = $item['version'];
-            $item['status_code'] = $status_code;
             /* @var idImageIndexed $object */
-            if (!$Indexed = $this->modx->getObject('idImageIndexed', ['version' => $version])) {
+            if (!$Indexed = $this->modx->getObject('idImageIndexed', ['version' => $Entity->version()])) {
                 $Indexed = $this->modx->newObject('idImageIndexed');
-                $Indexed->set('version', $version);
+                $Indexed->set('version', $Entity->version());
             }
 
-            $Indexed->fromArray($item);
+            $Indexed->fromArray($Entity->toArray());
             $Indexed->save();
             $this->pt();
         });

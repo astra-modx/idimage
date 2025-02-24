@@ -16,7 +16,7 @@ class Extractor
 
     public function extractionOffers(Response $Response, $offers)
     {
-        $status_code = $Response->getStatus();
+
         $data = $Response->json();
 
         $items = [];
@@ -46,52 +46,9 @@ class Extractor
             if (!empty($items[$k]['errors'])) {
                 $Offer->setError($items[$k]['errors']);
             }
-            $Offer->setStatusCode($status_code);
             $Offer->setReceived(true);
         }
     }
 
-    public function pollItems(array $closes)
-    {
-        $items = [];
-
-        if (count($closes) > 0) {
-            foreach ($closes as $item) {
-                $id = (int)$item['offer_id'];
-                $closes = null;
-                if (!empty($item['closes'])) {
-                    foreach ($item['closes'] as $offer) {
-                        $closes[$offer['offer_id']] = $offer['probability'];
-                    }
-                }
-                $items[$id] = [
-                    'status' => $item['status'],
-                    'total_close' => $item['total_close'] ?? 0,
-                    'min_scope' => $item['min_scope'] ?? 0,
-                    'closes' => $closes,
-                ];
-            }
-        }
-
-        return $items;
-    }
-
-    public function extractCloses(string $closes_url)
-    {
-        $http = get_headers($closes_url)[0];
-        if (strpos($http, '200') === false) {
-            return null;
-        }
-        $content = file_get_contents($closes_url);
-        $data = json_decode($content, true);
-        if (!is_array($data)) {
-            return null;
-        }
-        if (empty($data['closes']) || !is_array($data['closes'])) {
-            return null;
-        }
-
-        return $this->pollItems($data['closes']);
-    }
 
 }

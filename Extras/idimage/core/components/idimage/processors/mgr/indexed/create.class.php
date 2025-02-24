@@ -1,26 +1,40 @@
 <?php
 
-class idImageIndexedCreateProcessor extends modObjectCreateProcessor
+class idImageIndexedCreateProcessor extends modProcessor
 {
-    public $objectType = 'idImageIndexed';
-    public $classKey = 'idImageIndexed';
     public $languageTopics = ['idimage:manager'];
-    public $permission = 'create';
 
     /**
      * @return bool
      */
-    public function beforeSet()
+    public function process()
     {
-        $name = trim($this->getProperty('name'));
-        if (empty($name)) {
-            $this->modx->error->addField('name', $this->modx->lexicon('idimage_item_err_name'));
-        } elseif ($this->modx->getCount($this->classKey, ['name' => $name])) {
-            $this->modx->error->addField('name', $this->modx->lexicon('idimage_item_err_ae'));
-        }
         $this->setProperty('mode', 'new');
 
-        return parent::beforeSet();
+        // Здесь создаем новый индекс
+
+        /* @var idImage $idImage */
+        $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
+
+        $Response = $idImage->actions()->indexedCreate()->send();
+        if ($Response->getStatus() !== 201) {
+            return $this->failure('Ошибка при создании индекса', [
+                'status' => $Response->getStatus(),
+            ]);
+        }
+
+        /* @var idImageIndexed $Indexed */
+        $Indexed = $this->modx->newObject('idImageIndexed');
+        $Entity = $Indexed->entity()->fromArray($Response->json());
+
+        $Indexed->fromArray($Entity->toArray());
+        $Indexed->save();
+
+        if ($Indexed->save()) {
+            $Indexed->deactivate();
+        }
+
+        return $this->success('', $Indexed->toArray());
     }
 
 }

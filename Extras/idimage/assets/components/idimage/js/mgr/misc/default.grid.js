@@ -1,7 +1,7 @@
 idimage.grid.Default = function (config) {
     config = config || {};
 
-    if (typeof(config['multi_select']) != 'undefined' && config['multi_select'] == true) {
+    if (typeof (config['multi_select']) != 'undefined' && config['multi_select'] == true) {
         config.sm = new Ext.grid.CheckboxSelectionModel();
     }
 
@@ -47,7 +47,7 @@ idimage.grid.Default = function (config) {
     idimage.grid.Default.superclass.constructor.call(this, config);
 
     if (config.enableDragDrop && config.ddAction) {
-        this.on('render', function(grid) {
+        this.on('render', function (grid) {
             grid._initDD(config);
         });
     }
@@ -100,14 +100,31 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         };
     },
 
+    widgetTotal: function (id) {
+        return {
+            xtype: 'displayfield',
+            html: String.format('\
+                  <table>\
+                      <tr class="top">\
+                          <td class="idimage_panel_info">{0} <span id="' + id + '-total_info">0</span></td>\
+                      </tr>\
+                  </table>',
+                _('idimage_form_total'),
+            ),
+        };
+    },
+    total: 0,
     getListeners: function () {
         return {
-            /*
-             rowDblClick: function(grid, rowIndex, e) {
-             var row = grid.store.getAt(rowIndex);
-             this.someAction(grid, e, row);
-             }
-             */
+            beforerender: function (grid) {
+                var store = grid.getStore()
+                store.on('load', function (res) {
+                    if (res.reader && res.reader['jsonData']) {
+                        grid.total = res.reader['jsonData']['total'];
+                        document.getElementById(grid.config.id + '-total_info').innerText = grid.total;
+                    }
+                })
+            },
         };
     },
 
@@ -124,26 +141,22 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         var elem = e.getTarget();
         if (elem.nodeName == 'BUTTON') {
             var row = this.getSelectionModel().getSelected();
-            if (typeof(row) != 'undefined') {
+            if (typeof (row) != 'undefined') {
                 var action = elem.getAttribute('action');
                 if (action == 'showMenu') {
                     var ri = this.getStore().find('id', row.id);
                     return this._showMenu(this, ri, e);
-                }
-                else if (typeof this[action] === 'function') {
+                } else if (typeof this[action] === 'function') {
                     this.menu.record = row.data;
                     return this[action](this, e);
                 }
             }
-        }
-        else if (elem.nodeName == 'A' && elem.href.match(/(\?|\&)a=resource/)) {
+        } else if (elem.nodeName == 'A' && elem.href.match(/(\?|\&)a=resource/)) {
             if (e.button == 1 || (e.button == 0 && e.ctrlKey == true)) {
                 // Bypass
-            }
-            else if (elem.target && elem.target == '_blank') {
+            } else if (elem.target && elem.target == '_blank') {
                 // Bypass
-            }
-            else {
+            } else {
                 e.preventDefault();
                 MODx.loadPage('', elem.href);
             }
@@ -151,7 +164,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         return this.processEvent('click', e);
     },
 
-    refresh: function() {
+    refresh: function () {
         this.getStore().reload();
         if (this.config['enableDragDrop'] == true) {
             this.getSelectionModel().clearSelections(true);
@@ -216,7 +229,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
                             fn: function () {
                                 el.unmask();
                                 grid.refresh();
-                                if (typeof(grid.reloadTree) == 'function') {
+                                if (typeof (grid.reloadTree) == 'function') {
                                     sources.push(target);
                                     grid.reloadTree(sources);
                                 }
@@ -269,7 +282,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         MODx.Ajax.request({
             url: this.config.url,
             params: {
-                action: 'mgr/'+this.config.multiple+'/multiple',
+                action: 'mgr/' + this.config.multiple + '/multiple',
                 method: method,
                 ids: Ext.util.JSON.encode(ids),
             },
@@ -289,10 +302,11 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         })
     },
 
-    actionMenu: function (action, icon, one) {
+    actionMenu: function (action, icon, one, cls) {
         var lex = action.replace('/', '_'); // Заменяет первый слэш
 
-        var label = _('idimage_actions_' + lex);
+        var k = 'idimage_actions_' + lex;
+        var label = _(k);
 
         label = label === undefined ? action : label;
 
@@ -303,8 +317,12 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
             handlerFunction = () => this.actionsProgress(action);
         }
 
+        var clsd = 'idimage-context-menu';
+        if (cls) {
+            clsd = clsd + ' ' + cls;
+        }
         return {
-            cls: 'idimage-context-menu',
+            cls: clsd,
             text: icon + '' + label,
             handler: handlerFunction,
             scope: this
@@ -312,8 +330,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
     },
 
     actions: function (name) {
-
-
+        
         var grid = this;
         Ext.Msg.confirm(_('idimage_actions_confirm_title'), _('idimage_actions_confirm_text'), function (e) {
 
@@ -380,15 +397,39 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
     actionsProgress: function (controller) {
 
         var grid = this;
-        Ext.Msg.confirm(_('idimage_actions_confirm_title'), _('idimage_actions_confirm_text'), function (e) {
+        var ids = this._getSelectedIds();
+
+        var total = ids.length;
+
+        var text = _('idimage_actions_confirm_text')
+
+        if (!total) {
+            total = this.total
+        }
+
+        var lex = controller.replace('/', '_'); // Заменяет первый слэш
+
+        var label = _('idimage_actions_' + lex);
+
+        text += '<span style="display: block; padding-left: 41px;">Дейстивие: <b>' + label + '</b></span>'
+        text += '<span style="display: block; padding-left: 41px;">Выделено записей: <b>' + total + '</b></span>'
+
+
+        Ext.Msg.confirm(_('idimage_actions_confirm_title'), text, function (e) {
 
             if (e == 'yes') {
 
+                var params = {
+                    action: 'mgr/actions/' + controller,
+                    steps: true
+                }
+
+                if (total > 0) {
+                    params.ids = Ext.util.JSON.encode(ids)
+                }
+
                 idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
-                grid.actionsAjax({
-                        action: 'mgr/actions/' + controller,
-                        steps: true
-                    },
+                grid.actionsAjax(params,
                     function (grid, response) {
                         if (response.success) {
 
@@ -433,5 +474,6 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
             }
         })
     },
+
 });
 Ext.reg('idimage-grid-default', idimage.grid.Default);

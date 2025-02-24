@@ -20,13 +20,13 @@ idimage.grid.Closes = function (config) {
         }
     })
 
-
     Ext.applyIf(config, {
         baseParams: {
             action: 'mgr/close/getlist',
             sort: 'id',
             dir: 'DESC'
         },
+        multi_select: true,
         plugins: this.exp,
         stateful: true,
         stateId: config.id,
@@ -53,7 +53,7 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
 
     getFields: function () {
         return [
-            'id', 'pid', 'status_code', 'min_scope', 'total_close', 'status', 'picture', 'picture_cloud', 'tags', 'errors', 'received_at', 'received', 'createdon', 'updatedon', 'active', 'actions'
+            'id', 'pid', 'status_service', 'min_scope', 'total', 'status', 'picture', 'upload', 'upload_link', 'tags', 'errors', 'received_at', 'received', 'createdon', 'updatedon', 'active', 'actions'
         ];
     },
 
@@ -62,12 +62,11 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
             {header: _('idimage_close_id'), dataIndex: 'id', width: 20, sortable: true},
             {header: _('idimage_close_pid'), dataIndex: 'pid', width: 70, sortable: true, renderer: idimage.utils.resourceLink},
             {header: _('idimage_close_status'), dataIndex: 'status', width: 70, sortable: true, renderer: idimage.utils.statusClose},
+            {header: _('idimage_close_status_service'), dataIndex: 'status_service', width: 70, sortable: true, renderer: idimage.utils.statusServiceClose},
             {header: _('idimage_close_picture'), dataIndex: 'picture', sortable: true, width: 70, hidden: true},
-            {header: _('idimage_close_picture_cloud'), dataIndex: 'picture_cloud', sortable: true, width: 70, hidden: true},
             {header: _('idimage_close_min_scope'), dataIndex: 'min_scope', sortable: true, width: 70, hidden: true},
             {header: _('idimage_close_errors'), dataIndex: 'errors', sortable: true, width: 70, hidden: true, renderer: idimage.utils.jsonDataError},
-            {header: _('idimage_close_total_close'), dataIndex: 'total_close', sortable: true, width: 70},
-            {header: _('idimage_close_status_code'), dataIndex: 'status_code', sortable: true, width: 70},
+            {header: _('idimage_close_total'), dataIndex: 'total', sortable: true, width: 70},
             {header: _('idimage_close_tags'), dataIndex: 'tags', sortable: true, width: 150, renderer: idimage.utils.jsonDataTags},
             {header: _('idimage_close_received'), dataIndex: 'received', sortable: true, width: 75, renderer: idimage.utils.renderBoolean},
             {header: _('idimage_close_received_at'), dataIndex: 'received_at', sortable: true, width: 75, renderer: idimage.utils.formatDate},
@@ -84,59 +83,30 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
         ];
     },
 
-    action: function (action, icon, one) {
-        var lex = action.replace('/', '_'); // Заменяет первый слэш
 
-        var label = _('idimage_actions_' + lex);
-
-        label = label === undefined ? action : label;
-
-        icon = icon !== undefined ? '<i class="icon ' + icon + '"></i>&nbsp;' : '';
-
-        var handlerFunction = () => this.actions(action);
-        if (one !== true) {
-            handlerFunction = () => this.actionsProgress(action);
-        }
-
-        return {
-            cls: 'idimage-context-menu',
-            text: icon + '' + label,
-            handler: handlerFunction,
-            scope: this
-        };
-    },
-    getTopBar: function () {
+    getTopBar: function (config) {
         return [
 
-            this.actionMenu('creation', 'icon-plus'),
+
             {
-                text: '<i class="icon icon-cogs"></i> ' + _('crontabmanager_actions_dropdown'),
+                text: '<i class="icon icon-cogs"></i> ' + _('idimage_actions_dropdown'),
                 cls: 'primary-button',
                 menu: [
 
-                    this.actionMenu('reindex', 'icon-refresh', true),
+                    this.actionMenu('image/creation', 'icon-refresh', false, 'primary-button'),
+                    this.actionMenu('image/queue/add', 'icon-refresh', false, 'primary-button'),
+                    this.actionMenu('image/queue/delete', 'icon-refresh'),
                     '-',
-                    this.actionMenu('queue/add', 'icon-refresh'),
-                    this.actionMenu('queue/delete', 'icon-refresh'),
+                    this.actionMenu('image/status/processing', 'icon-refresh'),
+                    this.actionMenu('image/status/queue', 'icon-refresh'),
+
                     '-',
-                    this.actionMenu('upload', 'icon-upload'),
-                    '-',
-                    this.actionMenu('destroy', 'icon-trash action-red'),
+                    this.actionMenu('image/destroy', 'icon-trash action-red'),
                 ]
             },
 
-            {
-                text: '<i class="icon icon-cogs"></i> ' + _('crontabmanager_actions_dropdown_status'),
-                cls: 'primary-button',
-                menu: [
-                    this.actionMenu('status/proccessing', 'icon-refresh'),
-                    this.actionMenu('status/queue', 'icon-refresh'),
-                    this.actionMenu('status/upload', 'icon-refresh'),
-                ]
-            },
 
-            this.actionMenu('poll', 'icon-refresh', true),
-            {
+            /*{
                 xtype: 'idimage-combo-filter-active',
                 name: 'received',
                 width: 210,
@@ -154,9 +124,10 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
                         scope: this
                     }
                 }
-            }, {
-                xtype: 'idimage-combo-filter-resource',
-                name: 'pid',
+            },*/
+            {
+                xtype: 'idimage-combo-status',
+                name: 'status',
                 width: 210,
                 custm: true,
                 clear: true,
@@ -173,36 +144,33 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
                     }
                 }
             },
-            '->', this.getSearchField()];
-    },
-
-    getListeners: function () {
-        return {
-            rowDblClick: function (grid, rowIndex, e) {
-                var row = grid.store.getAt(rowIndex);
-                this.updateItem(grid, e, row);
-            },
-        };
-    },
-
-    createItem: function (btn, e) {
-        var w = MODx.load({
-            xtype: 'idimage-close-window-create',
-            id: Ext.id(),
-            listeners: {
-                success: {
-                    fn: function () {
-                        this.refresh();
-                    }, scope: this
+            {
+                xtype: 'idimage-combo-status-service',
+                name: 'status_service',
+                width: 210,
+                custm: true,
+                clear: true,
+                addall: true,
+                value: '',
+                listeners: {
+                    select: {
+                        fn: this._filterByCombo,
+                        scope: this
+                    },
+                    afterrender: {
+                        fn: this._filterByCombo,
+                        scope: this
+                    }
                 }
-            }
-        });
-        w.reset();
-        w.setValues({active: true});
-        w.show(e.target);
+            },
+
+            '->',
+            this.widgetTotal(config.id), this.getSearchField()
+        ];
     },
 
-    updateItem: function (btn, e, row) {
+
+    updateClose: function (btn, e, row) {
         if (typeof (row) != 'undefined') {
             this.menu.record = row.data;
         } else if (!this.menu.record) {
@@ -240,30 +208,14 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
         });
     },
 
-    removeItem: function () {
+    removeClose: function () {
         this.action('remove')
     },
-    disableItem: function () {
+    disableClose: function () {
         this.action('disable')
     },
-    enableItem: function () {
+    enableClose: function () {
         this.action('enable')
-    },
-
-    actionsReIndex: function () {
-        this.actions('reindex')
-    },
-
-    actionsCreation: function () {
-        this.actionsProgress('creation')
-    },
-
-    actionsUpload: function () {
-        this.actionsProgress('upload')
-    },
-
-    actionsStatusPoll: function () {
-        this.actions('statuspoll')
     },
 
 });

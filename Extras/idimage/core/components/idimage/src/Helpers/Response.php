@@ -3,6 +3,7 @@
 namespace IdImage\Helpers;
 
 use Exception;
+use IdImage\Entities\EntityCatalog;
 use IdImage\Entities\EntityClose;
 
 /**
@@ -121,4 +122,13 @@ class Response
         return $items;
     }
 
+    public function entityCatalog()
+    {
+        if ($this->isFail()) {
+            return null;
+        }
+        $Entity = new EntityCatalog();
+
+        return $Entity->fromArray($this->json());
+    }
 }

@@ -126,17 +126,6 @@ class EntityClose extends EntityAbsract
         return $this;
     }
 
-    public function setStatusCode(int $status_code)
-    {
-        $this->status_code = $status_code;
-
-        return $this;
-    }
-
-    public function getStatusCode()
-    {
-        return $this->status_code;
-    }
 
     public function getStatus()
     {

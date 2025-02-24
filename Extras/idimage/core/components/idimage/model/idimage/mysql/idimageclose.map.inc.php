@@ -10,20 +10,21 @@ $xpdo_meta_map['idImageClose']= array (
   ),
   'fields' => 
   array (
-    'pid' => 0,
-    'picture' => '',
-    'picture_cloud' => '',
-    'hash' => '',
+    'pid' => NULL,
+    'picture' => NULL,
+    'hash' => NULL,
     'tags' => NULL,
     'version' => 0,
-    'status' => 0,
-    'status_code' => 0,
+    'status' => 1,
+    'status_service' => 1,
+    'upload' => 0,
+    'upload_link' => NULL,
     'received' => 0,
     'received_at' => 0,
     'active' => 1,
     'closes' => NULL,
     'errors' => NULL,
-    'total_close' => 0,
+    'total' => 0,
     'min_scope' => 0,
     'updatedon' => 0,
     'createdon' => 0,
@@ -36,8 +37,7 @@ $xpdo_meta_map['idImageClose']= array (
       'precision' => '10',
       'attributes' => 'unsigned',
       'phptype' => 'integer',
-      'null' => true,
-      'default' => 0,
+      'null' => false,
     ),
     'picture' => 
     array (
@@ -45,15 +45,6 @@ $xpdo_meta_map['idImageClose']= array (
       'precision' => '500',
       'phptype' => 'string',
       'null' => false,
-      'default' => '',
-    ),
-    'picture_cloud' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '500',
-      'phptype' => 'string',
-      'null' => false,
-      'default' => '',
     ),
     'hash' => 
     array (
@@ -61,7 +52,6 @@ $xpdo_meta_map['idImageClose']= array (
       'precision' => '32',
       'phptype' => 'string',
       'null' => false,
-      'default' => '',
     ),
     'tags' => 
     array (
@@ -85,23 +75,38 @@ $xpdo_meta_map['idImageClose']= array (
       'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => true,
-      'default' => 0,
+      'default' => 1,
     ),
-    'status_code' => 
+    'status_service' => 
     array (
       'dbtype' => 'int',
       'precision' => '10',
       'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => true,
+      'default' => 1,
+    ),
+    'upload' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'phptype' => 'boolean',
+      'null' => false,
       'default' => 0,
+    ),
+    'upload_link' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '500',
+      'phptype' => 'string',
+      'null' => true,
     ),
     'received' => 
     array (
       'dbtype' => 'tinyint',
       'precision' => '1',
       'phptype' => 'boolean',
-      'null' => true,
+      'null' => false,
       'default' => 0,
     ),
     'received_at' => 
@@ -132,7 +137,7 @@ $xpdo_meta_map['idImageClose']= array (
       'phptype' => 'json',
       'null' => true,
     ),
-    'total_close' => 
+    'total' => 
     array (
       'dbtype' => 'int',
       'precision' => '10',

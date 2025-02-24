@@ -58,6 +58,16 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
             $c->where("{$this->objectType}.pid={$pid}");
         }
 
+        $status = trim($this->getProperty('status'));
+        if (!empty($status)) {
+            $c->where("{$this->objectType}.status={$status}");
+        }
+
+        $status_service = trim($this->getProperty('status_service'));
+        if (!empty($status_service)) {
+            $c->where("{$this->objectType}.status_service={$status_service}");
+        }
+
         return $c;
     }
 
@@ -70,55 +80,25 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
     public function prepareRow(xPDOObject $object)
     {
         $array = $object->toArray();
-        $array['actions'] = [];
+        $cloud = $this->setCheckbox('cloud');
 
-        $currentFolder = basename(__DIR__);
-        $lexicon_key = $currentFolder;
-        $lexicon_key_action = ucfirst($currentFolder);
+        $IndexedAction = new \IdImage\Actions\IndexedAction($object, basename(__DIR__));
+        $actions = $IndexedAction->getList(function ($action) use ($cloud) {
+            if (!$cloud) {
+                //$action->add('update', 'icon-edit');
 
-        // Edit
-        $array['actions'][] = [
-            'cls' => '',
-            'icon' => 'icon icon-edit',
-            'title' => $this->modx->lexicon('idimage_'.$lexicon_key.'_update'),
-            'action' => 'update'.$lexicon_key_action,
-            'button' => true,
-            'menu' => true,
-        ];
+                /*if (!$action->get('active')) {
+                    $action->add('enable', 'icon-power-off action-green');
+                } else {
+                    $action->add('disable', 'icon-power-off action-gray');
+                }
 
-
-        if (!$array['active']) {
-            $array['actions'][] = [
-                'cls' => '',
-                'icon' => 'icon icon-power-off action-green',
-                'title' => $this->modx->lexicon('idimage_'.$lexicon_key.'_enable'),
-                'multiple' => $this->modx->lexicon('idimage_'.$lexicon_key.'s_enable'),
-                'action' => 'enableItem',
-                'button' => true,
-                'menu' => true,
-            ];
-        } else {
-            $array['actions'][] = [
-                'cls' => '',
-                'icon' => 'icon icon-power-off action-gray',
-                'title' => $this->modx->lexicon('idimage_'.$lexicon_key.'_disable'),
-                'multiple' => $this->modx->lexicon('idimage_'.$lexicon_key.'s_disable'),
-                'action' => 'disable'.$lexicon_key_action,
-                'button' => true,
-                'menu' => true,
-            ];
-        }
-
-        // Remove
-        $array['actions'][] = [
-            'cls' => '',
-            'icon' => 'icon icon-trash-o action-red',
-            'title' => $this->modx->lexicon('idimage_'.$lexicon_key.'_remove'),
-            'multiple' => $this->modx->lexicon('idimage_'.$lexicon_key.'s_remove'),
-            'action' => 'remove'.$lexicon_key_action,
-            'button' => true,
-            'menu' => true,
-        ];
+                $action->add('remove', 'icon icon-trash-o action-red');*/
+            } else {
+                $action->add('upload', 'icon icon-upload');
+            }
+        });
+        $array['actions'] = $actions;
 
         return $array;
     }

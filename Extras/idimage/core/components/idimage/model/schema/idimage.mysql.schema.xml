@@ -3,17 +3,20 @@
        version="1.1">
 
     <object class="idImageClose" table="idimage_closes" extends="xPDOSimpleObject">
-        <field key="pid" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
-        <field key="picture" dbtype="varchar" precision="500" phptype="string" null="false" default=""/>
-        <field key="picture_cloud" dbtype="varchar" precision="500" phptype="string" null="false" default=""/>
-        <field key="hash" dbtype="varchar" precision="32" phptype="string" null="false" default=""/>
+        <field key="pid" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false"/>
+        <field key="picture" dbtype="varchar" precision="500" phptype="string" null="false"/>
+
+        <field key="hash" dbtype="varchar" precision="32" phptype="string" null="false"/>
         <field key="tags" dbtype="text" phptype="json" null="true"/>
 
         <field key="version" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
-        <field key="status" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
-        <field key="status_code" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+        <field key="status" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="1"/>
+        <field key="status_service" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="1"/>
 
-        <field key="received" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="upload" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0"/>
+        <field key="upload_link" dbtype="varchar" precision="500" phptype="string" null="true"/>
+
+        <field key="received" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0"/>
         <field key="received_at" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
 
         <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
@@ -21,13 +24,12 @@
         <field key="closes" dbtype="text" phptype="json" null="true"/>
         <field key="errors" dbtype="text" phptype="json" null="true"/>
 
-        <field key="total_close" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+        <field key="total" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
         <field key="min_scope" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
 
         <field key="updatedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
 
         <field key="createdon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
-
 
         <index alias="pid" name="pid" primary="false" unique="false" type="BTREE">
             <column key="pid" length="" collation="A" null="false"/>
@@ -46,28 +48,24 @@
     </object>
 
     <object class="idImageIndexed" table="idimage_indexeds" extends="xPDOSimpleObject">
-        <field key="version" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+        <field key="version" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="1"/>
 
         <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
-        <field key="cloud_upload" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
-        <field key="cloud_size" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
-        <field key="current_version" dbtype="varchar" precision="500" phptype="string" null="true" default=""/>
+        <field key="upload" dbtype="tinyint" precision="1" phptype="boolean" default="0"/>
+        <field key="size" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true"/>
+        <field key="download_link" dbtype="varchar" precision="500" phptype="string" null="true"/>
 
-        <field key="images" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
-        <field key="closes" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+        <field key="images" dbtype="int" precision="10" attributes="unsigned" phptype="integer" default="0"/>
+        <field key="closes" dbtype="int" precision="10" attributes="unsigned" phptype="integer" default="0"/>
 
+        <field key="launch" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="run" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
         <field key="completed" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
         <field key="sealed" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
 
         <field key="use_version" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
 
-        <field key="start_at" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
-        <field key="finished_at" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
-        <field key="upload_at" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
         <field key="upload" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
-        <field key="processed" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
-
-        <field key="status_code" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
 
         <field key="updatedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
 

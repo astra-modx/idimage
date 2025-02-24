@@ -1,12 +1,10 @@
 <?php
 
-use IdImage\Entities\EntityClose;
-
 if (!class_exists('idImageActionsProcessor')) {
-    include_once __DIR__.'/actions.class.php';
+    include_once __DIR__.'/../../../actions.class.php';
 }
 
-class idImageUploadProcessor extends idImageActionsProcessor implements \IdImage\Interfaces\ActionProgressBar
+class idImageActionsImageUploadCloudProcessor extends idImageActionsProcessor implements \IdImage\Interfaces\ActionProgressBar
 {
     public function stepChunk()
     {
@@ -16,7 +14,8 @@ class idImageUploadProcessor extends idImageActionsProcessor implements \IdImage
     public function withProgressIds()
     {
         return $this->query()->closes()->where([
-            'status' => idImageClose::STATUS_UPLOAD,
+            'upload' => false,
+            'OR:upload_link:=' => null,
         ])->ids();
     }
 
@@ -25,6 +24,29 @@ class idImageUploadProcessor extends idImageActionsProcessor implements \IdImage
      */
     public function process()
     {
+        if ($this->getProperty('steps')) {
+            // Проверка только на первом этапе
+            if (!$this->idImage->isCloudUpload()) {
+                return $this->failure($this->modx->lexicon('idimage_cloud_upload_disabled'));
+            }
+
+            // Получаем информацию о каталоге
+            $Response = $this->idImage->actions()->info()->send();
+            if ($Response->isFail()) {
+                return $this->failure($Response->getMsg());
+            }
+
+            $Entity = $Response->entityCatalog();
+
+            // Проверяем наличие каталога
+            if (!$Entity->active()) {
+                return $this->failure($this->modx->lexicon('idimage_catalog_disabled'));
+            }
+            if (!$Entity->uploadApi()) {
+                return $this->failure($this->modx->lexicon('idimage_cloud_upload_disabled'));
+            }
+        }
+
         return $this->withProgressBar(function (array $ids) {
             $PhpThumb = new \IdImage\Helpers\PhpThumb($this->modx);
             $this->query()
@@ -42,7 +64,8 @@ class idImageUploadProcessor extends idImageActionsProcessor implements \IdImage
                         if ($Response->isOk()) {
                             $data = $Response->json();
                             if (!empty($data['url'])) {
-                                $close->set('picture_cloud', $data['url']);
+                                $close->set('upload', true);
+                                $close->set('upload_link', $data['url']);
                             }
                         } else {
                             $status = idImageClose::STATUS_FAILED;
@@ -51,7 +74,6 @@ class idImageUploadProcessor extends idImageActionsProcessor implements \IdImage
 
                         $close->set('errors', $errors);
                         $close->set('status', $status);
-                        $close->set('status_code', $Response->getStatus());
 
                         $close->save();
                     });
@@ -67,4 +89,4 @@ class idImageUploadProcessor extends idImageActionsProcessor implements \IdImage
 
 }
 
-return 'idImageUploadProcessor';
+return 'idImageActionsImageUploadCloudProcessor';

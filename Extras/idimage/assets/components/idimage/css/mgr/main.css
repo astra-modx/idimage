@@ -95,41 +95,7 @@ a.idimage-btn.disabled, fieldset[disabled] a.idimage-btn { pointer-events: none 
 .idimage-btn-block { display: block; width: 100% }
 .idimage-btn-block + .idimage-btn-block { margin-top: 5px }
 
-.idimage-status {
 
-}
-
-.idimage-status-color-create {
-    color: darkblue;
-}
-.idimage-status-color-queue {
-    color: darkblue;
-}
-.idimage-status-color-completed {
-    color: green;
-}
-.idimage-status-color-failed {
-    color: red;
-}
-.idimage-status-color-no_launch {
-    color: gray;
-}
-.idimage-status-color-review {
-    color: gray;
-}
-.idimage-status-color-processing {
-    color: #985f0d;
-}
-.idimage-status-color-unknown {
-    color: gray;
-}
-
-.idimage-status-color-invalid {
-    color: red;
-}
-.idimage-status-color-upload {
-    color: #985f0d;
-}
 
 /* resourcer field */
 .x-field-idimage-resource-clear,
@@ -168,4 +134,11 @@ a.idimage-btn.disabled, fieldset[disabled] a.idimage-btn { pointer-events: none 
 }
 .idimage-context-menu img {
     display: none;
+}
+
+.idimage_panel_info {
+    padding: 10px 20px;
+}
+#idimage-panel-info-total_info {
+    font-weight: bold;
 }

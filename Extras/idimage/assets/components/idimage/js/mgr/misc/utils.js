@@ -148,6 +148,14 @@ idimage.utils.statusClose = function (value) {
     );
 };
 
+idimage.utils.statusServiceClose = function (value) {
+    var status = idimage.config.status_service_map[value]
+    return String.format(
+        '<span class="idimage-status idimage-status-color-{0}">{0}</span>',
+        status
+    );
+};
+
 idimage.utils.jsonDataTags = function (value) {
     v = value ? value.join(", ") : '';
     return v !== '' ? '<span>' + v + '</span>' : '<span class="idimage-gray">---</span>';
