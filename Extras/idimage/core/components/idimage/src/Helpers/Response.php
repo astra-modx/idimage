@@ -4,7 +4,6 @@ namespace IdImage\Helpers;
 
 use Exception;
 use IdImage\Entities\EntityCatalog;
-use IdImage\Entities\EntityClose;
 
 /**
  * Created by Andrey Stepanenko.

@@ -55,16 +55,20 @@ class idImageIndexedGetListProcessor extends modObjectGetListProcessor
      */
     public function prepareRow(xPDOObject $object)
     {
+        /* @var idImageIndexed $object */
         $array = $object->toArray();
         $IndexedAction = new \IdImage\Actions\IndexedAction($object, basename(__DIR__));
-        $actions = $IndexedAction->getList(function ($action) {
-
-
+        $actions = $IndexedAction->getList(function (\IdImage\Actions\IndexedAction $action) use ($object) {
             if ($action->get('version')) {
                 // Использование текущей версии
                 if ($action->get('completed') && $action->get('launch')) {
                     if (!$action->get('sealed')) {
-                        $action->add('useVersion', 'icon-upload');
+                        if ($object->versionJsonExists()) {
+                            $action->add('useVersion', 'icon-refresh action-green');
+                        }
+
+                        $exist = $object->versionJsonExists();
+                        $action->add('download', 'icon-download', !$exist);
                     }
                 }
 
@@ -73,7 +77,7 @@ class idImageIndexedGetListProcessor extends modObjectGetListProcessor
                 }
             }
 
-            $action->add('info', 'icon-info', false);
+            //$action->add('info', 'icon-info', false);
             /*if (!$action->get('active')) {
                 $action->add('enable', 'icon-power-off action-green', false);
             } else {

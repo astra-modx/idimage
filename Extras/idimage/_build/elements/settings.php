@@ -18,7 +18,7 @@ return [
     ],
     'api_url' => [
         'xtype' => 'textfield',
-        'value' => '',
+        'value' => 'https://idimage.ru/api',
         'area' => 'idimage_main',
     ],
     'crop_size' => [
@@ -29,6 +29,12 @@ return [
     'site_url' => [
         'xtype' => 'textfield',
         'value' => '',
+        'area' => 'idimage_main',
+    ],
+    'extract_path' => [
+        'xtype' => 'textfield',
+        'value' => '',
+        //'value' => '{core_path}cache/idimage/indexed',
         'area' => 'idimage_main',
     ],
 ];

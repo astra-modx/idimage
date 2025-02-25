@@ -11,7 +11,7 @@ class idImageActionsImageQueueAddProcessor extends idImageActionsProcessor imple
 
     public function stepChunk()
     {
-        return 50;
+        return 1000;
     }
 
     public function withProgressIds()

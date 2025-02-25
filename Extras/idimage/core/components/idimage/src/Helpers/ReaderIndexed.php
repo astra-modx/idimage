@@ -25,41 +25,36 @@ class ReaderIndexed
         $this->indexed = $indexed;
     }
 
-    public function read(string $path)
+    public function download(string $source, string $target)
     {
-        $url = $this->indexed->downloadLink();
+        $zipData = file_get_contents($source);
 
-        $pathArchiveFile = $path.basename($url);
-        $pathJsonFile = $path.$this->indexed->filenameVersion();
-
-
-        if (!is_dir($path)) {
-            if (!mkdir($path, 0777, true)) {
-                throw new Exception('Ошибка создания директории: '.$path);
-            }
+        if (!file_put_contents($target, $zipData)) {
+            throw new Exception('Ошибка записи в архив');
         }
 
-        if (!file_exists($pathJsonFile)) {
-            if (!file_exists($pathArchiveFile)) {
-                $content = file_get_contents($url);
-                if (!file_put_contents($pathArchiveFile, $content)) {
-                    throw new Exception('Ошибка записи в архив');
-                }
-            }
-
-            // распаковать zip
-            $zip = new ZipArchive;
-            $zip->open($pathArchiveFile);
-            if (!$res = $zip->extractTo($path)) {
-                throw new Exception('Ошибка распаковки');
+        // распаковать zip
+        $zip = new ZipArchive;
+        $dir = dirname($target);
+        if ($zip->open($target) === true) {
+            if (!$zip->extractTo($dir)) {
+                throw new Exception('Error extracting archive to directory '.$target);
             }
             $zip->close();
-            if (!file_exists($pathJsonFile)) {
-                throw new Exception('Ошибка записи в json');
-            }
+        } else {
+            throw new Exception('Failed to open ZIP archive');
         }
 
-        $content = file_get_contents($pathJsonFile);
+        return $this;
+    }
+
+    public function read(string $source)
+    {
+        if (!file_exists($source)) {
+            throw new Exception("File $source not found");
+        }
+
+        $content = file_get_contents($source);
         if (empty($content)) {
             throw new Exception('Нет данных');
         }

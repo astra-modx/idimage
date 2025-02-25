@@ -330,7 +330,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
     },
 
     actions: function (name) {
-        
+
         var grid = this;
         Ext.Msg.confirm(_('idimage_actions_confirm_title'), _('idimage_actions_confirm_text'), function (e) {
 
@@ -411,9 +411,13 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
 
         var label = _('idimage_actions_' + lex);
 
-        text += '<span style="display: block; padding-left: 41px;">Дейстивие: <b>' + label + '</b></span>'
-        text += '<span style="display: block; padding-left: 41px;">Выделено записей: <b>' + total + '</b></span>'
+        text += '<span class="idimage_actions_window_info">'+_('lexicon')+': <b>' + label + '</b></span>'
 
+        if (total > 0) {
+            text += '<span class="idimage_actions_window_info">'+_('idimage_actions_selected_records')+': <b>' + total + '</b></span>'
+        }
+
+        //idimage_actions_selected_records
 
         Ext.Msg.confirm(_('idimage_actions_confirm_title'), text, function (e) {
 

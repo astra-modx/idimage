@@ -8,7 +8,7 @@
 
 namespace IdImage\Interfaces;
 
-use IdImage\Helpers\XpdoQueryIdImage;
+use IdImage\Helpers\xPDOQueryIdImage;
 
 interface ActionProgressBar
 {
@@ -19,7 +19,7 @@ interface ActionProgressBar
     public function stepChunk();
 
     /**
-     * @return XpdoQueryIdImage
+     * @return xPDOQueryIdImage
      */
     public function withProgressIds();
 }

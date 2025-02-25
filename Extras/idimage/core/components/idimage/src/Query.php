@@ -22,7 +22,7 @@ class Query
 
     public function create($class)
     {
-        return new XpdoQueryIdImage($this->idImage->modx, $class);
+        return new xPDOQueryIdImage($this->idImage->modx, $class);
     }
 
     public function files()

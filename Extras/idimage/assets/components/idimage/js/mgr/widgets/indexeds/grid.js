@@ -294,6 +294,10 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
         this.action('action/launch')
     },
 
+    downloadIndexed: function () {
+        this.action('action/download')
+    },
+
     removeIndexed: function () {
         this.action('remove')
     },

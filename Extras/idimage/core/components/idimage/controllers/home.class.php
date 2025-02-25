@@ -95,6 +95,9 @@ class idimageHomeManagerController extends modExtraManagerController
             'token' => !empty($this->modx->getOption('idimage_token')),
             'cloud' => $this->idimage->isCloudUpload(),
             'validate_site_url' => $this->idimage->validateSiteUrl(),
+            'zip' => (class_exists('ZipArchive') && extension_loaded('zip')),
+            'php' => version_compare(PHP_VERSION, '7.4.0', '>='),
+            'php_current' => phpversion(),
         ];
 
         return $data;

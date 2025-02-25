@@ -101,6 +101,23 @@
                             `]]
                         </div>
                         <div class="idimage-availability">
+                            <span class="idimage-availability-name">zip архиватор:</span>
+                            [[+zip:is=`1`:then=`
+                            <span class="idimage-status success">Доступен</span>
+                            `:else=`
+                            <span class="idimage-status error">Не доступен</span>
+                            `]]
+                        </div>
+
+                        <div class="idimage-availability">
+                            <span class="idimage-availability-name">Минимальная версия php 7.4:</span>
+                            [[+php:is=`1`:then=`
+                                <span class="idimage-status success">[[+php_current]]</span>
+                            `:else=`
+                                <span class="idimage-status error">Несовместимая версия [[+php_current]]</span>
+                            `]]
+                        </div>
+                        <div class="idimage-availability">
                             <span class="idimage-availability-name">Глобальный доступ к изображениям:</span>
                             [[+validate_site_url:is=`1`:then=`
                             <span class="idimage-status success">Да</span>

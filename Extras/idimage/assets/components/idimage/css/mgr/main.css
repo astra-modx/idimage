@@ -142,3 +142,7 @@ a.idimage-btn.disabled, fieldset[disabled] a.idimage-btn { pointer-events: none 
 #idimage-panel-info-total_info {
     font-weight: bold;
 }
+
+.idimage_actions_window_info{
+    display: block; padding-left: 41px
+}

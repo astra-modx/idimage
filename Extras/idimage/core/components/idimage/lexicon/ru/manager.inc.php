@@ -3,7 +3,7 @@
 include_once 'setting.inc.php';
 
 $_lang['idimage'] = 'Id Image';
-$_lang['idimage_menu_desc'] = 'Близкие изображения';
+$_lang['idimage_menu_desc'] = 'Похожие товары';
 $_lang['idimage_intro_msg'] = 'Вы можете выделять сразу несколько предметов при помощи Shift или Ctrl.';
 
 
@@ -43,7 +43,7 @@ $_lang['idimage_close_upload_link'] = 'Ссылка в облаке';
 ////////////////////////
 //// Closes
 ////////////////////////
-$_lang['idimage_closes'] = 'Близкие изображения';
+$_lang['idimage_closes'] = 'Похожие изображения';
 $_lang['idimage_close_id'] = 'Id';
 $_lang['idimage_close_status'] = 'Статус';
 $_lang['idimage_close_status_service'] = 'Статус в сервисе';
@@ -162,4 +162,8 @@ $_lang['idimage_actions_image_upload/enable'] = 'Включить загрузк
 $_lang['idimage_actions_image_upload/disable'] = 'Отключить загрузку в облако';
 $_lang['idimage_actions_image_upload/cloud'] = 'Загрузка изображений в облачное хранилище.';
 $_lang['idimage_actions_image_destroy'] = 'Уничтожить все изображения';
+$_lang['idimage_indexed_action_download'] = 'Скачать индекс с товарами';
+
+
+$_lang['idimage_actions_selected_records'] = 'Выделено записей';
 

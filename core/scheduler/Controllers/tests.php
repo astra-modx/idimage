@@ -12,6 +12,14 @@ class CrontabControllerTests extends modCrontabController
         /* @var idImage $idImage */
         $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
 
+
+        $dat = $this->modx->getOption('ecodes', [
+            'ecodes' => '{core_path}cache/idimage/indexed',
+        ], null);
+
+        dd($dat);
+
+
         /* @var idImageIndexed $Indexed */
 
         $Indexed = $this->modx->getObject('idImageIndexed', 7);

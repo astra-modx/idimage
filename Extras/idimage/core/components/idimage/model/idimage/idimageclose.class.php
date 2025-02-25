@@ -1,6 +1,6 @@
 <?php
 
-use IdImage\Helpers\XpdoQueryIdImage;
+use IdImage\Helpers\xPDOQueryIdImage;
 
 /**
  * @package idimage

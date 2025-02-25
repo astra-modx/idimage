@@ -58,6 +58,7 @@ class idImage
             'path_versions' => MODX_CORE_PATH.'cache/idimage/versions/',
             'site_url' => $this->modx->getOption('idimage_site_url', $config, null),
             'cloud' => $this->modx->getOption('idimage_cloud', $config, false),
+            'extract_path' => $this->modx->getOption('idimage_extract_path', $config, MODX_CORE_PATH.'cache/idimage/indexed', true),
         ], $config);
 
 

@@ -10,6 +10,10 @@ class idImageIndexedActionUseVersionProcessor extends modProcessor
      */
     public function process()
     {
+        /* @var idImage $idImage */
+        $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
+
+
         $id = $this->getProperty('id');
 
         /* @var idImageIndexed $Indexed */
@@ -20,24 +24,20 @@ class idImageIndexedActionUseVersionProcessor extends modProcessor
         $Entity = $Indexed->entity()->fromArray($Indexed->toArray());
 
 
-        /* @var idImage $idImage */
-        $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
-
-
-        $Reader = $Entity->readerIndexed();
-        try {
-            $Reader->read($idImage->pathVersions());
-        } catch (Exception $e) {
-            dd($e->getMessage());
+        $versionJson = $Indexed->versionJson();
+        if (!$Indexed->versionJsonExists()) {
+            throw new Exception("Error json {$versionJson}");
         }
 
+        $Reader = $Entity->readerIndexed()->read($versionJson);
 
-        $items = $Reader->closes();
+        if (!$items = $Reader->closes()) {
+            throw new Exception("Error read json closes {$versionJson}");
+        }
+
         $total = $Reader->totalCloses();
         $pids = $Reader->offersKeys();
-
         $statusServiceMap = $idImage->statusMapService();
-
 
         $version = $Entity->version();
         $idImage->query()->closes()

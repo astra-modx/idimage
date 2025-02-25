@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'astraw/idimage',
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
-        'reference' => 'e66204eba3d994ea8b459671ef75499c2b94cc3b',
+        'pretty_version' => '1.0.0+no-version-set',
+        'version' => '1.0.0.0',
+        'reference' => NULL,
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'astraw/idimage' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
-            'reference' => 'e66204eba3d994ea8b459671ef75499c2b94cc3b',
+            'pretty_version' => '1.0.0+no-version-set',
+            'version' => '1.0.0.0',
+            'reference' => NULL,
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

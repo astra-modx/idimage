@@ -6,13 +6,17 @@ use Closure;
 use PDO;
 use xPDOQuery_mysql;
 
+if (!class_exists('xPDOQuery_mysql')) {
+    include_once MODX_CORE_PATH.'xpdo/om/mysql/xpdoquery.class.php';
+}
+
 /**
  * Created by Andrey Stepanenko.
  * User: webnitros
  * Date: 20.02.2025
  * Time: 10:43
  */
-class XpdoQueryIdImage extends xPDOQuery_mysql
+class xPDOQueryIdImage extends xPDOQuery_mysql
 {
 
     public function count()
