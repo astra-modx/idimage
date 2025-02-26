@@ -83,7 +83,7 @@ class ReaderIndexed
         return $this;
     }
 
-    public function closes()
+    public function items()
     {
         $items = null;
 
@@ -114,7 +114,7 @@ class ReaderIndexed
             return [];
         }
 
-        return array_keys($this->closes());
+        return array_keys($this->items());
     }
 
     public function totalCloses()

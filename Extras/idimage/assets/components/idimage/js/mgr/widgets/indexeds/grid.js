@@ -106,7 +106,17 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
     getTopBar: function (config) {
         return [
 
+            this.actionMenu('image/creation', 'icon-refresh', false, 'primary-button'),
+            this.actionMenu('image/queue/add', 'icon-refresh', false, 'primary-button'),
             {
+                text: '<i class="icon icon-plus"></i>&nbsp;' + _('idimage_indexed_action_create_version'),
+                handler: this.createIndexed,
+                scope: this,
+                cls: 'primary-button idimage-context-menu',
+            },
+            this.actionMenu('indexed/poll', 'icon-refresh', true),
+            this.actionMenu('indexed/update/products', 'icon-refresh'),
+            /*{
                 text: '<i class="icon icon-cogs"></i> ' + _('idimage_actions_dropdown'),
                 cls: 'primary-button',
                 menu: [
@@ -118,7 +128,7 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
                     },
                     this.actionMenu('indexed/poll', 'icon-refresh', true),
                 ]
-            },
+            },*/
 
             {
                 xtype: 'idimage-combo-filter-active',
@@ -243,28 +253,16 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
         if (!ids.length) {
             return false
         }
+
         var grid = this
         Ext.Msg.confirm(_('idimage_actions_confirm_title'), _('idimage_actions_confirm_text'), function (e) {
-
             if (e == 'yes') {
-                /* idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
-                 grid.actionsAjax({
-                     action: 'mgr/' + grid.config.multiple + '/multiple',
-                     method: 'action/useversion',
-                     ids: Ext.util.JSON.encode(ids),
-                 }, function (response) {
-
-                     console.log(response);
-                     idimage.progress.hide()
-                     MODx.msg.alert(_('success'), 'Загрузка завершена')
-                 })*/
-
                 idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
                 MODx.Ajax.request({
                     url: grid.config.url,
                     params: {
                         action: 'mgr/' + grid.config.multiple + '/multiple',
-                        method: 'action/useversion',
+                        method: 'action/use_version',
                         ids: Ext.util.JSON.encode(ids),
                     },
                     listeners: {

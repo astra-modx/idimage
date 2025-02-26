@@ -163,6 +163,7 @@ $_lang['idimage_actions_image_upload/disable'] = 'Отключить загру�
 $_lang['idimage_actions_image_upload/cloud'] = 'Загрузка изображений в облачное хранилище.';
 $_lang['idimage_actions_image_destroy'] = 'Уничтожить все изображения';
 $_lang['idimage_indexed_action_download'] = 'Скачать индекс с товарами';
+$_lang['idimage_actions_indexed_update/products'] = 'Обновить похожие товары';
 
 
 $_lang['idimage_actions_selected_records'] = 'Выделено записей';

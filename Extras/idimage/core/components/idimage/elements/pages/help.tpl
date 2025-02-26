@@ -112,9 +112,9 @@
                         <div class="idimage-availability">
                             <span class="idimage-availability-name">Минимальная версия php 7.4:</span>
                             [[+php:is=`1`:then=`
-                                <span class="idimage-status success">[[+php_current]]</span>
+                            <span class="idimage-status success">[[+php_current]]</span>
                             `:else=`
-                                <span class="idimage-status error">Несовместимая версия [[+php_current]]</span>
+                            <span class="idimage-status error">Несовместимая версия [[+php_current]]</span>
                             `]]
                         </div>
                         <div class="idimage-availability">
@@ -122,18 +122,17 @@
                             [[+validate_site_url:is=`1`:then=`
                             <span class="idimage-status success">Да</span>
                             `:else=`
-                            <span class="idimage-status error">отсутствует (обратитесь в тех поддержку)</span>
+                            <span class="idimage-status error">Отсутствует</span>
                             `]]
                         </div>
                         [[+cloud:is=`1`:then=`
                         <div class="idimage-availability">
                             <span class="idimage-availability-name">Загрузка в облачное хранилище:</span>
-                            <span class="idimage-status error">Нет</span>
+                            <span class="idimage-status success">Включена</span>
                         </div>
                         `]]
 
                     </div>
-
 
 
                     <div id="schedule_service">
@@ -162,19 +161,20 @@
                         <p>Вы можете выполнить все шаги автоматически, просто нажмите запустить индексацию, по завершению вам останеться только разместить
                             код на странице</p>
                         <p>Внимание!!! После запуска не уходите с этой страницы, чтобы процедура завершилась автоматически</p>
-                    </div>]]
+                    </div>
+                    ]]
 
                     <hr>
                     <h3>Поддержка</h3>
                     <div class="idimage-contacts">
                         <div>
-                           <a href="https://t.me/idimage" target="_blank">Telegram</a>
+                            <a href="https://t.me/idimage" target="_blank">Telegram</a>
                         </div>
                         <div>
-                           <a href="https://idimage.ru/" target="_blank">Cайт</a>
+                            <a href="https://idimage.ru/" target="_blank">Cайт</a>
                         </div>
                         <div>
-                           <a href="https://idimage.ru/api/documentation" target="_blank">Api documentation</a>
+                            <a href="https://idimage.ru/api/documentation" target="_blank">Api documentation</a>
                         </div>
                     </div>
 

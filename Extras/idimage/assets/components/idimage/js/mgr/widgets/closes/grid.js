@@ -95,11 +95,12 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
 
                     this.actionMenu('image/creation', 'icon-refresh', false, 'primary-button'),
                     this.actionMenu('image/queue/add', 'icon-refresh', false, 'primary-button'),
-                    this.actionMenu('image/queue/delete', 'icon-refresh'),
                     '-',
                     this.actionMenu('image/status/processing', 'icon-refresh'),
                     this.actionMenu('image/status/queue', 'icon-refresh'),
 
+                    '-',
+                    this.actionMenu('image/queue/delete', 'icon-refresh'),
                     '-',
                     this.actionMenu('image/destroy', 'icon-trash action-red'),
                 ]

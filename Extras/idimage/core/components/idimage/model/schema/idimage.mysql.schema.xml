@@ -63,7 +63,7 @@
         <field key="completed" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
         <field key="sealed" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
 
-        <field key="use_version" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="use_version" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
 
         <field key="upload" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
 

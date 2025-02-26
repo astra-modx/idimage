@@ -408,16 +408,17 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         }
 
         var lex = controller.replace('/', '_'); // Заменяет первый слэш
-
+        console.log('idimage_actions_' + lex);
         var label = _('idimage_actions_' + lex);
+        text += '<span class="idimage_actions_window_info">' + _('lexicon') + ': <b>' + label + '</b></span>'
 
-        text += '<span class="idimage_actions_window_info">'+_('lexicon')+': <b>' + label + '</b></span>'
 
-        if (total > 0) {
-            text += '<span class="idimage_actions_window_info">'+_('idimage_actions_selected_records')+': <b>' + total + '</b></span>'
+        if (controller !== 'indexed/update/products') {
+            if (total > 0) {
+                text += '<span class="idimage_actions_window_info">' + _('idimage_actions_selected_records') + ': <b>' + total + '</b></span>'
+            }
         }
-
-        //idimage_actions_selected_records
+        
 
         Ext.Msg.confirm(_('idimage_actions_confirm_title'), text, function (e) {
 
