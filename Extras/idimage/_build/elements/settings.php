@@ -21,11 +21,6 @@ return [
         'value' => 'https://idimage.ru/api',
         'area' => 'idimage_main',
     ],
-    'crop_size' => [
-        'xtype' => 'textfield',
-        'value' => 'small',
-        'area' => 'idimage_main',
-    ],
     'site_url' => [
         'xtype' => 'textfield',
         'value' => '',

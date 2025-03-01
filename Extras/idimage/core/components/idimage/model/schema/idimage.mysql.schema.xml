@@ -48,9 +48,33 @@
     </object>
 
     <object class="idImageIndexed" table="idimage_indexeds" extends="xPDOSimpleObject">
-        <field key="version" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="1"/>
+        <field key="name" dbtype="varchar" precision="256" phptype="string" null="true"/>
+        <field key="code" dbtype="varchar" precision="256" phptype="string" null="true"/>
 
+        <field key="upload_api" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
         <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
+
+        <field key="updatedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+        <field key="createdon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+
+        <index alias="name" name="name" primary="false" unique="false" type="BTREE">
+            <column key="name" length="" collation="A" null="false"/>
+        </index>
+
+        <index alias="code" name="code" primary="false" unique="false" type="BTREE">
+            <column key="code" length="" collation="A" null="false"/>
+        </index>
+
+        <composite alias="Versions" class="idImageVersion" local="id" foreign="indexed_id" cardinality="many" owner="id"/>
+    </object>
+
+
+    <object class="idImageVersion" table="idimage_versions" extends="xPDOSimpleObject">
+
+        <field key="indexed_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+
+        <field key="version" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="1"/>
+        <field key="awaiting_processing" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0"/>
         <field key="upload" dbtype="tinyint" precision="1" phptype="boolean" default="0"/>
         <field key="size" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true"/>
         <field key="download_link" dbtype="varchar" precision="500" phptype="string" null="true"/>
@@ -58,6 +82,7 @@
         <field key="images" dbtype="int" precision="10" attributes="unsigned" phptype="integer" default="0"/>
         <field key="closes" dbtype="int" precision="10" attributes="unsigned" phptype="integer" default="0"/>
 
+        <field key="download" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
         <field key="launch" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
         <field key="run" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
         <field key="completed" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
@@ -75,6 +100,7 @@
             <column key="version" length="" collation="A" null="false"/>
         </index>
 
+        <aggregate alias="Indexed" class="idImageIndexed" local="indexed_id" foreign="id" cardinality="one" owner="foreign"/>
     </object>
 
 </model>

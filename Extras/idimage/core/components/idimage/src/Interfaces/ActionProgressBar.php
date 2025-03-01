@@ -8,7 +8,7 @@
 
 namespace IdImage\Interfaces;
 
-use IdImage\Helpers\xPDOQueryIdImage;
+use IdImage\Support\xPDOQueryIdImage;
 
 interface ActionProgressBar
 {

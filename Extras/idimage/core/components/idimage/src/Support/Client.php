@@ -1,10 +1,9 @@
 <?php
 
-namespace IdImage;
+namespace IdImage\Support;
 
 use CURLFile;
-use Exception;
-use IdImage\Helpers\Response;
+use IdImage\Exceptions\ExceptionJsonModx;
 use modX;
 
 /**
@@ -35,10 +34,10 @@ class Client
         $this->token = $modx->getOption('idimage_token', null, null);
         $this->apiUrl = $modx->getOption('idimage_api_url', null, null);
         if (empty($this->token)) {
-            throw new Exception('Token not set, setting idimage_token');
+            throw new ExceptionJsonModx('Token not set, setting idimage_token');
         }
         if (empty($this->apiUrl)) {
-            throw new Exception('apiUrl not set, setting idimage_api_url');
+            throw new ExceptionJsonModx('apiUrl not set, setting idimage_api_url');
         }
     }
 
@@ -68,10 +67,10 @@ class Client
             ->setUrl($url);
     }
 
-    public function upload(string $offerId, $imagePath)
+    public function upload(string $url, string $offerId, $imagePath)
     {
         return $this
-            ->setUrl('images/service/upload')
+            ->setUrl($url)
             ->setHeaders([
                 'Accept: application/json',
             ])
@@ -209,6 +208,16 @@ class Client
     public function getMethod()
     {
         return $this->method;
+    }
+
+    public function sendException()
+    {
+        $Response = $this->send();
+        if (!$Response->isOk()) {
+            throw $Response->exception();
+        }
+
+        return $Response;
     }
 
 

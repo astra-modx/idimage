@@ -1,9 +1,8 @@
 <?php
 
-namespace IdImage\Helpers;
+namespace IdImage\Support;
 
-use Exception;
-use IdImage\Entities\EntityIndexed;
+use IdImage\Exceptions\ExceptionJsonModx;
 use ZipArchive;
 
 /**
@@ -15,65 +14,82 @@ use ZipArchive;
 class ReaderIndexed
 {
 
-    private EntityIndexed $indexed;
+    protected $closes = null;
+    protected $total = 0;
+    /**
+     * @var string|null
+     */
+    private $path;
+    /**
+     * @var string|null
+     */
+    private $pathZip;
+    private $downloadUrl;
 
-    private $closes = null;
-    private $total = null;
-
-    public function __construct(EntityIndexed $indexed)
+    public function __construct(string $path, string $pathZip, $downloadUrl = null)
     {
-        $this->indexed = $indexed;
+        $this->path = $path;
+        $this->pathZip = $pathZip;
+        $this->downloadUrl = $downloadUrl;
+
+        if (empty($this->downloadUrl)) {
+            throw new ExceptionJsonModx('source is empty');
+        }
+
+        if (empty($pathZip)) {
+            throw new ExceptionJsonModx('target is empty');
+        }
     }
 
-    public function download(string $source, string $target)
+    public function download()
     {
-        $zipData = file_get_contents($source);
+        $zipData = file_get_contents($this->downloadUrl);
 
-        if (!file_put_contents($target, $zipData)) {
-            throw new Exception('Ошибка записи в архив');
+        if (!file_put_contents($this->pathZip, $zipData)) {
+            throw new ExceptionJsonModx('Ошибка записи в архив');
         }
 
         // распаковать zip
         $zip = new ZipArchive;
-        $dir = dirname($target);
-        if ($zip->open($target) === true) {
+        $dir = dirname($this->pathZip);
+        if ($zip->open($this->pathZip) === true) {
             if (!$zip->extractTo($dir)) {
-                throw new Exception('Error extracting archive to directory '.$target);
+                throw new ExceptionJsonModx('Error extracting archive to directory '.$this->pathZip);
             }
             $zip->close();
         } else {
-            throw new Exception('Failed to open ZIP archive');
+            throw new ExceptionJsonModx('Failed to open ZIP archive');
         }
 
         return $this;
     }
 
-    public function read(string $source)
+    public function read()
     {
-        if (!file_exists($source)) {
-            throw new Exception("File $source not found");
+        if (!file_exists($this->path)) {
+            throw new ExceptionJsonModx("File {$this->path} not found");
         }
 
-        $content = file_get_contents($source);
+        $content = file_get_contents($this->path);
         if (empty($content)) {
-            throw new Exception('Нет данных');
+            throw new ExceptionJsonModx('Нет данных');
         }
 
         $data = json_decode($content, true);
 
         if (!is_array($data)) {
-            throw new Exception('Ошибка чтения данных');
+            throw new ExceptionJsonModx('Ошибка чтения данных');
         }
         if (!isset($data['closes'])) {
-            throw new Exception('closes field is empty');
+            throw new ExceptionJsonModx('closes field is empty');
         }
 
         if (!is_array($data['closes'])) {
-            throw new Exception('Error closes field is not array');
+            throw new ExceptionJsonModx('Error closes field is not array');
         }
 
         if (!is_array($data['total'])) {
-            throw new Exception('Error closes field is not array');
+            throw new ExceptionJsonModx('Error closes field is not array');
         }
 
 

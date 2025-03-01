@@ -1,6 +1,6 @@
 <?php
 
-use IdImage\Entities\EntityClose;
+use IdImage\Api\Entities\EntityClose;
 
 if (!class_exists('idImageActionsProcessor')) {
     include_once __DIR__.'/../../../actions.class.php';
@@ -17,9 +17,9 @@ class idImageActionsImageDeleteProcessor extends idImageActionsProcessor impleme
     public function withProgressIds()
     {
         return $this->query()->closes()
-          /*  ->where([
-                'received' => true, // любые предложения что доставлялись
-            ])*/
+            /*  ->where([
+                  'received' => true, // любые предложения что доставлялись
+              ])*/
             ->ids();
     }
 
@@ -29,15 +29,15 @@ class idImageActionsImageDeleteProcessor extends idImageActionsProcessor impleme
     public function process()
     {
         return $this->withProgressBar(function (array $ids) {
-            $Operation = $this->idImage->operation();
+            $Operation = $this->idImage->api()->queue();
             $closes = null;
 
-            $Offers = new \IdImage\Offers();
+            $Offers = new \IdImage\Support\Offers();
 
             $this->query()
                 ->closes()
                 ->where(['id:IN' => $ids])
-                ->each(function (idImageClose $close) use ($Operation, &$closes, $Offers) {
+                ->each(function (idImageClose $close) use (&$closes, $Offers) {
                     // Create Entity
                     $EntityClose = new EntityClose();
                     $EntityClose->delete();
@@ -53,7 +53,7 @@ class idImageActionsImageDeleteProcessor extends idImageActionsProcessor impleme
 
 
             // send service
-            $Operation->deleteQueue($Offers, function (EntityClose $entity) use (&$closes) {
+            $Operation->delete($Offers, function (EntityClose $entity) use (&$closes) {
                 // Get close
                 $Close = $closes[$entity->getOfferId()];
 

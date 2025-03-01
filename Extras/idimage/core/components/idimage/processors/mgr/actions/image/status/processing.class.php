@@ -8,8 +8,6 @@ class idImageActionsStatusProcessing extends idImageActionsStatusProcessor
 {
     public function status()
     {
-        dd('processing');
-
         return idImageClose::STATUS_PROCESSING;
     }
 

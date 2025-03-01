@@ -6,7 +6,7 @@
  * Time: 11:50
  */
 
-namespace IdImage\Actions;
+namespace IdImage\Support;
 
 use IdImage\Interfaces\ActionInterfaces;
 

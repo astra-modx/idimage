@@ -4,6 +4,9 @@ include_once 'setting.inc.php';
 
 $_lang['idimage'] = 'Id Image';
 $_lang['idimage_menu_desc'] = 'Похожие товары';
+$_lang['idimage'] = 'Id Image';
+$_lang['idimage_system_settings'] = 'Системные настройки';
+$_lang['idimage_system_settings_desc'] = 'Системные настройки Id Image';
 $_lang['idimage_clouds'] = 'Cloud';
 
 ////////////////////////////////////////////////////////////////////////
@@ -23,3 +26,20 @@ $_lang['idimage_help_intro'] = 'Каталог';
 
 
 
+
+//////////////////////// Actions
+$_lang['idimage_actions_image_creation'] = 'Добавить товары в очереди';
+$_lang['idimage_actions_indexed_poll'] = 'Синхронизировать индекс';
+$_lang['idimage_actions_image_queue/add'] = 'Начать отправку очереди';
+$_lang['idimage_actions_image_queue/delete'] = 'Удалить товары из сервиса';
+$_lang['idimage_actions_image_status/processing'] = 'Установить статус "В обработке"';
+$_lang['idimage_actions_image_status/queue'] = 'Установить статус "В очереди"';
+$_lang['idimage_actions_image_upload/enable'] = 'Включить загрузку в облако';
+$_lang['idimage_actions_image_upload/disable'] = 'Отключить загрузку в облако';
+$_lang['idimage_actions_image_upload/cloud'] = 'Загрузка изображений в облако.';
+$_lang['idimage_actions_image_destroy'] = 'Уничтожить все товары';
+$_lang['idimage_indexed_action_download'] = 'Скачать индекс с товарами';
+$_lang['idimage_indexed_action_poll'] = 'Получить информацию о индексе';
+$_lang['idimage_actions_indexed_products'] = 'Импортировать похожие товары';
+$_lang['idimage_actions_image_upload/reset'] = 'Сбросить метку загрузки в облако';
+$_lang['idimage_actions_indexed_launch'] = 'Запустить индексацию';

@@ -121,7 +121,10 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
                 store.on('load', function (res) {
                     if (res.reader && res.reader['jsonData']) {
                         grid.total = res.reader['jsonData']['total'];
-                        document.getElementById(grid.config.id + '-total_info').innerText = grid.total;
+                        var el = document.getElementById(grid.config.id + '-total_info')
+                        if (el) {
+                            el.innerText = grid.total;
+                        }
                     }
                 })
             },
@@ -279,33 +282,45 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         if (!ids.length) {
             return false
         }
-        MODx.Ajax.request({
-            url: this.config.url,
-            params: {
-                action: 'mgr/' + this.config.multiple + '/multiple',
-                method: method,
-                ids: Ext.util.JSON.encode(ids),
-            },
-            listeners: {
-                success: {
-                    fn: function () {
-                        this.refresh()
-                    }, scope: this
-                },
-                failure: {
-                    fn: function (r) {
-                        MODx.msg.alert(_('error'), r.message);
-                        this.refresh()
-                    }, scope: this
-                }
+
+        var grid = this;
+        Ext.Msg.confirm(_('idimage_action_title'), _('idimage_action_confirm'), function (e) {
+
+            if (e == 'yes') {
+                idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
+                MODx.Ajax.request({
+                    url: grid.config.url,
+                    params: {
+                        action: 'mgr/' + grid.config.multiple + '/multiple',
+                        method: method,
+                        ids: Ext.util.JSON.encode(ids),
+                    },
+                    listeners: {
+                        success: {
+                            fn: function () {
+                                grid.refresh()
+                                idimage.progress.hide()
+                            }, scope: this
+                        },
+                        failure: {
+                            fn: function (r) {
+                                MODx.msg.alert(_('error'), r.message);
+                                idimage.progress.hide()
+                                grid.refresh()
+                            }, scope: this
+                        }
+                    }
+                })
             }
-        })
+        });
+
     },
 
     actionMenu: function (action, icon, one, cls) {
         var lex = action.replace('/', '_'); // Заменяет первый слэш
 
         var k = 'idimage_actions_' + lex;
+
         var label = _(k);
 
         label = label === undefined ? action : label;
@@ -371,7 +386,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
 
     actionsCall: function (controller) {
 
-        if (this.iterations[this.iterationNext] && this.iterations[this.iterationNext].length > 0) {
+        if (this.iterations && this.iterations[this.iterationNext] && this.iterations[this.iterationNext].length > 0) {
 
             var ids = this.iterations[this.iterationNext];
             delete this.iterations[this.iterationNext]
@@ -408,17 +423,24 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         }
 
         var lex = controller.replace('/', '_'); // Заменяет первый слэш
-        console.log('idimage_actions_' + lex);
+
         var label = _('idimage_actions_' + lex);
-        text += '<span class="idimage_actions_window_info">' + _('lexicon') + ': <b>' + label + '</b></span>'
+
+        text += '<span class="idimage_actions_window_info">' + _('actions') + ': <b>' + label + '</b></span>'
 
 
-        if (controller !== 'indexed/update/products') {
+        if (controller !== 'indexed/products') {
             if (total > 0) {
                 text += '<span class="idimage_actions_window_info">' + _('idimage_actions_selected_records') + ': <b>' + total + '</b></span>'
             }
         }
-        
+
+        var desc_key = 'idimage_actions_' + lex + '_desc';
+        console.log(desc_key);
+        var desc = _(desc_key);
+        if (desc !== undefined) {
+            text += '<span class="idimage_actions_window_info">' + desc + '</span>'
+        }
 
         Ext.Msg.confirm(_('idimage_actions_confirm_title'), text, function (e) {
 
@@ -466,12 +488,14 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
             listeners: {
                 success: {
                     fn: function (response) {
+                        idImageState()
                         callback(this, response);
                         //this.refresh()
                     }, scope: this
                 },
                 failure: {
                     fn: function (r) {
+                        idImageState()
                         MODx.msg.alert(_('error'), r.message);
                         this.refresh()
                     }, scope: this

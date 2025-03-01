@@ -19,6 +19,19 @@ abstract class idImageActionsProcessor extends modProcessor
         return $this->idImage;
     }
 
+    /* @var idImageIndexed $Indexed */
+    /* @var idImageIndexed $Indexed */
+    protected $Indexed;
+
+    public function indexed()
+    {
+        if (is_null($this->Indexed)) {
+            $this->Indexed = $this->idImage->indexed();
+        }
+
+        return $this->Indexed;
+    }
+
     public function calculationSteps($query, $chunk)
     {
         $ids = $query->where([

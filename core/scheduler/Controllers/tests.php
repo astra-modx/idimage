@@ -11,22 +11,16 @@ class CrontabControllerTests extends modCrontabController
     {
         /* @var idImage $idImage */
         $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
+        $Indexed = $idImage->actions()->indexed()->item()->entity();
+        dd($Indexed);
 
+        dd($Indexed->active());
 
-        $dat = $this->modx->getOption('ecodes', [
-            'ecodes' => '{core_path}cache/idimage/indexed',
-        ], null);
-
-        dd($dat);
-
+        dd($Catalog->toArray());
 
         /* @var idImageIndexed $Indexed */
-
         $Indexed = $this->modx->getObject('idImageIndexed', 7);
-
-
         $Entity = $Indexed->entity()->fromArray($Indexed->toArray());
-
 
         $path = MODX_CORE_PATH.'cache/idimage/versions/';
 
@@ -58,8 +52,6 @@ class CrontabControllerTests extends modCrontabController
               ->setFinishedAt($Indexed->get('finished_at'))
               ->setUploadAt($Indexed->get('upload_at'));*/
 
-
-        $version = $idImage->operation()->lastVersion();
 
         dd($version);
 

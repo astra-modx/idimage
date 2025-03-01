@@ -5,5 +5,6 @@ $xpdo_meta_map = array (
   array (
     0 => 'idImageClose',
     1 => 'idImageIndexed',
+    2 => 'idImageVersion',
   ),
 );

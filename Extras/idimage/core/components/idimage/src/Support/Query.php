@@ -1,9 +1,8 @@
 <?php
 
-namespace IdImage;
+namespace IdImage\Support;
 
 use idImage;
-use IdImage\Helpers\xPDOQueryIdImage;
 
 /**
  * Created by Andrey Stepanenko.
@@ -38,13 +37,13 @@ class Query
 
     public function filesCriteria()
     {
-        $cropSize = $this->idImage->modx->getOption('idimage_crop_size', null, 'small');
+        $thumbnailSize = $this->idImage->modx->getOption('ms2_product_thumbnail_size', null, 'small');
 
         return $this->files()->where([
             'msProduct.published' => true,
             'msProduct.deleted:!=' => true,
             'Close.pid:IS' => null,
-            'msProductFile.path:LIKE' => '%/'.$cropSize.'/%',
+            'msProductFile.path:LIKE' => '%/'.$thumbnailSize.'/%',
         ]);
     }
 
@@ -53,6 +52,7 @@ class Query
     {
         return $this->create('idImageClose');
     }
+
     public function indexeds()
     {
         return $this->create('idImageIndexed');

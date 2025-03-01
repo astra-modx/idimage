@@ -54,20 +54,13 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
 
     getFields: function () {
         return [
-            'id', 'name', 'code', 'awaiting_processing', 'total_products', 'active', 'version', 'upload', 'size', 'download_link', 'images', 'active', 'run', 'closes', 'launch', 'completed', 'sealed', 'use_version', 'upload', 'createdon', 'updatedon', 'active', 'actions'
+            'id', 'version', 'upload', 'size', 'download_link', 'images', 'active', 'run', 'closes', 'launch', 'completed', 'sealed', 'use_version', 'upload', 'createdon', 'updatedon', 'active', 'actions'
         ];
     },
 
     getColumns: function () {
         return [
             {header: _('idimage_indexed_id'), dataIndex: 'id', width: 20, sortable: true},
-            {header: _('idimage_indexed_name'), dataIndex: 'name', width: 20, sortable: true},
-            {header: _('idimage_indexed_code'), dataIndex: 'code', width: 20, sortable: true},
-            {header: _('idimage_indexed_active'), dataIndex: 'active', width: 20, sortable: true, renderer: idimage.utils.renderBoolean},
-
-
-            {header: _('idimage_indexed_total_products'), dataIndex: 'total_products', width: 50, sortable: false},
-            {header: _('idimage_indexed_awaiting_processing'), dataIndex: 'awaiting_processing', width: 20, sortable: true},
             {header: _('idimage_indexed_version'), dataIndex: 'version', width: 20, sortable: true},
             {header: _('idimage_indexed_launch'), dataIndex: 'launch', width: 20, sortable: true, renderer: idimage.utils.renderBoolean},
             {header: _('idimage_indexed_completed'), dataIndex: 'completed', sortable: true, width: 70, hidden: true, renderer: idimage.utils.renderBoolean},
@@ -114,43 +107,36 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
         return [
 
 
-            /*  this.actionMenu('image/creation', 'icon-refresh', false, 'primary-button'),
-              this.actionMenu('image/queue/add', 'icon-send', false, 'primary-button'),
-  */
-            this.actionMenu('indexed/products', 'icon-refresh'),
+            {
+                text: '<i class="icon icon-cogs"></i> ' + _('idimage_actions_dropdown'),
+                cls: 'primary-button',
+                menu: [
+                    this.actionMenu('indexed/poll', 'icon-refresh', true),
+                    this.actionMenu('image/queue/add', 'icon-refresh', false, 'primary-button'),
+                ]
+            },
 
-            /* {
-                 text: '<i class="icon icon-cogs"></i> ' + _('idimage_actions_dropdown'),
-                 cls: 'primary-button',
-                 menu: [
-                     this.actionMenu('indexed/poll', 'icon-refresh', true),
-                     this.actionMenu('indexed/products', 'icon-refresh'),
-                 ]
-             },*/
-
-            /*  {
-                 xtype: 'idimage-combo-filter-active',
-                 name: 'received',
-                 width: 210,
-                 custm: true,
-                 clear: true,
-                 addall: true,
-                 value: '',
-                 listeners: {
-                     select: {
-                         fn: this._filterByCombo,
-                         scope: this
-                     },
-                     afterrender: {
-                         fn: this._filterByCombo,
-                         scope: this
-                     }
-                 }
-             },
+            {
+                xtype: 'idimage-combo-filter-active',
+                name: 'received',
+                width: 210,
+                custm: true,
+                clear: true,
+                addall: true,
+                value: '',
+                listeners: {
+                    select: {
+                        fn: this._filterByCombo,
+                        scope: this
+                    },
+                    afterrender: {
+                        fn: this._filterByCombo,
+                        scope: this
+                    }
+                }
+            },
             '->',
-             this.widgetTotal(config.id), this.getSearchField()*/
-
-        ];
+            this.widgetTotal(config.id), this.getSearchField()];
     },
 
 
@@ -290,10 +276,6 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
 
     launchIndexed: function () {
         this.action('action/launch')
-    },
-
-    pollIndexed: function () {
-        this.action('action/poll')
     },
 
     downloadIndexed: function () {

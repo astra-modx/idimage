@@ -67,19 +67,19 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
             {header: _('idimage_close_min_scope'), dataIndex: 'min_scope', sortable: true, width: 70, hidden: true},
             {header: _('idimage_close_errors'), dataIndex: 'errors', sortable: true, width: 70, hidden: true, renderer: idimage.utils.jsonDataError},
             {header: _('idimage_close_total'), dataIndex: 'total', sortable: true, width: 70},
-            {header: _('idimage_close_tags'), dataIndex: 'tags', sortable: true, width: 150, renderer: idimage.utils.jsonDataTags},
+            //{header: _('idimage_close_tags'), dataIndex: 'tags', sortable: true, width: 150, renderer: idimage.utils.jsonDataTags},
             {header: _('idimage_close_received'), dataIndex: 'received', sortable: true, width: 75, renderer: idimage.utils.renderBoolean},
             {header: _('idimage_close_received_at'), dataIndex: 'received_at', sortable: true, width: 75, renderer: idimage.utils.formatDate},
             {header: _('idimage_close_createdon'), dataIndex: 'createdon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
             {header: _('idimage_close_updatedon'), dataIndex: 'updatedon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
             {header: _('idimage_close_active'), dataIndex: 'active', width: 75, renderer: idimage.utils.renderBoolean, hidden: true},
-            {
+            /*{
                 header: _('idimage_grid_actions'),
                 dataIndex: 'actions',
                 id: 'actions',
                 width: 50,
                 renderer: idimage.utils.renderActions
-            }
+            }*/
         ];
     },
 
@@ -93,9 +93,6 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
                 cls: 'primary-button',
                 menu: [
 
-                    this.actionMenu('image/creation', 'icon-refresh', false, 'primary-button'),
-                    this.actionMenu('image/queue/add', 'icon-refresh', false, 'primary-button'),
-                    '-',
                     this.actionMenu('image/status/processing', 'icon-refresh'),
                     this.actionMenu('image/status/queue', 'icon-refresh'),
 

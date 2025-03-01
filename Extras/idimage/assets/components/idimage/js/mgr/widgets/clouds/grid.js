@@ -60,6 +60,16 @@ Ext.extend(idimage.grid.Clouds, idimage.grid.Closes, {
     getTopBar: function (config) {
         return [
             this.actionMenu('image/upload/cloud', 'icon-upload', false, 'primary-button'),
+
+
+            {
+                text: '<i class="icon icon-cogs"></i> ' + _('idimage_actions_dropdown'),
+                cls: 'primary-button',
+                menu: [
+                    this.actionMenu('image/upload/reset', 'icon-refresh'),
+                ]
+            },
+
             '->',
             this.widgetTotal(config.id), this.getSearchField()];
     },

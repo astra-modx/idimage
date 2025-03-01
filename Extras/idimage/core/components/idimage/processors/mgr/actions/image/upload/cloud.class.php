@@ -31,12 +31,7 @@ class idImageActionsImageUploadCloudProcessor extends idImageActionsProcessor im
             }
 
             // Получаем информацию о каталоге
-            $Response = $this->idImage->actions()->info()->send();
-            if ($Response->isFail()) {
-                return $this->failure($Response->getMsg());
-            }
-
-            $Entity = $Response->entityCatalog();
+            $Entity = $this->idImage->api()->indexed()->entity();
 
             // Проверяем наличие каталога
             if (!$Entity->active()) {
@@ -48,7 +43,7 @@ class idImageActionsImageUploadCloudProcessor extends idImageActionsProcessor im
         }
 
         return $this->withProgressBar(function (array $ids) {
-            $PhpThumb = new \IdImage\Helpers\PhpThumb($this->modx);
+            $PhpThumb = new \IdImage\Support\PhpThumb($this->modx);
             $this->query()
                 ->closes()
                 ->where(['id:IN' => $ids])
@@ -57,7 +52,7 @@ class idImageActionsImageUploadCloudProcessor extends idImageActionsProcessor im
 
                     // Загружаем картинку
                     $PhpThumb->makeThumbnail($ImagePath, function ($pathTmp) use ($close) {
-                        $Response = $this->idImage->operation()->upload($close->offerId(), $pathTmp);
+                        $Response = $this->idImage->api()->queue()->upload($close->offerId(), $pathTmp)->send();
 
                         $status = idImageClose::STATUS_QUEUE;
                         $errors = null;

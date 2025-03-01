@@ -2,8 +2,10 @@
 
 namespace IdImage;
 
-use Exception;
-use modX;
+use idImage;
+use IdImage\Api\Queue;
+use IdImage\Api\Indexed;
+use IdImage\Support\Client;
 
 /**
  * Created by Andrey Stepanenko.
@@ -14,60 +16,24 @@ use modX;
 class Actions
 {
 
-    private Client $client;
+    protected Queue $queue;
+    protected Indexed $indexed;
 
-    public function __construct(modX $modx)
+    public function __construct(idImage $idImage)
     {
-        $this->client = new Client($modx);
+        $Client = new Client($idImage->modx);
+        $this->queue = new Queue($Client);
+        $this->indexed = new Indexed($Client);
     }
 
-    public function create(array $items)
+    public function queue()
     {
-        return $this->client->post('images', ['items' => $items]);
+        return $this->queue;
     }
-
-    public function delete(array $items)
-    {
-        return $this->client->delete('images', ['items' => $items]);
-    }
-
-    public function upload(string $offerId, string $imagePath)
-    {
-        return $this->client->upload($offerId, $imagePath);
-    }
-
-    public function lastVersion()
-    {
-        return $this->client->get('images/last/version');
-    }
-
 
     public function indexed()
     {
-        return $this->client->get('indexed');
+        return $this->indexed;
     }
-
-    public function indexedLatest()
-    {
-        return $this->client->get('indexed/latest');
-    }
-
-    public function indexedCreate()
-    {
-        return $this->client->post('indexed');
-    }
-
-    public function indexedLaunch(int $version)
-    {
-        return $this->client->post('indexed/launch', [
-            'version' => $version,
-        ]);
-    }
-
-    public function info()
-    {
-        return $this->client->get('token/info');
-    }
-
 
 }

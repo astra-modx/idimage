@@ -6,7 +6,7 @@
  * Time: 12:48
  */
 
-namespace IdImage\Entities;
+namespace IdImage\Api\Entities;
 
 
 use IdImage\Abstracts\EntityAbsract;
@@ -40,12 +40,6 @@ class EntityClose extends EntityAbsract
                 return $res;
             }
         }
-
-
-        /*  $res = $this->checkHttpStatus();
-          if ($res !== true) {
-              return $res;
-          }*/
 
         return true;
     }

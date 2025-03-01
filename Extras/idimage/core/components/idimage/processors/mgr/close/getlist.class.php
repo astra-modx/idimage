@@ -82,7 +82,7 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
         $array = $object->toArray();
         $cloud = $this->setCheckbox('cloud');
 
-        $IndexedAction = new \IdImage\Actions\IndexedAction($object, basename(__DIR__));
+        $IndexedAction = new \IdImage\Support\IndexedAction($object, basename(__DIR__));
         $actions = $IndexedAction->getList(function ($action) use ($cloud) {
             if (!$cloud) {
                 //$action->add('update', 'icon-edit');

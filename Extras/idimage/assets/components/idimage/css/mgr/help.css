@@ -4,14 +4,14 @@
 }
 
 .idimage-wrapper-help {
-    display: flex;
-    width: 100%;
+    display: block;
+    width: 90%;
     position: relative;
 }
 
-.idimage-row-help {
-    flex: 0 0 65%; /* Первый блок занимает 70% */
-}
+/*.idimage-row-help {
+    flex: 0 0 65%; !* Первый блок занимает 70% *!
+}*/
 
 .idimage-row-help-check {
     flex: 0 0 30%; /* Второй блок занимает 30% */
@@ -157,7 +157,7 @@
 }
 
 .idimage-availability {
-    padding: 5px 0;
+    padding: 8px 0;
 }
 
 .idimage-availability .idimage-availability-name {
@@ -224,3 +224,31 @@
     color: #6f42c1 !important;
 }
 
+
+.idimage-main-wrapper {
+    margin: 0;
+    padding: 0 50px 0 0;
+
+}
+
+.idimage-btn {
+    margin: 10px 0 10px 0;
+    clear: both;
+}
+
+.idimage-stat-text {
+    padding: 5px 0;
+}
+
+.idimage-stat-section {
+    padding: 10px 0 20px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.idimage-stat-section h3{
+    margin-top: 10px;
+}
+
+.text-warning {
+    color: #f10f0f;
+}

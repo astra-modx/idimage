@@ -6,16 +6,13 @@
  * Time: 12:48
  */
 
-namespace IdImage\Entities;
+namespace IdImage\Api\Entities;
 
 
 use IdImage\Abstracts\EntityAbsract;
-use IdImage\Helpers\ReaderIndexed;
 
 class EntityCatalog extends EntityAbsract
 {
-    protected $data = [];
-
     public function id()
     {
         return $this->get('id');
@@ -36,6 +33,11 @@ class EntityCatalog extends EntityAbsract
         return (bool)$this->get('active');
     }
 
+    public function version()
+    {
+        return (int)$this->get('version');
+    }
+
     public function uploadApi()
     {
         return (bool)$this->get('upload_api');
@@ -51,28 +53,4 @@ class EntityCatalog extends EntityAbsract
         return $this->get('created_at');
     }
 
-    public function get(string $key)
-    {
-        if (isset($this->data[$key])) {
-            return $this->data[$key];
-        }
-
-        return null;
-    }
-
-
-    public function toArray()
-    {
-        return $this->data;
-    }
-
-    public function fromArray(array $array)
-    {
-        // all variables
-        foreach ($array as $key => $value) {
-            $this->data[$key] = $value;
-        }
-
-        return $this;
-    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace IdImage\Helpers;
+namespace IdImage\Support;
 
 use Closure;
 use PDO;

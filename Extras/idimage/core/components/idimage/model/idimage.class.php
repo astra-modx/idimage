@@ -1,9 +1,7 @@
 <?php
 
 use IdImage\Actions;
-use IdImage\Client;
-use IdImage\Operation;
-use IdImage\Query;
+use IdImage\Support\Query;
 
 include_once MODX_CORE_PATH.'components/idimage/vendor/autoload.php';
 
@@ -15,22 +13,14 @@ class idImage
     /** @var array() $config */
     public $config = array();
 
-    /* @var Client $client */
-    protected $client = null;
 
     /* @var Query $query */
     protected $query = null;
 
-    /* @var Operation $query */
-    protected $operation = null;
-
     /* @var Actions $actions */
-    protected $actions = null;
+    protected $api = null;
 
-    /* @var \IdImage\Extractor $extractor */
-    protected $extractor = null;
-
-    /* @var \IdImage\Helpers\PhpThumb $phpThumb */
+    /* @var \IdImage\Support\PhpThumb $phpThumb */
     protected $phpThumb = null;
 
 
@@ -70,11 +60,6 @@ class idImage
         $this->modx->lexicon->load('idimage:default');
 
         $this->modx->loadClass('idImageClose');
-    }
-
-    public function pathVersions()
-    {
-        return $this->config['path_versions'];
     }
 
     public function hasToken()
@@ -160,17 +145,6 @@ class idImage
         }
     }
 
-
-    public function client()
-    {
-        if (is_null($this->client)) {
-            $this->client = new Client($this->modx);
-        }
-
-        return $this->client;
-    }
-
-
     public function hash(string $path)
     {
         $sizes = @getimagesize($path);
@@ -188,41 +162,36 @@ class idImage
         return $this->query;
     }
 
-
-    public function operation()
+    public function api()
     {
-        if (is_null($this->operation)) {
-            $this->operation = new Operation($this);
+        if (is_null($this->api)) {
+            $this->api = new Actions($this);
         }
 
-        return $this->operation;
-    }
-
-    public function actions()
-    {
-        if (is_null($this->actions)) {
-            $this->actions = new Actions($this->modx);
-        }
-
-        return $this->actions;
-    }
-
-    public function extractor()
-    {
-        if (is_null($this->extractor)) {
-            $this->extractor = new \IdImage\Extractor();
-        }
-
-        return $this->extractor;
+        return $this->api;
     }
 
     public function phpThumb()
     {
         if (is_null($this->phpThumb)) {
-            $this->phpThumb = new \IdImage\Helpers\PhpThumb($this->modx);
+            $this->phpThumb = new \IdImage\Support\PhpThumb($this->modx);
         }
 
         return $this->phpThumb;
     }
 
+    /**
+     * @return idImageIndexed
+     */
+    public function indexed()
+    {
+        $q = $this->modx->newQuery('idImageIndexed');
+        $q->limit(1);
+
+        if (!$Indexed = $this->modx->getObject('idImageIndexed', $q)) {
+            $Indexed = $this->modx->newObject('idImageIndexed');
+        }
+
+        return $Indexed;
+    }
 }

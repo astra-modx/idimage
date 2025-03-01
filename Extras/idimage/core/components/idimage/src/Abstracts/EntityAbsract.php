@@ -11,6 +11,14 @@ namespace IdImage\Abstracts;
 
 abstract class EntityAbsract
 {
+    protected $data = [];
+
+    public function __construct($data = null)
+    {
+        if (is_array($data)) {
+            $this->fromArray($data);
+        }
+    }
 
     public function isLocalUrl()
     {
@@ -31,17 +39,30 @@ abstract class EntityAbsract
         return true;
     }
 
-    public function checkHttpStatus()
+    public function get(string $key, $default = null)
     {
-        // Проверяем наличие файла на диске
-        $picture = $this->getPicture();
-
-        $headers = get_headers($picture, 1);
-
-        if ($headers && strpos($headers[0], '200') !== false) {
-            return true;
-        } else {
-            return "status checked ".$headers[0];
+        if (isset($this->data[$key])) {
+            return $this->data[$key];
         }
+
+        return $default;
     }
+
+
+    public function toArray()
+    {
+        return $this->data;
+    }
+
+    public function fromArray(array $array)
+    {
+        // all variables
+        foreach ($array as $key => $value) {
+            $this->data[$key] = $value;
+        }
+
+        return $this;
+    }
+
+
 }

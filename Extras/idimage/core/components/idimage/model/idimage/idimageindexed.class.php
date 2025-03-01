@@ -1,10 +1,21 @@
 <?php
 
+use IdImage\Exceptions\ExceptionJsonModx;
+
 class idImageIndexed extends xPDOSimpleObject
 {
-    public function entity()
+    /** @var idImageVersion $Version */
+    protected $Version;
+
+    public function save($cacheFlag = null)
     {
-        return new \IdImage\Entities\EntityIndexed();
+        if (!$this->isNew()) {
+            $this->set('updatedon', time());
+        } else {
+            $this->set('createdon', time());
+        }
+
+        return parent::save($cacheFlag);
     }
 
     public function deactivate()
@@ -14,62 +25,74 @@ class idImageIndexed extends xPDOSimpleObject
         }
     }
 
-    public function unUseVersion()
+
+    /**
+     * @return idImageVersion
+     */
+    public function version()
     {
-        if (!$this->isNew()) {
-            $this->xpdo->exec("UPDATE {$this->_table} SET use_version = '0'  WHERE id != ".$this->get('id'));
-        }
+        return $this->loadData();
     }
 
-    public function filename()
+
+    public function toArray($keyPrefix = '', $rawValues = false, $excludeLazy = false, $includeRelated = false)
     {
-        if (!$url = $this->get('download_link')) {
-            return null;
+        $original = parent::toArray($keyPrefix, $rawValues, $excludeLazy, $includeRelated);
+        $additional = array_merge(
+            $this->loadData()->toArray($keyPrefix, $rawValues, $excludeLazy, $includeRelated),
+        );
+        $intersect = array_keys(array_intersect_key($original, $additional));
+        foreach ($intersect as $key) {
+            unset($additional[$key]);
         }
 
-        return pathinfo($url, PATHINFO_FILENAME);
+        return array_merge($original, $additional);
     }
 
-    public function filePath()
+    /**
+     * @return idImageVersion
+     */
+    public function loadData()
     {
-        if ($filename = $this->filename()) {
-            $idImage = $this->xpdo->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
-            $path = $idImage->config['extract_path'];
-            if (empty($path)) {
-                throw new Exception("setting idimage_extract_path is not set");
+        if (!is_object($this->Version) || !($this->Version instanceof msProductData)) {
+            $q = $this->xpdo->newQuery('idImageVersion');
+            $q->where(array(
+                'indexed_id' => $this->get('id'),
+            ));
+            $q->sortby('id', 'DESC');
+
+            if (!$this->Version = $this->xpdo->getObject('idImageVersion', $q)) {
+                $this->Version = $this->xpdo->newObject('idImageVersion');
+                $this->Version->set('indexed_id', $this->get('id'));
+                parent::addOne($this->Version);
             }
-            if (!is_dir($path)) {
-                if (!mkdir($path, 0777, true)) {
-                    throw new Exception('Error creating directory: '.$path);
+        }
+
+        return $this->Version;
+    }
+
+    public function get($k, $format = null, $formatTemplate = null)
+    {
+        switch ($k) {
+            case 'id':
+                break;
+            default:
+                if (isset($this->loadData()->_fields[$k])) {
+                    return $this->loadData()->get($k, $format, $formatTemplate);
                 }
-            }
-
-            return rtrim($path, '/').'/'.$filename;
+                break;
         }
 
-        return null;
+
+        return parent::get($k, $format, $formatTemplate);
     }
 
-    public function versionZip()
+    public function api()
     {
-        if ($path = $this->filePath()) {
-            return $path.'.zip';
-        }
+        /* @var idImage $idImage */
+        $idImage = $this->xpdo->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
 
-        return null;
+        return $idImage->api()->indexed();
     }
 
-    public function versionJson()
-    {
-        if ($path = $this->filePath()) {
-            return $path.'.json';
-        }
-
-        return null;
-    }
-
-    public function versionJsonExists()
-    {
-        return ($file = $this->versionJson()) ? file_exists($file) : false;
-    }
 }

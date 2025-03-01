@@ -6,12 +6,11 @@
  * Time: 10:34
  */
 
-namespace IdImage\Helpers;
+namespace IdImage\Support;
 
 
 use Closure;
 use Exception;
-use idImage;
 use modPhpThumb;
 use modX;
 

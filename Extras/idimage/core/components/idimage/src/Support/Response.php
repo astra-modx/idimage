@@ -1,9 +1,8 @@
 <?php
 
-namespace IdImage\Helpers;
+namespace IdImage\Support;
 
-use Exception;
-use IdImage\Entities\EntityCatalog;
+use IdImage\Exceptions\ExceptionJsonModx;
 
 /**
  * Created by Andrey Stepanenko.
@@ -29,7 +28,7 @@ class Response
 
     public function isOk()
     {
-        return ($this->status === 200 || $this->status === 204);
+        return ($this->status === 200 || $this->status === 201 || $this->status === 204);
     }
 
     public function isFail()
@@ -47,7 +46,7 @@ class Response
         return !empty($this->content) ? $this->content : null;
     }
 
-    public function getMsg()
+    public function getMessage()
     {
         $msg = !empty($this->msg) ? $this->msg : '';
         if ($this->isFail()) {
@@ -91,7 +90,7 @@ class Response
     {
         return [
             'status' => $this->getStatus(),
-            'msg' => $this->getMsg(),
+            'msg' => $this->getMessage(),
             'data' => $this->json() ?? $this->getContent(),
         ];
     }
@@ -99,9 +98,9 @@ class Response
 
     public function exception()
     {
-        $msg = "[STATUS: ".$this->getStatus()."] msg: ".$this->getMsg();
+        $msg = "[STATUS: ".$this->getStatus()."] msg: ".$this->getMessage();
 
-        return new Exception($msg);
+        return new ExceptionJsonModx($msg);
     }
 
     public function items($callback = null)
@@ -121,13 +120,28 @@ class Response
         return $items;
     }
 
-    public function entityCatalog()
+    private $entity = null;
+
+    public function setEntity(string $entity)
+    {
+        $this->entity = $entity;
+
+        return $this;
+    }
+
+    public function entity()
     {
         if ($this->isFail()) {
             return null;
         }
-        $Entity = new EntityCatalog();
+        if (empty($this->entity)) {
+            throw new ExceptionJsonModx("Не указан класс для обработки данных entity");
+        }
 
-        return $Entity->fromArray($this->json());
+        $Entity = new $this->entity();
+
+        if (empty($Entity)) {
+            return null;
+        }
     }
 }

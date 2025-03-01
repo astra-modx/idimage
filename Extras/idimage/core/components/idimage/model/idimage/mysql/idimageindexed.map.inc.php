@@ -10,30 +10,35 @@ $xpdo_meta_map['idImageIndexed']= array (
   ),
   'fields' => 
   array (
-    'version' => 1,
+    'name' => NULL,
+    'code' => NULL,
+    'upload_api' => 1,
     'active' => 1,
-    'upload' => 0,
-    'size' => NULL,
-    'download_link' => NULL,
-    'images' => 0,
-    'closes' => 0,
-    'launch' => 0,
-    'run' => 0,
-    'completed' => 0,
-    'sealed' => 0,
-    'use_version' => 0,
     'updatedon' => 0,
     'createdon' => 0,
   ),
   'fieldMeta' => 
   array (
-    'version' => 
+    'name' => 
     array (
-      'dbtype' => 'int',
-      'precision' => '10',
-      'attributes' => 'unsigned',
-      'phptype' => 'integer',
-      'null' => false,
+      'dbtype' => 'varchar',
+      'precision' => '256',
+      'phptype' => 'string',
+      'null' => true,
+    ),
+    'code' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '256',
+      'phptype' => 'string',
+      'null' => true,
+    ),
+    'upload_api' => 
+    array (
+      'dbtype' => 'tinyint',
+      'precision' => '1',
+      'phptype' => 'boolean',
+      'null' => true,
       'default' => 1,
     ),
     'active' => 
@@ -43,85 +48,6 @@ $xpdo_meta_map['idImageIndexed']= array (
       'phptype' => 'boolean',
       'null' => true,
       'default' => 1,
-    ),
-    'upload' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'size' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '10',
-      'attributes' => 'unsigned',
-      'phptype' => 'integer',
-      'null' => true,
-    ),
-    'download_link' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '500',
-      'phptype' => 'string',
-      'null' => true,
-    ),
-    'images' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '10',
-      'attributes' => 'unsigned',
-      'phptype' => 'integer',
-      'default' => 0,
-    ),
-    'closes' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '10',
-      'attributes' => 'unsigned',
-      'phptype' => 'integer',
-      'default' => 0,
-    ),
-    'launch' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'run' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'completed' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'sealed' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'use_version' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
     ),
     'updatedon' => 
     array (
@@ -142,21 +68,48 @@ $xpdo_meta_map['idImageIndexed']= array (
   ),
   'indexes' => 
   array (
-    'version' => 
+    'name' => 
     array (
-      'alias' => 'version',
+      'alias' => 'name',
       'primary' => false,
       'unique' => false,
       'type' => 'BTREE',
       'columns' => 
       array (
-        'version' => 
+        'name' => 
         array (
           'length' => '',
           'collation' => 'A',
           'null' => false,
         ),
       ),
+    ),
+    'code' => 
+    array (
+      'alias' => 'code',
+      'primary' => false,
+      'unique' => false,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'code' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
+    ),
+  ),
+  'composites' => 
+  array (
+    'Versions' => 
+    array (
+      'class' => 'idImageVersion',
+      'local' => 'id',
+      'foreign' => 'indexed_id',
+      'cardinality' => 'many',
+      'owner' => 'id',
     ),
   ),
 );

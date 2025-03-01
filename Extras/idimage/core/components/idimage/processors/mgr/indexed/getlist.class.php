@@ -57,36 +57,25 @@ class idImageIndexedGetListProcessor extends modObjectGetListProcessor
     {
         /* @var idImageIndexed $object */
         $array = $object->toArray();
-        $IndexedAction = new \IdImage\Actions\IndexedAction($object, basename(__DIR__));
-        $actions = $IndexedAction->getList(function (\IdImage\Actions\IndexedAction $action) use ($object) {
-            if ($action->get('version')) {
-                // Использование текущей версии
-                if ($action->get('completed') && $action->get('launch')) {
-                    if (!$action->get('sealed')) {
-                        if ($object->versionJsonExists()) {
-                            $action->add('useVersion', 'icon-refresh action-green');
-                        }
+        // $Version = $object->version();
 
-                        $exist = $object->versionJsonExists();
-                        $action->add('download', 'icon-download', !$exist);
-                    }
-                }
 
-                if (!$action->get('launch')) {
-                    $action->add('launch', 'icon-play');
-                }
-            }
+        $array['total_products'] = $this->modx->getCount('idImageClose');
 
-            //$action->add('info', 'icon-info', false);
-            /*if (!$action->get('active')) {
-                $action->add('enable', 'icon-power-off action-green', false);
-            } else {
-                $action->add('disable', 'icon-power-off action-gray', false);
-            }
-*/
-            $action->add('remove', 'icon icon-trash-o action-red', false);
-        });
-        $array['actions'] = $actions;
+        /*  $IndexedAction = new \IdImage\Support\IndexedAction($object, basename(__DIR__));
+        $actions = $IndexedAction->getList(function (\IdImage\Support\IndexedAction $action) use ($object, $Version) {
+             if ($Version->get('version')) {
+                 if (!$action->get('sealed')) {
+                     $exist = $Version->downloadLink();
+                     if ($exist) {
+                         $action->add('download', 'icon-download');
+                     }
+                 }
+             }
+
+             $action->add('poll', 'icon icon-refresh action-green');
+         });
+        $array['actions'] = $actions;*/
 
         return $array;
     }
