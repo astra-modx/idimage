@@ -186,9 +186,9 @@ $_lang['idimage_update_products'] = 'Обновление товаров';
 
 
 ######################
-$_lang['idimage_actions_image_upload/cloud_desc'] = '<span style="color: darkred">Отправка в облачное хранилище займет достаточно много времени, не уходите со страницы до завершения процесса отправки</span>';
-$_lang['idimage_actions_indexed_products_desc'] = '<span style="color: darkred">Перед импортом похожих товаров, убедитесь что индексация завершена и вы скачали последнюю версию файла с индексом товаров.</span>';
-$_lang['idimage_actions_indexed_running_desc'] = '<span style="color: darkred">После запуска процесса, прервать будет невозможно, убедитесь что вы отправили в сервис все товары для индексации.</span>';
+$_lang['idimage_actions_image_upload/cloud_desc'] = '<span style="color: darkred">Отправка в облачное хранилище займет достаточно много времени, не уходите со страницы до завершения процесса отправки. Рассмотрите возможность указать альтернативный url откуда возможно скачать изображения</span>';
+$_lang['idimage_actions_indexed_products_desc'] = '<span style="color: darkred">Перед импортом похожих товаров, убедитесь что индексация завершена и находиться в статусе <b>"Finished"</b>.</span>';
+$_lang['idimage_actions_indexed_running_desc'] = '<span style="color: darkred">После запуска процесса индексации, прервать процесс будет невозможно, убедитесь что вы отправили в сервис все товары для индексации и обработка товаров завершена.</span>';
 
 
 $_lang['ms2_utilities_gallery'] = 'Галерея';

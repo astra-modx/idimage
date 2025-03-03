@@ -40,11 +40,11 @@ abstract class ApiAbstract
         }
         $json = $Response->json();
 
-        if (!empty($json)) {
-            return new $class($json);
+        if (empty($json)) {
+            throw new ExceptionJsonModx('Ошибка чтения данных: '.$Response->getContent());
         }
 
-        return null;
+        return new $class($json);
     }
 
     protected function response()
