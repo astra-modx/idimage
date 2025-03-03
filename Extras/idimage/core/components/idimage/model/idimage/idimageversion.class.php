@@ -28,6 +28,15 @@ class idImageVersion extends xPDOSimpleObject
     }
 
 
+    public function deactivate()
+    {
+        if (!$this->isNew()) {
+            $sql = "UPDATE {$this->_table} SET use_version = '0'  WHERE use_version = 1 AND id != ".$this->get('id');
+            $this->xpdo->exec($sql);
+        }
+    }
+
+
     public function isDownload()
     {
         return ($this->get('download') && $this->exists());

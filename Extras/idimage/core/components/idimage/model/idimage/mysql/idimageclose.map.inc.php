@@ -22,7 +22,7 @@ $xpdo_meta_map['idImageClose']= array (
     'received' => 0,
     'received_at' => 0,
     'active' => 1,
-    'closes' => NULL,
+    'similar' => NULL,
     'errors' => NULL,
     'total' => 0,
     'min_scope' => 0,
@@ -125,7 +125,7 @@ $xpdo_meta_map['idImageClose']= array (
       'null' => true,
       'default' => 1,
     ),
-    'closes' => 
+    'similar' => 
     array (
       'dbtype' => 'text',
       'phptype' => 'json',

@@ -16,7 +16,6 @@ class idImageStatProcessor extends modProcessor
 
         $Entity = $Indexed->api()->entity();
 
-
         /* @var idImageIndexed $Indexed */
         if (!$Indexed = $this->modx->getObject('idImageIndexed', ['code' => $Entity->code()])) {
             $Indexed = $this->modx->newObject('idImageIndexed');
@@ -43,10 +42,14 @@ class idImageStatProcessor extends modProcessor
             }
 
             $Version->fromArray($Entity->toArray());
+            $Version->set('use_version', true);
 
             if (!$Version->save()) {
                 return $this->failure('Unable to save version');
             }
+
+            // Деактивируем остальные версии
+            $Version->deactivate();
         }
 
         return $this->success('', $Entity->toArray());

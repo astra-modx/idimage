@@ -187,7 +187,10 @@ class idImage
     {
         $q = $this->modx->newQuery('idImageIndexed');
         $q->limit(1);
-
+        $q->where([
+            'Version.use_version' => true,
+        ]);
+        $q->innerJoin('idImageVersion', 'Version', 'Version.indexed_id = idImageIndexed.id');
         if (!$Indexed = $this->modx->getObject('idImageIndexed', $q)) {
             $Indexed = $this->modx->newObject('idImageIndexed');
         }

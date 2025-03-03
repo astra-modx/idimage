@@ -15,7 +15,11 @@ class ReaderIndexed
 {
 
     protected $closes = null;
-    protected $total = 0;
+    protected $total = [
+        'all' => 0,
+        'completed' => 0,
+        'error' => 0,
+    ];
     /**
      * @var string|null
      */
@@ -33,7 +37,7 @@ class ReaderIndexed
         $this->downloadUrl = $downloadUrl;
 
         if (empty($this->downloadUrl)) {
-            throw new ExceptionJsonModx('source is empty');
+            throw new ExceptionJsonModx('Ссылка на скачивание пустая');
         }
 
         if (empty($pathZip)) {
@@ -41,9 +45,46 @@ class ReaderIndexed
         }
     }
 
+    function fetchZipData(string $url): ?string
+    {
+        $options = [
+            'http' => [
+                'method' => 'GET',
+                'timeout' => 30,
+                'header' => "User-Agent: PHP",
+            ],
+        ];
+
+        $context = stream_context_create($options);
+
+        // Открываем поток и получаем содержимое
+        $data = @file_get_contents($url, false, $context);
+
+        // Проверяем, что удалось получить данные
+        if ($data === false) {
+            throw new ExceptionJsonModx('Не удалось загрузить архив: '.$url.'. Файл не доступен для скачивания или доступ к нему ограничен');
+        }
+
+        // Получаем HTTP-статус из заголовков
+        $httpResponseHeader = $http_response_header ?? [];
+        if (!empty($httpResponseHeader)) {
+            foreach ($httpResponseHeader as $header) {
+                if (preg_match('/^HTTP\/\d\.\d\s+(\d+)/', $header, $matches)) {
+                    $statusCode = (int)$matches[1];
+                    if ($statusCode !== 200) {
+                        throw new ExceptionJsonModx('Ошибка при загрузке архива: HTTP status code '.$statusCode);
+                    }
+                    break;
+                }
+            }
+        }
+
+        return $data;
+    }
+
     public function download()
     {
-        $zipData = file_get_contents($this->downloadUrl);
+        $zipData = $this->fetchZipData($this->downloadUrl);
 
         if (!file_put_contents($this->pathZip, $zipData)) {
             throw new ExceptionJsonModx('Ошибка записи в архив');
@@ -106,17 +147,17 @@ class ReaderIndexed
         if ($this->closes) {
             foreach ($this->closes as $item) {
                 $id = (int)$item['offer_id'];
-                $closes = null;
-                if (!empty($item['closes'])) {
-                    foreach ($item['closes'] as $offer) {
-                        $closes[$offer['offer_id']] = $offer['probability'];
+                $similar = null;
+                if (!empty($item['similar'])) {
+                    foreach ($item['similar'] as $offer) {
+                        $similar[$offer['offer_id']] = $offer['probability'];
                     }
                 }
                 $items[$id] = [
                     'status' => (int)$item['status'],
                     'total' => (int)$item['total_close'] ?? 0,
                     'min_scope' => (int)$item['min_scope'] ?? 0,
-                    'closes' => $closes,
+                    'similar' => $similar,
                 ];
             }
         }

@@ -31,27 +31,28 @@ if (!$object = $modx->getObject('idImageClose', $c)) {
 }
 
 // Iterate through items
-$list = [];
+
 $i = 0;
-$closes = $object->get('closes');
+$results = [];
+$similar = $object->get('similar');
+if (!empty($similar) && is_array($similar)) {
+    arsort($similar);
 
-arsort($closes);
-
-foreach ($closes as $id => $probability) {
-    if ($pid === $id || $max_scope < $probability) {
-        continue;
-    }
-    if ($min_scope < $probability) {
-        $i++;
-        $list[$id] = $id;
-        if ($i >= $limit) {
-            break;
+    foreach ($similar as $id => $probability) {
+        if ($pid === $id || $max_scope < $probability) {
+            continue;
+        }
+        if ($min_scope < $probability) {
+            $i++;
+            $results[$id] = $id;
+            if ($i >= $limit) {
+                break;
+            }
         }
     }
 }
-
-$modx->setPlaceholder('idimage_closes', $closes);
+$modx->setPlaceholder('idimage_similar', $results);
 
 // Output
-return implode(',', $list);
+return implode(',', $results);
 

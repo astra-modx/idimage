@@ -6,7 +6,7 @@ if (!class_exists('idImageActionsProcessor')) {
     include_once __DIR__.'/../../actions.class.php';
 }
 
-class idImageIndexedUpdateProductsProcessor extends idImageActionsProcessor
+class idImageActionsIndexedRunningProcessor extends idImageActionsProcessor
 {
     /* @var idImageIndexed $Indexed */
     protected $Indexed;
@@ -16,7 +16,7 @@ class idImageIndexedUpdateProductsProcessor extends idImageActionsProcessor
         $Indexed = $this->idimage()->indexed();
 
 
-        $Response = $Indexed->api()->launch()->send();
+        $Response = $Indexed->api()->running()->send();
         if (!$Response->isOk()) {
             return $this->failure($Response->getMessage());
         }
@@ -28,4 +28,4 @@ class idImageIndexedUpdateProductsProcessor extends idImageActionsProcessor
 
 }
 
-return 'idImageIndexedUpdateProductsProcessor';
+return 'idImageActionsIndexedRunningProcessor';

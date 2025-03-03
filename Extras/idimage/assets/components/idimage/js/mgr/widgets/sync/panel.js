@@ -307,12 +307,8 @@ function indexedProducts() {
     actionsProgress('indexed/products')
 }
 
-function indexedLaunch() {
-    actionsProgress('indexed/launch')
-
-    setTimeout(function () {
-        indexedPoll(true)
-    }, 5000)
+function indexedRunning() {
+    actionsProgress('indexed/running')
 }
 
 
@@ -387,25 +383,41 @@ function indexedPoll(wait) {
                     if (r.success) {
                         var object = r.object;
                         object.download_link = object.download_link ? '<a href="' + object.download_link + '" target="_blank">' + object.download_link + '</a>' : '---'
-                        object.status = object.completed === true
-                            ? '<span class="idimage-status idimage-status-color-completed">Завершено</span>'
-                            : '<span class="idimage-status idimage-status-color-processing">В процессе</span>'
 
+
+                        object.status = '<span class="idimage-status idimage-status-color-' + object.status + '">' + object.status + '</span>'
 
                         object.size = formatFileSize(object.size)
                         object.closes = object.closes + ' шт.'
                         object.awaiting_processing = object.awaiting_processing + ' шт.'
                         object.active = idimage.utils.renderBoolean(object.active)
-                        object.run = idimage.utils.renderBoolean(object.run)
-                        object.launch = idimage.utils.renderBoolean(object.launch)
                         object.sealed = idimage.utils.renderBoolean(object.sealed)
                         object.upload = idimage.utils.renderBoolean(object.upload)
                         object.upload_api = idimage.utils.renderBoolean(object.upload_api)
-                        object.completed = idimage.utils.renderBoolean(object.completed)
-                        object.finished_at = idimage.utils.formatDate(object.finished_at)
                         object.created_at = idimage.utils.formatDate(object.created_at)
                         object.updated_at = idimage.utils.formatDate(object.updated_at)
-                        object.start_at = idimage.utils.formatDate(object.start_at)
+                        object.start_at = '---'
+                        object.finished_at = '---'
+
+
+                        if (object.logs.length > 0) {
+                            for (var log of object.logs) {
+                                switch (log.status) {
+                                    case "running":
+                                        object.start_at = idimage.utils.formatDate(log.timestamp)
+                                        break;
+                                    case "finished":
+                                        object.finished_at = idimage.utils.formatDate(log.timestamp)
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+
+                            }
+                        }
+
+
                         form.setValues(object)
                     }
 

@@ -145,16 +145,11 @@ $_lang['idimage_indexed_size'] = 'Размер файла';
 $_lang['idimage_indexed_download_link'] = 'Ссылка для скачивания';
 $_lang['idimage_indexed_images'] = 'Кол-во товаров';
 $_lang['idimage_indexed_closes'] = 'Кол-во близких';
-$_lang['idimage_indexed_launch'] = 'Индексация разрешена';
-$_lang['idimage_indexed_run'] = 'Запущена индексация';
-$_lang['idimage_indexed_completed'] = 'Завершен';
+$_lang['idimage_indexed_status'] = 'Статус';
 $_lang['idimage_indexed_sealed'] = 'Запечатан';
 $_lang['idimage_indexed_use_version'] = 'Используется';
-$_lang['idimage_indexed_start_at'] = 'Дата начала индексации';
-$_lang['idimage_indexed_finished_at'] = 'Дата завершения индексации';
 $_lang['idimage_indexed_upload_at'] = 'Дата загрузки файла';
 $_lang['idimage_indexed_upload'] = 'Загружен';
-$_lang['idimage_indexed_processed'] = 'Обработан';
 $_lang['idimage_indexed_createdon'] = 'Дата создания';
 $_lang['idimage_indexed_updatedon'] = 'Дата обновления';
 $_lang['idimage_indexed_description'] = 'Описание';
@@ -168,7 +163,7 @@ $_lang['idimage_indexed_create_closes'] = 'Отправлено в сервис'
 
 $_lang['idimage_indexed_action_info'] = 'Информация о индексе';
 $_lang['idimage_indexed_action_useversion'] = 'Закрепить похожие товары';
-$_lang['idimage_indexed_action_launch'] = 'Разрешить запуск индексации';
+$_lang['idimage_indexed_action_running'] = 'Разрешить запуск индексации';
 $_lang['idimage_indexed_action_remove'] = 'Удалить версию индекса';
 
 ////////////////////////
@@ -186,7 +181,6 @@ $_lang['idimage_action_title'] = 'Выполнить действие';
 $_lang['idimage_action_confirm'] = 'Вы уверены что хотите выполнить это действие?';
 
 
-
 $_lang['idimage_sync'] = 'Синхронизация';
 $_lang['idimage_update_products'] = 'Обновление товаров';
 
@@ -194,8 +188,7 @@ $_lang['idimage_update_products'] = 'Обновление товаров';
 ######################
 $_lang['idimage_actions_image_upload/cloud_desc'] = '<span style="color: darkred">Отправка в облачное хранилище займет достаточно много времени, не уходите со страницы до завершения процесса отправки</span>';
 $_lang['idimage_actions_indexed_products_desc'] = '<span style="color: darkred">Перед импортом похожих товаров, убедитесь что индексация завершена и вы скачали последнюю версию файла с индексом товаров.</span>';
-$_lang['idimage_actions_indexed_launch_desc'] = '<span style="color: darkred">После запуска процесс прервать будет невозможно, убедитесь что вы отправили в сервис все товары для индексации.</span>';
-
+$_lang['idimage_actions_indexed_running_desc'] = '<span style="color: darkred">После запуска процесса, прервать будет невозможно, убедитесь что вы отправили в сервис все товары для индексации.</span>';
 
 
 $_lang['ms2_utilities_gallery'] = 'Галерея';

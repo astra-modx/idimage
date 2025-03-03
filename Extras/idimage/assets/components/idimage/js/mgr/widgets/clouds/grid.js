@@ -67,6 +67,7 @@ Ext.extend(idimage.grid.Clouds, idimage.grid.Closes, {
                 cls: 'primary-button',
                 menu: [
                     this.actionMenu('image/upload/reset', 'icon-refresh'),
+                    //this.actionMenu('image/upload/mark', 'icon-check'),
                 ]
             },
 

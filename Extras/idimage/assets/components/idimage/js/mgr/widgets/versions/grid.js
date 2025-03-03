@@ -54,7 +54,7 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
 
     getFields: function () {
         return [
-            'id', 'version', 'upload', 'size', 'download_link', 'images', 'active', 'run', 'closes', 'launch', 'completed', 'sealed', 'use_version', 'upload', 'createdon', 'updatedon', 'active', 'actions'
+            'id', 'version', 'upload', 'size', 'download_link', 'total', 'active', 'total_similar', 'sealed', 'use_version', 'upload', 'createdon', 'updatedon', 'active', 'actions'
         ];
     },
 
@@ -62,8 +62,7 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
         return [
             {header: _('idimage_indexed_id'), dataIndex: 'id', width: 20, sortable: true},
             {header: _('idimage_indexed_version'), dataIndex: 'version', width: 20, sortable: true},
-            {header: _('idimage_indexed_launch'), dataIndex: 'launch', width: 20, sortable: true, renderer: idimage.utils.renderBoolean},
-            {header: _('idimage_indexed_completed'), dataIndex: 'completed', sortable: true, width: 70, hidden: true, renderer: idimage.utils.renderBoolean},
+            {header: _('idimage_indexed_status'), dataIndex: 'status', width: 20, sortable: true},
             {
                 header: _('idimage_indexed_upload'),
                 dataIndex: 'upload',
@@ -72,10 +71,9 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
                 hidden: true,
                 renderer: idimage.utils.renderBoolean
             },
-            {header: _('idimage_indexed_run'), dataIndex: 'run', sortable: true, width: 70, hidden: false, renderer: idimage.utils.renderBoolean},
             {header: _('idimage_indexed_download_link'), dataIndex: 'download_link', sortable: true, width: 70, hidden: true},
-            {header: _('idimage_indexed_images'), dataIndex: 'images', sortable: true, width: 70, hidden: true},
-            {header: _('idimage_indexed_closes'), dataIndex: 'closes', sortable: true, width: 70, hidden: true},
+            {header: _('idimage_indexed_total'), dataIndex: 'total', sortable: true, width: 70, hidden: true},
+            {header: _('idimage_indexed_total_similar'), dataIndex: 'total_similar', sortable: true, width: 70, hidden: true},
 
             {header: _('idimage_indexed_size'), dataIndex: 'size', sortable: true, width: 70, hidden: true},
             {
@@ -87,8 +85,7 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
                 renderer: idimage.utils.renderBoolean
             },
             {header: _('idimage_indexed_upload'), dataIndex: 'upload', sortable: true, width: 70, hidden: true, renderer: idimage.utils.renderBoolean},
-            {header: _('idimage_indexed_processed'), dataIndex: 'processed', sortable: true, width: 70, hidden: true, renderer: idimage.utils.renderBoolean},
-            {header: _('idimage_indexed_sealed'), dataIndex: 'processed', sortable: true, width: 70, hidden: true, renderer: idimage.utils.renderBoolean},
+            {header: _('idimage_indexed_sealed'), dataIndex: 'sealed', sortable: true, width: 70, hidden: true, renderer: idimage.utils.renderBoolean},
 
             {header: _('idimage_indexed_updatedon'), dataIndex: 'updatedon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
             {header: _('idimage_indexed_active'), dataIndex: 'active', width: 75, renderer: idimage.utils.renderBoolean, hidden: true},
@@ -274,8 +271,8 @@ Ext.extend(idimage.grid.Indexeds, idimage.grid.Default, {
 
     },
 
-    launchIndexed: function () {
-        this.action('action/launch')
+    runningIndexed: function () {
+        this.action('action/running')
     },
 
     downloadIndexed: function () {

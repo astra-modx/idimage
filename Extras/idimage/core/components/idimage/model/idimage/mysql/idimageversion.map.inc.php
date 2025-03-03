@@ -11,21 +11,20 @@ $xpdo_meta_map['idImageVersion']= array (
   'fields' => 
   array (
     'indexed_id' => 0,
+    'status' => NULL,
     'version' => 1,
     'awaiting_processing' => 0,
     'upload' => 0,
     'size' => NULL,
     'download_link' => NULL,
-    'images' => 0,
-    'closes' => 0,
+    'total' => 0,
+    'total_similar' => 0,
     'download' => 0,
-    'launch' => 0,
-    'run' => 0,
-    'completed' => 0,
     'sealed' => 0,
     'use_version' => 1,
     'updatedon' => 0,
     'createdon' => 0,
+    'logs' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -37,6 +36,13 @@ $xpdo_meta_map['idImageVersion']= array (
       'phptype' => 'integer',
       'null' => true,
       'default' => 0,
+    ),
+    'status' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '50',
+      'phptype' => 'string',
+      'null' => false,
     ),
     'version' => 
     array (
@@ -79,7 +85,7 @@ $xpdo_meta_map['idImageVersion']= array (
       'phptype' => 'string',
       'null' => true,
     ),
-    'images' => 
+    'total' => 
     array (
       'dbtype' => 'int',
       'precision' => '10',
@@ -87,7 +93,7 @@ $xpdo_meta_map['idImageVersion']= array (
       'phptype' => 'integer',
       'default' => 0,
     ),
-    'closes' => 
+    'total_similar' => 
     array (
       'dbtype' => 'int',
       'precision' => '10',
@@ -96,30 +102,6 @@ $xpdo_meta_map['idImageVersion']= array (
       'default' => 0,
     ),
     'download' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'launch' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'run' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'completed' => 
     array (
       'dbtype' => 'tinyint',
       'precision' => '1',
@@ -158,6 +140,12 @@ $xpdo_meta_map['idImageVersion']= array (
       'phptype' => 'timestamp',
       'null' => false,
       'default' => 0,
+    ),
+    'logs' => 
+    array (
+      'dbtype' => 'text',
+      'phptype' => 'json',
+      'null' => true,
     ),
   ),
   'indexes' => 

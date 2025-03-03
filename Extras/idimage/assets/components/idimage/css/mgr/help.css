@@ -166,7 +166,7 @@
 }
 
 
-.idimage-status-color-queue {
+.idimage-status-color-queue,.idimage-status-color-start {
     color: darkblue;
     border-color: darkblue;
 }
@@ -181,15 +181,11 @@
     border-color: red;
 }
 
-.idimage-status-color-no_launch {
+.idimage-status-color-created, .idimage-status-color-clear, .idimage-status-color-unknown {
     color: gray;
     border-color: gray;
 }
 
-.idimage-status-color-review {
-    color: gray;
-    border-color: gray;
-}
 
 .idimage-status-color-processing {
     color: #985f0d;
@@ -245,7 +241,7 @@
     border-bottom: 1px solid #ddd;
 }
 
-.idimage-stat-section h3{
+.idimage-stat-section h3 {
     margin-top: 10px;
 }
 

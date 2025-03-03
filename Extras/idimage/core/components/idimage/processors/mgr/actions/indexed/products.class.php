@@ -19,6 +19,7 @@ class idImageIndexedUpdateProductsProcessor extends idImageActionsProcessor impl
     public function withProgressIds()
     {
         $Version = $this->indexed()->version();
+
         $reader = $Version->reader();
 
 
@@ -53,7 +54,7 @@ class idImageIndexedUpdateProductsProcessor extends idImageActionsProcessor impl
                 $pid = $close->get('pid');
 
                 $total = $min_scope = 0;
-                $closes = [];
+                $similar = [];
                 $status = idImageClose::STATUS_FAILED;
                 if (isset($items[$pid])) {
                     $item = $items[$pid];
@@ -62,8 +63,8 @@ class idImageIndexedUpdateProductsProcessor extends idImageActionsProcessor impl
                         $status = idImageClose::STATUS_FAILED;
                     }
                     $min_scope = !empty($item['min_scope']) ? $item['min_scope'] : 0;
-                    $closes = (!empty($item['closes']) && is_array($item['closes'])) ? $item['closes'] : [];
-                    $total = count($closes);
+                    $similar = (!empty($item['similar']) && is_array($item['similar'])) ? $item['similar'] : [];
+                    $total = count($similar);
                 }
 
 
@@ -71,7 +72,7 @@ class idImageIndexedUpdateProductsProcessor extends idImageActionsProcessor impl
                 $close->set('status_service', $status);
                 $close->set('total', $total);
                 $close->set('min_scope', $min_scope);
-                $close->set('closes', $closes);
+                $close->set('similar', $similar);
                 $close->set('version', $this->Indexed->get('version'));
 
 

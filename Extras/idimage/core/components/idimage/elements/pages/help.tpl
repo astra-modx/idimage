@@ -4,7 +4,7 @@
 
             <div class="idimage-stat-section">
                 <h2>Статистика</h2>
-                <span class="idimage-btn x-btn x-btn-small x-btn-icon-small-left primary-button x-btn-noicon" onclick="indexedLaunch(true)">
+                <span class="idimage-btn x-btn x-btn-small x-btn-icon-small-left primary-button x-btn-noicon" onclick="indexedRunning(true)">
                  <button type="button" class=" x-btn-text">
                          <i class=" icon icon-play"></i> Запустить индексацию
                  </button>

@@ -18,13 +18,6 @@ class idImageIndexed extends xPDOSimpleObject
         return parent::save($cacheFlag);
     }
 
-    public function deactivate()
-    {
-        if (!$this->isNew()) {
-            $this->xpdo->exec("UPDATE {$this->_table} SET active = '0'  WHERE id != ".$this->get('id'));
-        }
-    }
-
 
     /**
      * @return idImageVersion
@@ -57,6 +50,7 @@ class idImageIndexed extends xPDOSimpleObject
         if (!is_object($this->Version) || !($this->Version instanceof msProductData)) {
             $q = $this->xpdo->newQuery('idImageVersion');
             $q->where(array(
+                'use_version' => true,
                 'indexed_id' => $this->get('id'),
             ));
             $q->sortby('id', 'DESC');
@@ -66,6 +60,8 @@ class idImageIndexed extends xPDOSimpleObject
                 $this->Version->set('indexed_id', $this->get('id'));
                 parent::addOne($this->Version);
             }
+
+
         }
 
         return $this->Version;

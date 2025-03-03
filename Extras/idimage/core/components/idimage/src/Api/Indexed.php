@@ -20,9 +20,9 @@ class Indexed extends ApiAbstract implements ApiInterfaces
         return $this->get('indexed');
     }
 
-    public function launch()
+    public function running()
     {
-        return $this->post('indexed/launch');
+        return $this->post('indexed/running');
     }
 
     public function entity(): EntityCatalog

@@ -13,13 +13,17 @@
                 'pid' => $modx->resource->id,
                 'min_scope' => 65
                 ])}
-                {$modx->runSnippet('msProducts', [
-                'tpl' => '@FILE chunks/catalog/product.row.tpl',
-                'resources' => $ids,
-                'sortby' => "FIELD(msProduct.id, {$ids})",
-                'parents' => 0,
-                ])}
 
+                {$ids}
+                {if $ids}
+                    {$modx->runSnippet('msProducts', [
+                        'tpl' => '@FILE chunks/catalog/product.row.tpl',
+                        'resources' => $ids,
+                        'sortby' => "FIELD(msProduct.id, {$ids})",
+                        'parents' => 0,
+                    ])}
+
+                {/if}
             </div>
         </div>
     </div>
