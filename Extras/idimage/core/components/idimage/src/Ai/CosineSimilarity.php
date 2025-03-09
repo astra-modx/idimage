@@ -9,6 +9,7 @@
 namespace IdImage\Ai;
 
 
+use Exception;
 use InvalidArgumentException;
 
 class CosineSimilarity
@@ -42,11 +43,11 @@ class CosineSimilarity
                 continue;
             }
             if (!is_array($item['embedding'])) {
-                throw new InvalidArgumentException("Вектор должен быть массивом");
+                throw new Exception("Вектор должен быть массивом pid: {$pid}");
             }
 
             if (count($item['embedding']) != 512) {
-                throw new InvalidArgumentException("Вектор должен быть длиной 512");
+                throw new Exception("Вектор должен быть длиной 512 pid: {$pid}");
             }
 
             $vectorB = $item['embedding'];

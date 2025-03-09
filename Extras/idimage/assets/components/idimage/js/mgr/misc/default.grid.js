@@ -490,7 +490,6 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
             listeners: {
                 success: {
                     fn: function (response) {
-                        idImageState()
                         callback(this, response);
                         //this.refresh()
                     }, scope: this

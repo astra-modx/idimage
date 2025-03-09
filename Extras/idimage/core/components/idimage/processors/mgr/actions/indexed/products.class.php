@@ -11,7 +11,7 @@ class idImageIndexedProductsProcessor extends idImageActionsProcessor implements
 
     public function stepChunk()
     {
-        return 100;
+        return $this->idImage->limitIndexed();
     }
 
     public function withProgressIds()
@@ -38,20 +38,38 @@ class idImageIndexedProductsProcessor extends idImageActionsProcessor implements
             $closes = $this->query()->closes()->where(['id:IN' => $ids]);
 
             $closes->each(function (idImageClose $close) use ($CollectionProduct) {
-                $pid = $close->get('pid');
-                $embedding = $close->embedding()->getEmbedding();
+                $pid = $close->get('pid');;
 
 
                 // Получаем похожие товары
-                $Similar = $CollectionProduct->getSimilar($pid, $embedding, $CollectionProduct->getEmbedding());
+                $errors = null;
+                if (!$embedding = $close->embedding()->getEmbedding()) {
+                    $errors = [
+                        'error' => 'No embedding',
+                    ];
+                } else {
+                    try {
+                        $Similar = $CollectionProduct->getSimilar($pid, $embedding, $CollectionProduct->getEmbedding());
+                        $status = $Similar->status();
+                        $close->set('similar', $Similar->getSimilar());
+                        $close->set('search_scope', $this->idImage->minimumProbabilityScore());
+                        $close->set('min_scope', $Similar->minValue());
+                        $close->set('max_scope', $Similar->maxValue());
+                        $close->set('total', $Similar->total());
+                    } catch (Exception $e) {
+                        $errors = [
+                            'error' => $e->getMessage(),
+                        ];
+                    }
+                }
 
-                $close->set('similar', $Similar->getSimilar());
-                $close->set('status', $Similar->status());
+                if ($errors) {
+                    $status = idImageClose::STATUS_INVALID;
+                }
 
-                $close->set('search_scope', $this->idImage->minimumProbabilityScore());
-                $close->set('min_scope', $Similar->minValue());
-                $close->set('max_scope', $Similar->maxValue());
-                $close->set('total', $Similar->total());
+                $close->set('errors', $errors);
+                $close->set('status', $status);
+
 
                 $close->save();
 

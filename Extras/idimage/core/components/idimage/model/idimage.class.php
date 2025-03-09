@@ -50,6 +50,9 @@ class idImage
             'root_parent' => $this->modx->getOption('idimage_root_parent', $config, 0, true),
             'site_url' => $this->modx->getOption('idimage_site_url', $config, null),
             'send_file' => $this->modx->getOption('idimage_send_file', $config, false),
+            'limit_indexed' => $this->modx->getOption('idimage_limit_indexed', $config, 50, true),
+            'limit_creation' => $this->modx->getOption('idimage_limit_creation', $config, 100, true),
+            'limit_embedding' => $this->modx->getOption('idimage_limit_embedding', $config, 10, true),
         ], $config);
 
         if (empty($this->config['site_url'])) {
@@ -190,6 +193,22 @@ class idImage
     public function rootParent()
     {
         return $this->config['root_parent'] ?? 0;
+    }
+
+    public function limitIndexed()
+    {
+        return $this->config['limit_indexed'] ?? 50;
+    }
+
+
+    public function limitCreation()
+    {
+        return $this->config['limit_creation'] ?? 50;
+    }
+
+    public function limitEmbedding()
+    {
+        return $this->config['limit_embedding'] ?? 10;
     }
 
 }

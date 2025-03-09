@@ -8,7 +8,7 @@ class idImageCreationProcessor extends idImageActionsProcessor implements \IdIma
 {
     public function stepChunk()
     {
-        return 100;
+        return $this->idImage->limitCreation();
     }
 
     public function fromCategories($query)

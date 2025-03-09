@@ -24,6 +24,14 @@ class idImageEmbedding extends xPDOSimpleObject
             return null;
         }
 
+        if (!is_array($embedding)) {
+            return null;
+        }
+
+        if (count($embedding) != 512) {
+            return null;
+        }
+
         return $embedding;
     }
 }

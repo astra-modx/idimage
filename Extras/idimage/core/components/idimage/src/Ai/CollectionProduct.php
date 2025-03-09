@@ -10,6 +10,7 @@ namespace IdImage\Ai;
 
 
 use Closure;
+use Exception;
 use idImage;
 use idImageClose;
 use InvalidArgumentException;
@@ -44,7 +45,7 @@ class CollectionProduct
     public function getSimilar(int $pid, array $embedding, array $items): Similar
     {
         if (count($embedding) !== 512) {
-            throw new InvalidArgumentException("Вектор должен быть массивом");
+            throw new Exception("Вектор должен быть массивом");
         }
         $similar = $this->cosineSimilarity->collection($pid, $embedding, $items);
         $this->similar->fromArray($similar);
@@ -75,6 +76,10 @@ class CollectionProduct
                     'embedding' => json_decode($item['embedding'], true),
                 ];
             }, $items);
+
+            $items = array_filter($items, function ($item) {
+                return (is_array($item['embedding']) && count($item['embedding']) === 512);
+            });
 
             $this->embedding = $items;
         }

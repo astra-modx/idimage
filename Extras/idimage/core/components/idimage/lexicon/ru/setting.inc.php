@@ -27,3 +27,13 @@ $_lang['setting_idimage_root_parent_desc'] = 'По умолчанию: 0. Это
 
 $_lang['setting_idimage_site_url'] = 'Альтернативный URL';
 $_lang['setting_idimage_site_url_desc'] = 'Вы можете указать альтернативный URL для сервиса IDimage откуда будут скачиваться изображений товаров из интернета для создания векторных данных.';
+
+$_lang['area_idimage_limit'] = 'Лиминты';
+$_lang['setting_idimage_limit_indexed'] = 'Индексировать за раз';
+$_lang['setting_idimage_limit_indexed_desc'] = 'По умолчанию: 50. Это количество товаров которые будут индексированы за раз, чем больше товаров, тем дольше будет индексация.';
+
+$_lang['setting_idimage_limit_creation'] = 'Создавать товаров за раз';
+$_lang['setting_idimage_limit_creation_desc'] = 'По умолчанию: 100. Это количество товаров которые будут созданы за раз';
+
+$_lang['setting_idimage_limit_embedding'] = 'Получать векторов за раз';
+$_lang['setting_idimage_limit_embedding_desc'] = 'По умолчанию: 10. Это количество товаров которые будут получены векторные данные за раз. За минуту максимум 30. Не указывайте слишком большое значение, чтобы не получить ошибку 429 Too Many Requests';

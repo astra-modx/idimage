@@ -102,11 +102,11 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
     getTopBar: function (config) {
         return [
 
-          /*  {
-                text: '<i class="icon icon-plus"></i> Создать товар',
-                handler: this.assignSelected,
-                scope: this
-            },*/
+            /*  {
+                  text: '<i class="icon icon-plus"></i> Создать товар',
+                  handler: this.assignSelected,
+                  scope: this
+              },*/
 
             {
                 text: '<i class="icon icon-cogs"></i> ' + _('idimage_actions_dropdown'),
@@ -170,25 +170,25 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
             },
 
 
-            /* {
-                 xtype: 'idimage-combo-status',
-                 name: 'status',
-                 width: 210,
-                 custm: true,
-                 clear: true,
-                 addall: true,
-                 value: '',
-                 listeners: {
-                     select: {
-                         fn: this._filterByCombo,
-                         scope: this
-                     },
-                     afterrender: {
-                         fn: this._filterByCombo,
-                         scope: this
-                     }
-                 }
-             },*/
+            {
+                xtype: 'idimage-combo-status',
+                name: 'status',
+                width: 210,
+                custm: true,
+                clear: true,
+                addall: true,
+                value: '',
+                listeners: {
+                    select: {
+                        fn: this._filterByCombo,
+                        scope: this
+                    },
+                    afterrender: {
+                        fn: this._filterByCombo,
+                        scope: this
+                    }
+                }
+            },
 
 
             '->',

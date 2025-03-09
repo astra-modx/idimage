@@ -11,7 +11,7 @@ class idImageApiEmbeddingProcessor extends idImageActionsProcessor implements \I
 {
     public function stepChunk()
     {
-        return 10;
+        return $this->idImage->limitEmbedding();
     }
 
     public function withProgressIds()

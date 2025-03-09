@@ -42,4 +42,22 @@ return [
         'value' => '',
         'area' => 'idimage_main',
     ],
+
+    'idimage_limit_indexed' => [
+        'xtype' => 'numberfield',
+        'value' => 50,
+        'area' => 'idimage_limit',
+    ],
+
+    'idimage_limit_creation' => [
+        'xtype' => 'numberfield',
+        'value' => 100,
+        'area' => 'idimage_limit',
+    ],
+
+    'idimage_limit_embedding' => [
+        'xtype' => 'numberfield',
+        'value' => 10,
+        'area' => 'idimage_limit',
+    ],
 ];
