@@ -1,6 +1,7 @@
 <?php
 
 use IdImage\Actions;
+use IdImage\Exceptions\ExceptionJsonModx;
 use IdImage\Support\Query;
 
 include_once MODX_CORE_PATH.'components/idimage/vendor/autoload.php';
@@ -44,21 +45,12 @@ class idImage
             'assetsUrl' => $assetsUrl,
             'cssUrl' => $assetsUrl.'css/',
             'jsUrl' => $assetsUrl.'js/',
-            'mode_upload' => $this->modx->getOption('idimage_mode_upload', $config, 'picture'),
-            'path_versions' => MODX_CORE_PATH.'cache/idimage/versions/',
-            'site_url' => $this->modx->getOption('idimage_site_url', $config, null),
-            'cloud' => $this->modx->getOption('idimage_cloud', $config, false),
-            'extract_path' => $this->modx->getOption('idimage_extract_path', $config, MODX_CORE_PATH.'cache/idimage/indexed', true),
+            'minimum_probability_score' => $this->modx->getOption('idimage_minimum_probability_score', $config, 70, true),
+            'maximum_products_found' => $this->modx->getOption('idimage_maximum_products_found', $config, 50, true),
         ], $config);
-
-
-        if (empty($this->config['site_url'])) {
-            $this->config['site_url'] = $this->modx->getOption('site_url');
-        }
 
         $this->modx->addPackage('idimage', $this->config['modelPath']);
         $this->modx->lexicon->load('idimage:default');
-
         $this->modx->loadClass('idImageClose');
     }
 
@@ -72,38 +64,14 @@ class idImage
         return idImageClose::$statusMap;
     }
 
-    public function statusMapService()
+    public function minimumProbabilityScore(): int
     {
-        return idImageClose::$statusServiceMap;
+        return $this->config['minimum_probability_score'] ?? 70;
     }
 
-    public function siteUrl()
+    public function maximumProductsFound(): int
     {
-        return rtrim($this->config['site_url'], '/');
-    }
-
-    public function validateSiteUrl()
-    {
-        $siteUrl = $this->siteUrl();
-        $parsedUrl = parse_url($siteUrl);
-
-        if (!$parsedUrl || !isset($parsedUrl['host'])) {
-            return 'Not local address';
-        }
-
-        $host = strtolower($parsedUrl['host']);
-
-        // Проверяем, является ли хост локальным
-        if ($host === 'localhost' || $host === '127.0.0.1') {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function isCloudUpload()
-    {
-        return (bool)$this->config['cloud'];
+        return $this->config['maximum_products_found'] ?? 50;
     }
 
     /**
@@ -180,21 +148,26 @@ class idImage
         return $this->phpThumb;
     }
 
-    /**
-     * @return idImageIndexed
-     */
-    public function indexed()
+    public function makeThumbnail(string $path, Closure $callback): void
     {
-        $q = $this->modx->newQuery('idImageIndexed');
-        $q->limit(1);
-        $q->where([
-            'Version.use_version' => true,
-        ]);
-        $q->innerJoin('idImageVersion', 'Version', 'Version.indexed_id = idImageIndexed.id');
-        if (!$Indexed = $this->modx->getObject('idImageIndexed', $q)) {
-            $Indexed = $this->modx->newObject('idImageIndexed');
+        \IdImage\Support\PhpThumb::makeThumbnail($this->modx, $path, $callback);
+    }
+
+    public function balance()
+    {
+        $Response = $this->api()->ai()->balance()->send();
+        if ($Response->isFail()) {
+            $Response->exception();
         }
 
-        return $Indexed;
+        return $Response->json('balance');
     }
+
+    public function canToken()
+    {
+        if (!$this->hasToken()) {
+            throw new ExceptionJsonModx($this->modx->lexicon('idimage_token_not_set'), 401);
+        }
+    }
+
 }

@@ -139,17 +139,28 @@ idimage.utils.resourceLink = function (value, id, blank) {
         value
     );
 };
+idimage.utils.resourceLinkProduct = function (value, id, r) {
+    if (!value) {
+        return '';
+    } else if (!id) {
+        return value;
+    }
 
-idimage.utils.statusClose = function (value) {
-    var status = idimage.config.status_map[value]
+    var pid =  r.data.pid
+
+
     return String.format(
-        '<span class="idimage-status idimage-status-color-{0}">{0}</span>',
-        status
+        '<a href="?a=resource/update&id={0}" class="ms2-link" target="{1}">{2}</a><br>' +
+        '<span class="idimage-product-id">Product ID: {3}</span>',
+        pid,
+        '_blank',
+        value,
+        pid
     );
 };
 
-idimage.utils.statusServiceClose = function (value) {
-    var status = idimage.config.status_service_map[value]
+idimage.utils.statusClose = function (value) {
+    var status = idimage.config.status_map[value]
     return String.format(
         '<span class="idimage-status idimage-status-color-{0}">{0}</span>',
         status
@@ -162,6 +173,30 @@ idimage.utils.jsonDataTags = function (value) {
 };
 
 idimage.utils.jsonDataError = function (value) {
-    v = value ?  JSON.stringify(value) : '';
+    v = value ? JSON.stringify(value) : '';
     return v !== '' ? '<span class="red">' + v + '</span>' : '<span class="idimage-gray">---</span>';
 };
+
+idimage.utils.formatPrice = function (value) {
+    return new Intl.NumberFormat('ru-RU', {
+        style: 'currency',
+        currency: 'RUB'
+    }).format(value);
+};
+
+
+idimage.utils.renderImage = function (value, row, r) {
+    if (Ext.isEmpty(value)) {
+        value = miniShop2.config['default_thumb'];
+    } else {
+        if (!/\/\//.test(value)) {
+            if (!/^\//.test(value)) {
+                value = '/' + value;
+            }
+        }
+    }
+    var pid = r.data.pid
+    return String.format('<a href="/index.php?id=' + pid + '" target="_blank"><img src="{0}" /></a>', value);
+};
+
+

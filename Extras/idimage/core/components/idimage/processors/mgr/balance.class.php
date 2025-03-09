@@ -1,7 +1,8 @@
 <?php
 
-class idImageIndexedStatProcessor extends modProcessor
+class idImageBalanceProcessor extends modProcessor
 {
+    public $languageTopics = ['idimage:manager'];
 
     /**
      * @return array|string
@@ -11,14 +12,14 @@ class idImageIndexedStatProcessor extends modProcessor
         /* @var idImage $idImage */
         $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
 
+        $idImage->canToken();
 
         return $this->success('', [
-            'images' => $idImage->query()->closes()->count(),
-            'closes' => $idImage->query()->closes()->where(['status' => idImageClose::STATUS_PROCESSING])->count(),
+            'balance' => $idImage->balance(),
         ]);
     }
 
 
 }
 
-return 'idImageIndexedStatProcessor';
+return 'idImageBalanceProcessor';

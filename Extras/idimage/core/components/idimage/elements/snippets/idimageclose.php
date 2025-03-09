@@ -10,9 +10,10 @@ if (!$idimage) {
 
 // Do your snippet code here. This demo grabs 5 items from our custom table.
 $limit = $modx->getOption('limit', $scriptProperties, 10);
-$pid = $modx->getOption('pid', $scriptProperties, null);
+$pid = $modx->getOption('pid', $scriptProperties, $modx->resource->id, true);
 $max_scope = $modx->getOption('max_scope', $scriptProperties, 100);
 $min_scope = $modx->getOption('min_scope', $scriptProperties, 80);
+$status = $modx->getOption('status', $scriptProperties, idImageClose::STATUS_COMPLETED);
 
 if (empty($pid)) {
     return '';
@@ -21,7 +22,7 @@ if (empty($pid)) {
 // Build query
 $c = $modx->newQuery('idImageClose');
 $c->where([
-    'status' => idImageClose::STATUS_COMPLETED,
+    'status' => $status,
     'pid' => $pid,
 ]);
 
@@ -35,24 +36,46 @@ if (!$object = $modx->getObject('idImageClose', $c)) {
 $i = 0;
 $results = [];
 $similar = $object->get('similar');
+
+
+$modx->setPlaceholder('idimage_similar', $similar);
+
 if (!empty($similar) && is_array($similar)) {
     arsort($similar);
 
-    foreach ($similar as $id => $probability) {
-        if ($pid === $id || $max_scope < $probability) {
+    foreach ($similar as $id => $item) {
+        $probability = $item['probability'];
+        $pid = $item['offer_id'];
+        if ($pid === $id || ($max_scope !== 100 && $probability > $max_scope)) {
             continue;
         }
+
         if ($min_scope < $probability) {
             $i++;
-            $results[$id] = $id;
+            $results[] = [
+                'pid' => $pid,
+                'probability' => $probability,
+            ];
             if ($i >= $limit) {
                 break;
             }
         }
     }
 }
-$modx->setPlaceholder('idimage_similar', $results);
 
+
+
+if (empty($results)) {
+    // empty
+    return '';
+}
+
+usort($results, function ($a, $b) {
+    return ($b['probability'] > $a['probability']) ? 1 : (($b['probability'] < $a['probability']) ? -1 : 0);
+});
+
+// offer_id
+$ids = array_column($results, 'pid');
 // Output
-return implode(',', $results);
+return implode(',', $ids);
 

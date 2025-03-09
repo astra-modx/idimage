@@ -52,7 +52,7 @@ Ext.reg('idimage-field-search', idimage.combo.Search);
  * @param config
  * @constructor
  */
-idimage.combo.Active = function(config) {
+idimage.combo.Active = function (config) {
     config = config || {};
 
     if (config.custm) {
@@ -72,17 +72,17 @@ idimage.combo.Active = function(config) {
             });
         }
 
-        config.initTrigger = function() {
+        config.initTrigger = function () {
             var ts = this.trigger.select('.x-form-trigger', true);
             this.wrap.setStyle('overflow', 'hidden');
             var triggerField = this;
-            ts.each(function(t, all, index) {
-                t.hide = function() {
+            ts.each(function (t, all, index) {
+                t.hide = function () {
                     var w = triggerField.wrap.getWidth();
                     this.dom.style.display = 'none';
                     triggerField.el.setWidth(w - triggerField.trigger.getWidth());
                 };
-                t.show = function() {
+                t.show = function () {
                     var w = triggerField.wrap.getWidth();
                     this.dom.style.display = '';
                     triggerField.el.setWidth(w - triggerField.trigger.getWidth());
@@ -124,7 +124,7 @@ idimage.combo.Active = function(config) {
                 compiled: true
             }),
         cls: 'input-combo-idimage-active',
-        clearValue: function() {
+        clearValue: function () {
             if (this.hiddenField) {
                 this.hiddenField.value = '';
             }
@@ -135,15 +135,15 @@ idimage.combo.Active = function(config) {
             this.fireEvent('select', this, null, 0);
         },
 
-        getTrigger: function(index) {
+        getTrigger: function (index) {
             return this.triggers[index];
         },
 
-        onTrigger1Click: function() {
+        onTrigger1Click: function () {
             this.onTriggerClick();
         },
 
-        onTrigger2Click: function() {
+        onTrigger2Click: function () {
             this.clearValue();
         }
     });
@@ -158,14 +158,14 @@ Ext.reg('idimage-combo-filter-active', idimage.combo.Active);
  * @param config
  * @constructor
  */
-idimage.combo.Resource = function(config) {
+idimage.combo.Resource = function (config) {
     config = config || {};
 
     if (config.custm) {
         config.triggerConfig = [{
             tag: 'div',
             cls: 'x-field-search-btns',
-            style: String.format('width: {0}px;', config.clear?62:31),
+            style: String.format('width: {0}px;', config.clear ? 62 : 31),
             cn: [{
                 tag: 'div',
                 cls: 'x-form-trigger x-field-idimage-resource-go'
@@ -178,17 +178,17 @@ idimage.combo.Resource = function(config) {
             });
         }
 
-        config.initTrigger = function() {
+        config.initTrigger = function () {
             var ts = this.trigger.select('.x-form-trigger', true);
             this.wrap.setStyle('overflow', 'hidden');
             var triggerField = this;
-            ts.each(function(t, all, index) {
-                t.hide = function() {
+            ts.each(function (t, all, index) {
+                t.hide = function () {
                     var w = triggerField.wrap.getWidth();
                     this.dom.style.display = 'none';
                     triggerField.el.setWidth(w - triggerField.trigger.getWidth());
                 };
-                t.show = function() {
+                t.show = function () {
                     var w = triggerField.wrap.getWidth();
                     this.dom.style.display = '';
                     triggerField.el.setWidth(w - triggerField.trigger.getWidth());
@@ -220,7 +220,7 @@ idimage.combo.Resource = function(config) {
         url: idimage.config.connector_url,
         baseParams: {
             action: 'mgr/misc/resource/getlist',
-            client_status:1,
+            client_status: 1,
             combo: true
         },
         tpl: new Ext.XTemplate(
@@ -231,7 +231,7 @@ idimage.combo.Resource = function(config) {
                 compiled: true
             }),
         cls: 'input-combo-idimage-resource',
-        clearValue: function() {
+        clearValue: function () {
             if (this.hiddenField) {
                 this.hiddenField.value = '';
             }
@@ -242,15 +242,15 @@ idimage.combo.Resource = function(config) {
             this.fireEvent('select', this, null, 0);
         },
 
-        getTrigger: function(index) {
+        getTrigger: function (index) {
             return this.triggers[index];
         },
 
-        onTrigger1Click: function() {
+        onTrigger1Click: function () {
             this.onTriggerClick();
         },
 
-        onTrigger2Click: function() {
+        onTrigger2Click: function () {
             this.clearValue();
         }
     });
@@ -404,8 +404,6 @@ Ext.extend(idimage.combo.DateTime, Ext.ux.form.DateTime);
 Ext.reg('idimage-xdatetime', idimage.combo.DateTime);
 
 
-
-
 /**
  * Status
  * @param config
@@ -464,3 +462,51 @@ idimage.combo.StatusService = function (config) {
 };
 Ext.extend(idimage.combo.StatusService, MODx.combo.ComboBox);
 Ext.reg('idimage-combo-status-service', idimage.combo.StatusService);
+
+
+/**
+ * Filed Resource
+ * @param config
+ * @constructor
+ */
+idimage.combo.FilterReceived = function (config) {
+    config = config || {};
+    Ext.applyIf(config, {
+        name: 'received',
+        hiddenName: 'received',
+        displayField: 'name',
+        valueField: 'value',
+        editable: true,
+        fields: ['value', 'name'],
+        pageSize: 20,
+        baseParams: {
+            action: 'mgr/misc/received/getlist',
+            combo: true,
+            addall: config.addall || 0
+        },
+    });
+    idimage.combo.FilterReceived.superclass.constructor.call(this, config);
+};
+Ext.extend(idimage.combo.FilterReceived, idimage.combo.Active);
+Ext.reg('idimage-combo-filter-received', idimage.combo.FilterReceived);
+
+/**
+ * Filed Resource
+ * @param config
+ * @constructor
+ */
+idimage.combo.FilterSimilar = function (config) {
+    config = config || {};
+    Ext.applyIf(config, {
+        name: 'received',
+        hiddenName: 'received',
+        baseParams: {
+            action: 'mgr/misc/similar/getlist',
+            combo: true,
+            addall: config.addall || 0
+        },
+    });
+    idimage.combo.FilterSimilar.superclass.constructor.call(this, config);
+};
+Ext.extend(idimage.combo.FilterSimilar, idimage.combo.Active);
+Ext.reg('idimage-combo-filter-similar', idimage.combo.FilterSimilar);

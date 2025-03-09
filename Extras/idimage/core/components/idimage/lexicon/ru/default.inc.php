@@ -36,8 +36,20 @@ $_lang['idimage_actions_image_upload/disable'] = 'Отключить загру�
 $_lang['idimage_actions_image_upload/cloud'] = 'Загрузка изображений в облако.';
 $_lang['idimage_actions_image_destroy'] = 'Уничтожить все товары';
 $_lang['idimage_indexed_action_download'] = 'Скачать индекс с товарами';
-$_lang['idimage_indexed_action_poll'] = 'Получить информацию о индексе';
+$_lang['idimage_indexed_action_poll'] = 'Обновить статистику';
 $_lang['idimage_actions_indexed_products'] = 'Импортировать похожие товары';
 $_lang['idimage_actions_image_upload/reset'] = 'Сбросить метку загрузки в облако';
 $_lang['idimage_actions_image_upload/mark'] = 'Установить метку загрузки в облако';
 $_lang['idimage_actions_indexed_running'] = 'Запустить индексацию';
+
+
+$_lang['idimage_received'] = 'Есть вектора';
+$_lang['idimage_inreceived'] = 'Нет векторов';
+$_lang['idimage_received_all'] = 'Вектора';
+
+$_lang['idimage_similar'] = 'Есть похожие';
+$_lang['idimage_insimilar'] = 'Нет похожих';
+$_lang['idimage_similar_all'] = 'Похожие';
+$_lang['idimage_balance_text'] = 'На счету: ';
+$_lang['idimage_token_not_set'] = 'Не указан параметр "<b>'.$_lang['setting_idimage_token'].'</b>".<br> Скопируйте токен из личного кабинета <a 
+    href="https://idimage.ru/account/info" target="_blank">idimage.ru</a> и вставьте его в <a href="/manager/?a=system/settings&ns=idimage" target="_blank">системные настройки</a>';

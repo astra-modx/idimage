@@ -3,8 +3,7 @@
 namespace IdImage;
 
 use idImage;
-use IdImage\Api\Queue;
-use IdImage\Api\Indexed;
+use IdImage\Api\Ai;
 use IdImage\Support\Client;
 
 /**
@@ -15,25 +14,16 @@ use IdImage\Support\Client;
  */
 class Actions
 {
-
-    protected Queue $queue;
-    protected Indexed $indexed;
+    private Ai $ai;
 
     public function __construct(idImage $idImage)
     {
         $Client = new Client($idImage->modx);
-        $this->queue = new Queue($Client);
-        $this->indexed = new Indexed($Client);
+        $this->ai = new Ai($Client);
     }
 
-    public function queue()
+    public function ai()
     {
-        return $this->queue;
+        return $this->ai;
     }
-
-    public function indexed()
-    {
-        return $this->indexed;
-    }
-
 }

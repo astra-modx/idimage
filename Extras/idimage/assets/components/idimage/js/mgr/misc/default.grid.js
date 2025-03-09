@@ -115,10 +115,13 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
     },
     total: 0,
     getListeners: function () {
+
         return {
             beforerender: function (grid) {
                 var store = grid.getStore()
                 store.on('load', function (res) {
+                    console.log(22                )
+                    ;
                     if (res.reader && res.reader['jsonData']) {
                         grid.total = res.reader['jsonData']['total'];
                         var el = document.getElementById(grid.config.id + '-total_info')
@@ -454,7 +457,6 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
                 if (total > 0) {
                     params.ids = Ext.util.JSON.encode(ids)
                 }
-
                 idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
                 grid.actionsAjax(params,
                     function (grid, response) {

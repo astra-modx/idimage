@@ -111,7 +111,7 @@
     border-radius: 5px;
     margin-top: 5px;
     display: inline-block;
-    max-width: 800px;
+    max-width: 410px;
 }
 
 .idimage_help_command_pre {
@@ -161,12 +161,13 @@
 }
 
 .idimage-availability .idimage-availability-name {
-    width: 250px;
+    width: 200px;
+    margin-bottom: 5px;
     display: inline-block;
 }
 
 
-.idimage-status-color-queue,.idimage-status-color-start {
+.idimage-status-color-queue, .idimage-status-color-start {
     color: darkblue;
     border-color: darkblue;
 }
@@ -190,6 +191,11 @@
 .idimage-status-color-processing {
     color: #985f0d;
     border-color: #985f0d;
+}
+
+.idimage-status-color-similar_not_found {
+    color: #4c5169;
+    border-color: #4c5169;
 }
 
 .idimage-status-color-unknown {
@@ -247,4 +253,10 @@
 
 .text-warning {
     color: #f10f0f;
+}
+
+.idimage-product-id {
+    color: #666;
+    margin-top: 5px;
+    display: block;
 }

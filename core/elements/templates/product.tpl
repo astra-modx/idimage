@@ -10,17 +10,14 @@
             <div class="col-md-12">
 
                 {var $ids = $modx->runSnippet('idImageClose', [
-                'pid' => $modx->resource->id,
-                'min_scope' => 65
+                    'min_scope' => 65
                 ])}
-
-                {$ids}
                 {if $ids}
                     {$modx->runSnippet('msProducts', [
-                        'tpl' => '@FILE chunks/catalog/product.row.tpl',
-                        'resources' => $ids,
-                        'sortby' => "FIELD(msProduct.id, {$ids})",
-                        'parents' => 0,
+                    'tpl' => '@FILE chunks/catalog/product.row.tpl',
+                    'resources' => $ids,
+                    'sortby' => "FIELD(msProduct.id, {$ids})",
+                    'parents' => 0,
                     ])}
 
                 {/if}

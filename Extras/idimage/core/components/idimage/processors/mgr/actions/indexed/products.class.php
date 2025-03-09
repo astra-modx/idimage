@@ -1,82 +1,60 @@
 <?php
 
-use IdImage\Exceptions\ExceptionJsonModx;
+use IdImage\Ai\CollectionProduct;
 
 if (!class_exists('idImageActionsProcessor')) {
     include_once __DIR__.'/../../actions.class.php';
 }
 
-class idImageIndexedUpdateProductsProcessor extends idImageActionsProcessor implements \IdImage\Interfaces\ActionProgressBar
+class idImageIndexedProductsProcessor extends idImageActionsProcessor implements \IdImage\Interfaces\ActionProgressBar
 {
-
 
     public function stepChunk()
     {
         return 100;
     }
 
-
     public function withProgressIds()
     {
-        $Version = $this->indexed()->version();
-
-        $reader = $Version->reader();
-
-
-        // Если еще не загружен файл с данными версии, то загрузить его
-        if (!$Version->isDownload()) {
-            $reader->download();
-            // Ставим флаг загрузки файла с данными версии
-            $Version->set('download', true);
-            $Version->save();
-        }
-
-
-        if (!$Version->exists()) {
-            throw new ExceptionJsonModx("Error json {$Version->path()}");
-        }
-
-        $offersKeys = $reader->read()->offersKeys();
-
-        return !empty($offersKeys) ? $offersKeys : array_keys($offersKeys);
+        return $this->query()->closes()->where([
+            'received' => true, // с векторами
+        ])->ids();
     }
 
 
     public function process()
     {
-        return $this->withProgressBar(function (array $ids) {
-            // Получаем данные
-            $items = $this->indexed()->version()->reader()->read()->items();
+        $CollectionProduct = new CollectionProduct(
+            $this->idImage,
+            $this->idImage->minimumProbabilityScore(),
+            $this->idImage->maximumProductsFound()
+        );
 
-            $closes = $this->query()->closes()->where(['pid:IN' => $ids]);
+        return $this->withProgressBar(function (array $ids) use ($CollectionProduct) {
+            // Загрузка все товаров из базы для работы с ними
+            $CollectionProduct->loadEmbedding();
 
-            $closes->each(function (idImageClose $close) use ($items) {
+            // Выбираем все товары с изображениями
+            $closes = $this->query()->closes()->where(['id:IN' => $ids]);
+
+            $closes->each(function (idImageClose $close) use ($CollectionProduct) {
                 $pid = $close->get('pid');
-
-                $total = $min_scope = 0;
-                $similar = [];
-                $status = idImageClose::STATUS_FAILED;
-                if (isset($items[$pid])) {
-                    $item = $items[$pid];
-                    $status = $item['status'];
-                    if (!isset($statusServiceMap[$status])) {
-                        $status = idImageClose::STATUS_FAILED;
-                    }
-                    $min_scope = !empty($item['min_scope']) ? $item['min_scope'] : 0;
-                    $similar = (!empty($item['similar']) && is_array($item['similar'])) ? $item['similar'] : [];
-                    $total = count($similar);
-                }
+                $embedding = $close->embedding()->getEmbedding();
 
 
-                $close->set('status', idImageClose::STATUS_COMPLETED);
-                $close->set('status_service', $status);
-                $close->set('total', $total);
-                $close->set('min_scope', $min_scope);
-                $close->set('similar', $similar);
-                $close->set('version', $this->Indexed->get('version'));
+                // Получаем похожие товары
+                $Similar = $CollectionProduct->getSimilar($pid, $embedding, $CollectionProduct->getEmbedding());
 
+                $close->set('similar', $Similar->getSimilar());
+                $close->set('status', $Similar->status());
+
+                $close->set('search_scope', $this->idImage->minimumProbabilityScore());
+                $close->set('min_scope', $Similar->minValue());
+                $close->set('max_scope', $Similar->maxValue());
+                $close->set('total', $Similar->total());
 
                 $close->save();
+
                 $this->pt();
             });
 
@@ -86,4 +64,4 @@ class idImageIndexedUpdateProductsProcessor extends idImageActionsProcessor impl
 
 }
 
-return 'idImageIndexedUpdateProductsProcessor';
+return 'idImageIndexedProductsProcessor';

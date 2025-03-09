@@ -19,65 +19,20 @@ idimage.panel.Home = function (config) {
             ]
         },
 
-        /* {
-             title: _('idimage_help'),
-             id: 'idimage_help',
-             layout: 'anchor',
-             deferredRender: true,
-             items: [
-                 {
-                     html: '<p>' + _('idimage_help_intro') + '</p>'
-                     , border: false
-                     , bodyCssClass: 'panel-desc'
-                     , bodyStyle: 'margin-bottom: 10px'
-                 }
-                 , {
-                     xtype: 'idimage-form-setting-update'
-                 }
-             ]
-         },*/
        /* {
-            title: _('idimage_indexeds'),
-            layout: 'anchor',
-            items: [
-                {
-                    html: _('idimage_intro_msg'),
-                    cls: 'panel-desc',
-                }, {
-                    xtype: 'idimage-grid-indexeds',
-                    cls: 'main-wrapper',
-                }]
-        },*/
-        {
             title: _('idimage_closes'),
             layout: 'anchor',
-            items: [{
-                html: _('idimage_intro_msg'),
-                cls: 'panel-desc',
-            }, {
-                xtype: 'idimage-grid-closes',
-                cls: 'main-wrapper',
-            }]
-        }
-    ];
-
-
-    if (idimage.config.cloud) {
-
-        tabs.push({
-            title: _('idimage_clouds'),
-            layout: 'anchor',
             items: [
                 {
                     html: _('idimage_intro_msg'),
                     cls: 'panel-desc',
                 }, {
-                    xtype: 'idimage-grid-clouds',
+                    xtype: 'idimage-grid-closes',
                     cls: 'main-wrapper',
                 }
             ]
-        })
-    }
+        }*/
+    ];
 
     Ext.apply(config, {
         baseCls: 'modx-formpanel',
@@ -117,6 +72,10 @@ function idImageState(wait) {
         progress = Ext.MessageBox.wait('', _('please_wait'))
     }
 
+    var panel = Ext.getCmp('idimage-panel-sync')
+
+    var form = panel.getForm();
+
     MODx.Ajax.request({
         url: idimage.config.connectorUrl,
         params: {
@@ -129,7 +88,25 @@ function idImageState(wait) {
                         progress.hide()
                     }
                     if (r.success) {
+
                         document.getElementById('idimage-panel-sync-stat').innerHTML = r.object.tpl;
+
+                        var rec = r.object;
+                        var stat = rec.stat;
+
+                        var object = {
+                            status: '<span class="idimage-status idimage-status-color-' + rec.status + '">' + rec.status + '</span>',
+                            total: stat.total + ' шт.',
+                            total_similar: stat.total_similar + ' шт.',
+                            total_completed: stat.total_completed + ' шт.',
+                            total_error: stat.total_error + ' шт.',
+                            enable: idimage.utils.renderBoolean(rec.enable),
+                            balance: idimage.utils.formatPrice(rec.balance),
+                        };
+
+                        form.setValues(object)
+
+
                     }
 
                 }, scope: this

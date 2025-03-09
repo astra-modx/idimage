@@ -11,21 +11,19 @@ $xpdo_meta_map['idImageClose']= array (
   'fields' => 
   array (
     'pid' => NULL,
+    'attempt' => 0,
     'picture' => NULL,
     'hash' => NULL,
-    'tags' => NULL,
-    'version' => 0,
     'status' => 1,
-    'status_service' => 1,
-    'upload' => 0,
-    'upload_link' => NULL,
     'received' => 0,
     'received_at' => 0,
     'active' => 1,
     'similar' => NULL,
     'errors' => NULL,
     'total' => 0,
+    'search_scope' => 0,
     'min_scope' => 0,
+    'max_scope' => 0,
     'updatedon' => 0,
     'createdon' => 0,
   ),
@@ -38,6 +36,15 @@ $xpdo_meta_map['idImageClose']= array (
       'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
+    ),
+    'attempt' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => false,
+      'default' => 0,
     ),
     'picture' => 
     array (
@@ -53,21 +60,6 @@ $xpdo_meta_map['idImageClose']= array (
       'phptype' => 'string',
       'null' => false,
     ),
-    'tags' => 
-    array (
-      'dbtype' => 'text',
-      'phptype' => 'json',
-      'null' => true,
-    ),
-    'version' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '10',
-      'attributes' => 'unsigned',
-      'phptype' => 'integer',
-      'null' => true,
-      'default' => 0,
-    ),
     'status' => 
     array (
       'dbtype' => 'int',
@@ -76,30 +68,6 @@ $xpdo_meta_map['idImageClose']= array (
       'phptype' => 'integer',
       'null' => true,
       'default' => 1,
-    ),
-    'status_service' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '10',
-      'attributes' => 'unsigned',
-      'phptype' => 'integer',
-      'null' => true,
-      'default' => 1,
-    ),
-    'upload' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => false,
-      'default' => 0,
-    ),
-    'upload_link' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '500',
-      'phptype' => 'string',
-      'null' => true,
     ),
     'received' => 
     array (
@@ -146,7 +114,25 @@ $xpdo_meta_map['idImageClose']= array (
       'null' => true,
       'default' => 0,
     ),
+    'search_scope' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => true,
+      'default' => 0,
+    ),
     'min_scope' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => true,
+      'default' => 0,
+    ),
+    'max_scope' => 
     array (
       'dbtype' => 'int',
       'precision' => '10',
@@ -246,6 +232,14 @@ $xpdo_meta_map['idImageClose']= array (
       'class' => 'msProduct',
       'local' => 'pid',
       'foreign' => 'id',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
+    ),
+    'Embedding' => 
+    array (
+      'class' => 'idImageEmbedding',
+      'local' => 'pid',
+      'foreign' => 'pid',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),

@@ -8,10 +8,6 @@
 
 namespace IdImage\Interfaces;
 
-
-use IdImage\Abstracts\EntityAbsract;
-
 interface ApiInterfaces
 {
-    public function entity(): EntityAbsract;
 }

@@ -1,11 +1,6 @@
 <?php
 
 return [
-    'cloud' => [
-        'xtype' => 'combo-boolean',
-        'value' => false,
-        'area' => 'idimage_main',
-    ],
     'enable' => [
         'xtype' => 'combo-boolean',
         'value' => true,
@@ -21,15 +16,14 @@ return [
         'value' => 'https://idimage.ru/api',
         'area' => 'idimage_main',
     ],
-    'site_url' => [
-        'xtype' => 'textfield',
-        'value' => '',
+    'minimum_probability_score' => [
+        'xtype' => 'numberfield',
+        'value' => 70,
         'area' => 'idimage_main',
     ],
-    'extract_path' => [
-        'xtype' => 'textfield',
-        'value' => '',
-        //'value' => '{core_path}cache/idimage/indexed',
+    'maximum_products_found' => [
+        'xtype' => 'numberfield',
+        'value' => 50,
         'area' => 'idimage_main',
     ],
 ];

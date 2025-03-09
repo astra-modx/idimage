@@ -53,6 +53,11 @@ class Query
         return $this->create('idImageClose');
     }
 
+    public function embeddings()
+    {
+        return $this->create('idImageEmbedding')->select($this->idImage->modx->getSelectColumns('idImageEmbedding', 'idImageEmbedding', ''));
+    }
+
     public function indexeds()
     {
         return $this->create('idImageIndexed');

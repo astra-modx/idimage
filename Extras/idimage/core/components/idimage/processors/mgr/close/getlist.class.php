@@ -33,24 +33,37 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
      */
     public function prepareQueryBeforeCount(xPDOQuery $c)
     {
+        $c->select($this->modx->getSelectColumns('idImageClose', 'idImageClose'));
+
         $query = trim($this->getProperty('query'));
         if ($query) {
             $c->where([
-                'picture:LIKE' => "%{$query}%",
-                'OR:hash:LIKE' => "%{$query}%",
+                'idImageClose.picture:LIKE' => "%{$query}%",
+                'OR:idImageClose.hash:LIKE' => "%{$query}%",
+                'OR:msProduct.pagetitle:LIKE' => "%{$query}%",
             ]);
             $id = (int)$query;
             if ($id > 0) {
                 $c->where([
-                    'OR:id:=' => $id,
-                    'OR:pid:=' => $id,
+                    'OR:idImageClose.id:=' => $id,
+                    'OR:idImageClose.pid:=' => $id,
                 ]);
             }
         }
 
+
         $received = $this->getProperty('received');
         if ($received != '') {
             $c->where("{$this->objectType}.received={$received}");
+        }
+
+        $similar = $this->getProperty('similar');
+        if ($similar != '') {
+            if ($similar == '1') {
+                $c->where("{$this->objectType}.total!=0");
+            } else {
+                $c->where("{$this->objectType}.total=0");
+            }
         }
 
         $pid = trim($this->getProperty('pid'));
@@ -63,10 +76,9 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
             $c->where("{$this->objectType}.status={$status}");
         }
 
-        $status_service = trim($this->getProperty('status_service'));
-        if (!empty($status_service)) {
-            $c->where("{$this->objectType}.status_service={$status_service}");
-        }
+
+        $c->leftJoin('msProduct', 'msProduct', 'msProduct.id=idImageClose.pid');
+        $c->select('msProduct.pagetitle AS pagetitle');
 
         return $c;
     }

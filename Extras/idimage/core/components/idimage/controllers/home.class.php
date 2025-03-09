@@ -62,12 +62,8 @@ class idimageHomeManagerController extends modExtraManagerController
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/default.window.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/closes/grid.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/closes/windows.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/clouds/grid.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/indexeds/grid.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/indexeds/windows.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/settings/form.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/sync/panel.js');
-
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/home.panel.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/sections/home.js');
 
@@ -75,11 +71,6 @@ class idimageHomeManagerController extends modExtraManagerController
 
         $this->idimage->config['date_format'] = $this->modx->getOption('idimage_date_format', null, '%d.%m.%y <span class="gray">%H:%M</span>');
         $this->idimage->config['status_map'] = $this->idimage->statusMap();
-        $this->idimage->config['status_service_map'] = $this->idimage->statusMapService();
-        $this->idimage->config['cloud'] = $this->idimage->isCloudUpload();
-
-
-        $this->idimage->config['indexed'] = $this->idimage->indexed()->toArray();
 
         // Stat
         $Stat = new \IdImage\Stat($this->idimage);

@@ -20,6 +20,10 @@ class Client
     /* @var string $token */
     private $token;
 
+    /**
+     * @var null|string
+     */
+
     /* @var string $apiUrl */
     private $apiUrl;
 
@@ -28,6 +32,7 @@ class Client
 
     private $headers = [];
     private $method = 'post';
+
 
     public function __construct(modX $modx)
     {
@@ -57,17 +62,7 @@ class Client
             ]);
     }
 
-    public function delete(string $url, $params = null)
-    {
-        return $this->setMethod('delete')
-            ->setHeaders([
-                'Content-Type: application/json',
-            ])
-            ->setData($params)
-            ->setUrl($url);
-    }
-
-    public function upload(string $url, string $offerId, $imagePath)
+    public function embedding(string $url, $imagePath)
     {
         return $this
             ->setUrl($url)
@@ -75,7 +70,6 @@ class Client
                 'Accept: application/json',
             ])
             ->setData([
-                'offer_id' => $offerId,
                 'image' => new CURLFile($imagePath, 'image/jpeg', basename($imagePath)),
             ]);
     }
@@ -96,8 +90,10 @@ class Client
         $url = $this->getUrl();
         $headers = $this->getHeaders();
 
+
+        $token = $this->token;
         $headers = array_merge($headers, [
-            'Authorization: Bearer '.$this->token,
+            'Authorization: Bearer '.$token,
         ]);
 
         $upload = false;

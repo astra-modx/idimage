@@ -1,5 +1,7 @@
 <?php
 
+use IdImage\Exceptions\ExceptionJsonModx;
+
 abstract class idImageActionsProcessor extends modProcessor
 {
     public $languageTopics = ['idimage:manager'];
@@ -17,19 +19,6 @@ abstract class idImageActionsProcessor extends modProcessor
     public function idimage()
     {
         return $this->idImage;
-    }
-
-    /* @var idImageIndexed $Indexed */
-    /* @var idImageIndexed $Indexed */
-    protected $Indexed;
-
-    public function indexed()
-    {
-        if (is_null($this->Indexed)) {
-            $this->Indexed = $this->idImage->indexed();
-        }
-
-        return $this->Indexed;
     }
 
     public function calculationSteps($query, $chunk)
@@ -121,5 +110,10 @@ abstract class idImageActionsProcessor extends modProcessor
         $sql = "UPDATE {$table} SET {$field} = {$value} WHERE id IN ({$ids})";
 
         return $this->modx->exec($sql);
+    }
+
+    public function canToken()
+    {
+        $this->idimage()->canToken();
     }
 }

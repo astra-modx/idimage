@@ -7,7 +7,19 @@ return [
         'properties' => [
             'pid' => [
                 'type' => 'numberfield',
-                'value' => null,
+                'value' => '',
+            ],
+            'min_scope' => [
+                'type' => 'numberfield',
+                'value' => 80,
+            ],
+            'max_scope' => [
+                'type' => 'numberfield',
+                'value' => 100,
+            ],
+            'limit' => [
+                'type' => 'numberfield',
+                'value' => 10,
             ],
         ],
     ],

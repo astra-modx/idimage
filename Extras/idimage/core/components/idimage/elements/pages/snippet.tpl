@@ -1,6 +1,6 @@
-<div class="idimage-row-help" style="width: 100%; padding: 10px 0">
+<div class="idimage-row-help" style="width: 100%;">
     <div class="idimage-method-crontab" style="margin: 0">
-        <h3>Сниппет для подключение на страницу</h3>
+        <h2>Сниппет для подключение</h2>
         <p>Разместите код на странице с товаром или в любом другом мест</p>
         <div class="idimage_help_command">
 <pre class="idimage_help_command_pre">
