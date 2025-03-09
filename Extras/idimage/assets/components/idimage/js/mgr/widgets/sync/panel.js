@@ -135,7 +135,7 @@ idimage.panel.Sync = function (config) {
                                             },
                                             {
                                                 xtype: 'displayfield',
-                                                name: 'closes',
+                                                name: 'total_similar',
                                                 value: '---',
                                                 width: '99%',
                                                 fieldLabel: 'Товаров с похожими',
@@ -144,10 +144,17 @@ idimage.panel.Sync = function (config) {
 
                                             {
                                                 xtype: 'displayfield',
-                                                name: 'awaiting_processing',
+                                                name: 'total_completed',
                                                 value: '---',
                                                 width: '99%',
-                                                fieldLabel: 'Товаров ожидающих индексации',
+                                                fieldLabel: 'Товаров завершенных',
+                                            },
+                                            {
+                                                xtype: 'displayfield',
+                                                name: 'total_strike',
+                                                value: '---',
+                                                width: '99%',
+                                                fieldLabel: 'Товаров с ошибками',
                                             },
                                             {
                                                 xtype: 'displayfield',
@@ -388,8 +395,9 @@ function indexedPoll(wait) {
                         object.status = '<span class="idimage-status idimage-status-color-' + object.status + '">' + object.status + '</span>'
 
                         object.size = formatFileSize(object.size)
-                        object.closes = object.closes + ' шт.'
-                        object.awaiting_processing = object.awaiting_processing + ' шт.'
+                        object.total_similar = object.total_similar + ' шт.'
+                        object.total_strike = object.total_strike + ' шт.'
+                        object.total_completed = object.total_completed + ' шт.'
                         object.active = idimage.utils.renderBoolean(object.active)
                         object.sealed = idimage.utils.renderBoolean(object.sealed)
                         object.upload = idimage.utils.renderBoolean(object.upload)
