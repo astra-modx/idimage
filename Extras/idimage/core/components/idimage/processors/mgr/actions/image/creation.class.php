@@ -11,9 +11,35 @@ class idImageCreationProcessor extends idImageActionsProcessor implements \IdIma
         return 100;
     }
 
+    public function fromCategories($query)
+    {
+        $categories = $this->getProperty('categories');
+        if (!empty($categories)) {
+            $ctx = 'web';
+            #$contexts = array_map('trim', explode(',',  'web'));
+            $categories = $this->modx->fromJSON($categories);
+            /* @var $pdoFetch pdoFetch */
+            $pdoFetch = $this->modx->getService('pdoFetch');
+
+            $products = [];
+            foreach ($categories as $category) {
+                $ids = $pdoFetch->getChildIds('msCategory', $category, 10, array('context' => $ctx));
+                $products = array_merge($products, $ids);
+            }
+            $products = array_map('intval', $products);
+            $products = array_filter(array_unique($products));
+            $query->where([
+                'msProduct.id:IN' => $products,
+            ]);
+        }
+    }
+
     public function withProgressIds()
     {
-        return $this->query()->filesCriteria()->ids('file_id', false);
+        $query = $this->query()->filesCriteria();
+        $this->fromCategories($query);
+
+        return $query->ids('file_id', false);
     }
 
     /**

@@ -18,3 +18,12 @@ $_lang['setting_idimage_maximum_products_found_desc'] = 'По умолчанию
 
 $_lang['setting_idimage_minimum_probability_score'] = 'Минимальный процент совпадения';
 $_lang['setting_idimage_minimum_probability_score_desc'] = 'По умолчанию: 70. Чем меньше процент, тем меньше товар будет похож на оригинальный. Рекомендуется не менее 70%, чтобы совпадения были более точными';
+
+$_lang['setting_idimage_send_file'] = 'Включить отправку файлов';
+$_lang['setting_idimage_send_file_desc'] = 'По умолчанию отключано. Если выбрать "Да", сайт будет отправлять бинарные даные изображений на сервер Id Image. Используется только в случае если изображения не доступны по ссылке.';
+
+$_lang['setting_idimage_root_parent'] = 'Родительский раздел для поиска похожих товаров';
+$_lang['setting_idimage_root_parent_desc'] = 'По умолчанию: 0. Это ID раздела, который будет отображаться в дереве категорий при создании товаров';
+
+$_lang['setting_idimage_site_url'] = 'Альтернативный URL';
+$_lang['setting_idimage_site_url_desc'] = 'Вы можете указать альтернативный URL для сервиса IDimage откуда будут скачиваться изображений товаров из интернета для создания векторных данных.';

@@ -102,6 +102,12 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
     getTopBar: function (config) {
         return [
 
+          /*  {
+                text: '<i class="icon icon-plus"></i> Создать товар',
+                handler: this.assignSelected,
+                scope: this
+            },*/
+
             {
                 text: '<i class="icon icon-cogs"></i> ' + _('idimage_actions_dropdown'),
                 cls: 'primary-button',
@@ -164,25 +170,25 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
             },
 
 
-            {
-                xtype: 'idimage-combo-status',
-                name: 'status',
-                width: 210,
-                custm: true,
-                clear: true,
-                addall: true,
-                value: '',
-                listeners: {
-                    select: {
-                        fn: this._filterByCombo,
-                        scope: this
-                    },
-                    afterrender: {
-                        fn: this._filterByCombo,
-                        scope: this
-                    }
-                }
-            },
+            /* {
+                 xtype: 'idimage-combo-status',
+                 name: 'status',
+                 width: 210,
+                 custm: true,
+                 clear: true,
+                 addall: true,
+                 value: '',
+                 listeners: {
+                     select: {
+                         fn: this._filterByCombo,
+                         scope: this
+                     },
+                     afterrender: {
+                         fn: this._filterByCombo,
+                         scope: this
+                     }
+                 }
+             },*/
 
 
             '->',
@@ -193,44 +199,49 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
     ,
 
 
-    updateClose: function (btn, e, row) {
-        if (typeof (row) != 'undefined') {
-            this.menu.record = row.data;
-        } else if (!this.menu.record) {
-            return false;
-        }
-        var id = this.menu.record.id;
+    windows: {
+        assignCategories: false,
+    },
 
-        MODx.Ajax.request({
-            url: this.config.url,
-            params: {
-                action: 'mgr/close/get',
-                id: id
-            },
-            listeners: {
-                success: {
-                    fn: function (r) {
-                        var w = MODx.load({
-                            xtype: 'idimage-close-window-update',
-                            id: Ext.id(),
-                            record: r,
-                            listeners: {
-                                success: {
-                                    fn: function () {
-                                        this.refresh();
-                                    }, scope: this
-                                }
+    assignSelected: function () {
+
+        var grid = this;
+        if (!grid.windows.assignCategories) {
+            grid.windows.assignCategories = MODx.load({
+                xtype: 'idimage-window-categorys-assign'
+                , listeners: {
+                    success: {
+                        fn: function (response) {
+                            var data = response.a.result.object
+                            idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
+                            grid.totalRecords = data.total
+                            grid.iterationPrevTotal = 0;
+                            grid.iterationNext = 0;
+                            grid.iterations = data.iterations;
+
+                            if (grid.totalRecords === 0) {
+                                MODx.msg.alert(_('success'), 'Изменений не найдено')
+                            } else {
+                                idimage.progress.updateText('В обработке 0 из ' + grid.totalRecords)
+                                grid.actionsCall('image/creation')
                             }
-                        });
-                        w.reset();
-                        w.setValues(r.object);
-                        w.show(e.target);
-                    }, scope: this
+                            var tree = Ext.getCmp('idimage-tree-modal-categorys-assign-window')
+                            tree.enable()
+                            this.refresh()
+                        }, scope: this
+                    },
+                    hide: {
+                        fn: function () {
+                            this.refresh()
+                        }, scope: this
+                    }
                 }
-            }
-        });
-    }
-    ,
+            })
+        }
+
+        grid.windows.assignCategories.show()
+    },
+
 
     removeClose: function () {
         this.action('remove')

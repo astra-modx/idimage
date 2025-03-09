@@ -74,6 +74,19 @@ class Client
             ]);
     }
 
+
+    public function embeddingUrl(string $uri, $pircture)
+    {
+        return $this
+            ->setUrl($uri)
+            ->setHeaders([
+                'Accept: application/json',
+            ])
+            ->setData([
+                'picture' => $pircture,
+            ]);
+    }
+
     public function toArray()
     {
         return [

@@ -66,12 +66,6 @@ class idImageClose extends xPDOSimpleObject
         return md5(json_encode($sizes));
     }
 
-    public function uploadLink()
-    {
-        // Использование временной ссылки
-        return $this->get('upload_link');
-    }
-
     public function link(string $host)
     {
         $picture = $this->get('picture');

@@ -47,11 +47,28 @@ class idImage
             'jsUrl' => $assetsUrl.'js/',
             'minimum_probability_score' => $this->modx->getOption('idimage_minimum_probability_score', $config, 70, true),
             'maximum_products_found' => $this->modx->getOption('idimage_maximum_products_found', $config, 50, true),
+            'root_parent' => $this->modx->getOption('idimage_root_parent', $config, 0, true),
+            'site_url' => $this->modx->getOption('idimage_site_url', $config, null),
+            'send_file' => $this->modx->getOption('idimage_send_file', $config, false),
         ], $config);
+
+        if (empty($this->config['site_url'])) {
+            $this->config['site_url'] = $this->modx->getOption('site_url');
+        }
 
         $this->modx->addPackage('idimage', $this->config['modelPath']);
         $this->modx->lexicon->load('idimage:default');
         $this->modx->loadClass('idImageClose');
+    }
+
+    public function siteUrl()
+    {
+        return rtrim($this->config['site_url'], '/');
+    }
+
+    public function isSendFile(): bool
+    {
+        return (boolean)$this->config['send_file'] ?? false;
     }
 
     public function hasToken()
@@ -168,6 +185,11 @@ class idImage
         if (!$this->hasToken()) {
             throw new ExceptionJsonModx($this->modx->lexicon('idimage_token_not_set'), 401);
         }
+    }
+
+    public function rootParent()
+    {
+        return $this->config['root_parent'] ?? 0;
     }
 
 }

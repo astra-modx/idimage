@@ -173,7 +173,8 @@ function actionsProgress(processor) {
 }
 
 function productCreation() {
-    actionsProgress('image/creation')
+    this.gridDefault().assignSelected()
+    //actionsProgress('image/creation')
 }
 
 function apiGetEmbedding() {

@@ -66,14 +66,25 @@ class idImageApiEmbeddingProcessor extends idImageActionsProcessor implements \I
                 if ($close->get('attempts') < 5) {
                     $embedding = null;
                     try {
-                        $this->idImage->makeThumbnail($close->picturePath(), function ($pathTmp) use (&$embedding) {
-                            // Получаем вектора для изображения
-                            $Response = $this->idImage->api()->ai()->embedding($pathTmp)->send();
+                        if (!$this->idImage->isSendFile()) {
+                            // Отправляем запрос на сервер с помощью url изображения
+                            $url = $close->link($this->idImage->siteUrl());
+                            $Response = $this->idImage->api()->ai()->embeddingUrl($url)->send();
                             if ($Response->isFail()) {
                                 $Response->exception();
                             }
                             $embedding = $Response->json('embedding');
-                        });
+                        } else {
+                            // Отправляем запрос на сервер с помощью файла изображения
+                            $this->idImage->makeThumbnail($close->picturePath(), function ($pathTmp) use (&$embedding) {
+                                // Получаем вектора для изображения
+                                $Response = $this->idImage->api()->ai()->embedding($pathTmp)->send();
+                                if ($Response->isFail()) {
+                                    $Response->exception();
+                                }
+                                $embedding = $Response->json('embedding');
+                            });
+                        }
                     } catch (Exception $e) {
                         $errors = [
                             'message' => $e->getMessage(),

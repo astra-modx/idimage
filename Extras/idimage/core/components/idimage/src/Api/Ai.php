@@ -28,6 +28,11 @@ class Ai extends ApiAbstract implements ApiInterfaces
         return $this->client->embedding('ai/embedding', $imagePath);
     }
 
+    public function embeddingUrl(string $url)
+    {
+        return $this->client->embeddingUrl('ai/embedding', $url);
+    }
+
     public function balance()
     {
         return $this->client->post('/ai/balance');

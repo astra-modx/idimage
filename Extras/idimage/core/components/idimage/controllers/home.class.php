@@ -57,6 +57,7 @@ class idimageHomeManagerController extends modExtraManagerController
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/idimage.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/utils.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/combo.js');
+        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/category.tree.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/default.cyclic.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/default.grid.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/default.window.js');
@@ -76,6 +77,7 @@ class idimageHomeManagerController extends modExtraManagerController
         $Stat = new \IdImage\Stat($this->idimage);
         $this->idimage->config['stat'] = $Stat->process()->tpl();
         $this->idimage->config['snippet'] = $this->snippet();
+        $this->idimage->config['context'] = 'web';
 
 
         $this->addHtml(

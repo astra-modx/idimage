@@ -58,6 +58,9 @@ $_lang['idimage_close_action_upload'] = 'Загрузить в облако';
 $_lang['idimage_close_upload'] = 'Загружено в облако';
 $_lang['idimage_close_upload_link'] = 'Ссылка в облаке';
 
+
+$_lang['idimage_action_assign'] = 'Создание товаров для категорий';
+
 ////////////////////////
 //// Closes
 ////////////////////////
