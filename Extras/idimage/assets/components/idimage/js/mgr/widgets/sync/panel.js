@@ -177,8 +177,8 @@ function productCreation() {
     //actionsProgress('image/creation')
 }
 
-function apiGetEmbedding() {
-    actionsProgress('api/embedding')
+function taskCreation() {
+    actionsProgress('task/creation')
 }
 
 function apiBalance() {

@@ -16,9 +16,14 @@ class idImageIndexedProductsProcessor extends idImageActionsProcessor implements
 
     public function withProgressIds()
     {
-        return $this->query()->closes()->where([
-            'received' => true, // с векторами
-        ])->ids();
+        $ids = $this->query()
+            ->closes()
+            ->leftJoin('idImageTask', 'Task', 'Task.pid=idImageClose.pid')
+            ->where([
+                'Task.id:IS NOT' => null,
+            ])->ids('idImageClose.id as id');
+
+        return $ids;
     }
 
 

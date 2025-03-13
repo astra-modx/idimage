@@ -4,7 +4,6 @@
 
     <object class="idImageClose" table="idimage_closes" extends="xPDOSimpleObject">
         <field key="pid" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false"/>
-        <field key="attempt" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0"/>
         <field key="picture" dbtype="varchar" precision="500" phptype="string" null="false"/>
         <field key="hash" dbtype="varchar" precision="32" phptype="string" null="false"/>
         <field key="status" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="1"/>
@@ -37,6 +36,7 @@
 
         <aggregate alias="Product" class="msProduct" local="pid" foreign="id" cardinality="one" owner="foreign"/>
         <aggregate alias="Embedding" class="idImageEmbedding" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
+        <aggregate alias="Task" class="idImageTask" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
     </object>
 
     <object class="idImageEmbedding" table="idimage_embeddings" extends="xPDOSimpleObject">
@@ -51,6 +51,43 @@
         </index>
         <aggregate alias="Product" class="msProduct" local="pid" foreign="id" cardinality="one" owner="foreign"/>
         <aggregate alias="Close" class="idImageClose" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
+    </object>
+
+
+    <object class="idImageTask" table="idimage_tasks" extends="xPDOSimpleObject">
+        <field key="pid" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false"/>
+        <field key="picture" dbtype="varchar" precision="500" phptype="string" null="true"/>
+        <field key="picture_path" dbtype="varchar" precision="500" phptype="string" null="true"/>
+        <field key="image_available" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="etag" dbtype="varchar" precision="32" phptype="string" null="false"/>
+        <field key="offer_id" dbtype="varchar" precision="32" phptype="string" null="false"/>
+        <field key="status" dbtype="varchar" precision="32" phptype="string" null="false"/>
+        <field key="task_id" dbtype="varchar" precision="32" phptype="string" null="true"/>
+        <field key="type" dbtype="varchar" precision="32" phptype="string" null="true"/>
+        <field key="errors" dbtype="text" phptype="json" null="true"/>
+        <field key="attempt" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0"/>
+
+        <field key="updatedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+        <field key="createdon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+
+        <index alias="pid" name="pid" primary="false" unique="true" type="BTREE">
+            <column key="pid" length="" collation="A" null="false"/>
+        </index>
+
+        <index alias="task_id" name="task_id" primary="false" unique="false" type="BTREE">
+            <column key="pid" length="" collation="A" null="false"/>
+        </index>
+
+        <index alias="status" name="status" primary="false" unique="false" type="BTREE">
+            <column key="status" length="" collation="A" null="false"/>
+        </index>
+
+        <index alias="etag" name="etag" primary="false" unique="false" type="BTREE">
+            <column key="etag" length="" collation="A" null="false"/>
+        </index>
+
+        <aggregate alias="Close" class="idImageClose" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
+        <aggregate alias="Embedding" class="idImageEmbedding" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
     </object>
 
 

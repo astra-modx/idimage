@@ -43,21 +43,31 @@ return [
         'area' => 'idimage_main',
     ],
 
-    'idimage_limit_indexed' => [
+    'limit_upload' => [
         'xtype' => 'numberfield',
-        'value' => 50,
+        'value' => 5,
         'area' => 'idimage_limit',
     ],
 
-    'idimage_limit_creation' => [
+    'limit_creation' => [
+        'xtype' => 'numberfield',
+        'value' => 1000,
+        'area' => 'idimage_limit',
+    ],
+
+    'limit_received' => [
+        'xtype' => 'numberfield',
+        'value' => 1000,
+        'area' => 'idimage_limit',
+    ],
+    'limit_poll' => [
+        'xtype' => 'numberfield',
+        'value' => 1000,
+        'area' => 'idimage_limit',
+    ],
+    'limit_indexed' => [
         'xtype' => 'numberfield',
         'value' => 100,
-        'area' => 'idimage_limit',
-    ],
-
-    'idimage_limit_embedding' => [
-        'xtype' => 'numberfield',
-        'value' => 10,
         'area' => 'idimage_limit',
     ],
 ];

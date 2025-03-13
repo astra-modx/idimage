@@ -151,9 +151,9 @@ idimage.window.AssignCategorys = function (config) {
         , maxHeight: 450
         , height: 450
         , url: idimage.config.connector_url
-        , action: 'mgr/actions/image/creation'
+        , action: 'mgr/actions/image/product/creation'
         , baseParams: {
-            action: 'mgr/actions/image/creation',
+            action: 'mgr/actions/image/product/creation',
             steps: true
         }
         /* ,  buttons: [

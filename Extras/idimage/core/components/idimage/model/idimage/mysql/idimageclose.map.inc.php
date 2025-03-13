@@ -11,7 +11,6 @@ $xpdo_meta_map['idImageClose']= array (
   'fields' => 
   array (
     'pid' => NULL,
-    'attempt' => 0,
     'picture' => NULL,
     'hash' => NULL,
     'status' => 1,
@@ -36,15 +35,6 @@ $xpdo_meta_map['idImageClose']= array (
       'attributes' => 'unsigned',
       'phptype' => 'integer',
       'null' => false,
-    ),
-    'attempt' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '10',
-      'attributes' => 'unsigned',
-      'phptype' => 'integer',
-      'null' => false,
-      'default' => 0,
     ),
     'picture' => 
     array (
@@ -238,6 +228,14 @@ $xpdo_meta_map['idImageClose']= array (
     'Embedding' => 
     array (
       'class' => 'idImageEmbedding',
+      'local' => 'pid',
+      'foreign' => 'pid',
+      'cardinality' => 'one',
+      'owner' => 'foreign',
+    ),
+    'Task' => 
+    array (
+      'class' => 'idImageTask',
       'local' => 'pid',
       'foreign' => 'pid',
       'cardinality' => 'one',

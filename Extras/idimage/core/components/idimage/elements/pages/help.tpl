@@ -35,11 +35,11 @@
 
             </div>
             <div class="idimage-stat-section">
-                <h3>2: Получение векторов</h3>
+                <h3>2: Задания</h3>
 
-                <span class="idimage-btn x-btn x-btn-small x-btn-icon-small-left primary-button x-btn-noicon" onclick="apiGetEmbedding()">
+                <span class="idimage-btn x-btn x-btn-small x-btn-icon-small-left primary-button x-btn-noicon" onclick="taskCreation()">
                      <button type="button" class=" x-btn-text">
-                             <i class=" icon icon-play"></i> Получить вектора
+                             <i class=" icon icon-play"></i> Создать задания
                      </button>
                 </span>
                 <p><em>По API будут загружены векторы из сервиса IDimage. Для работы требуется положительный баланс в сервисе.</em></p>

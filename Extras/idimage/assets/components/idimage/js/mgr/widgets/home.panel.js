@@ -19,19 +19,32 @@ idimage.panel.Home = function (config) {
             ]
         },
 
-       /* {
-            title: _('idimage_closes'),
+        {
+            title: _('idimage_tasks'),
             layout: 'anchor',
             items: [
                 {
-                    html: _('idimage_intro_msg'),
+                    html: _('idimage_tasks_intro_msg'),
                     cls: 'panel-desc',
                 }, {
-                    xtype: 'idimage-grid-closes',
+                    xtype: 'idimage-grid-tasks',
                     cls: 'main-wrapper',
                 }
             ]
-        }*/
+        }
+        /* {
+             title: _('idimage_closes'),
+             layout: 'anchor',
+             items: [
+                 {
+                     html: _('idimage_intro_msg'),
+                     cls: 'panel-desc',
+                 }, {
+                     xtype: 'idimage-grid-closes',
+                     cls: 'main-wrapper',
+                 }
+             ]
+         }*/
     ];
 
     Ext.apply(config, {

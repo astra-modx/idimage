@@ -2,6 +2,7 @@
 
 use IdImage\Actions;
 use IdImage\Exceptions\ExceptionJsonModx;
+use IdImage\Sender;
 use IdImage\Support\Query;
 
 include_once MODX_CORE_PATH.'components/idimage/vendor/autoload.php';
@@ -50,9 +51,12 @@ class idImage
             'root_parent' => $this->modx->getOption('idimage_root_parent', $config, 0, true),
             'site_url' => $this->modx->getOption('idimage_site_url', $config, null),
             'send_file' => $this->modx->getOption('idimage_send_file', $config, false),
-            'limit_indexed' => $this->modx->getOption('idimage_limit_indexed', $config, 50, true),
-            'limit_creation' => $this->modx->getOption('idimage_limit_creation', $config, 100, true),
-            'limit_embedding' => $this->modx->getOption('idimage_limit_embedding', $config, 10, true),
+            'limit_poll' => $this->modx->getOption('idimage_limit_poll', $config, 1000, true),
+            'limit_upload' => $this->modx->getOption('idimage_limit_upload', $config, 10, true),
+            'limit_creation' => $this->modx->getOption('idimage_limit_creation', $config, 1000, true),
+            'limit_received' => $this->modx->getOption('idimage_limit_received', $config, 1000, true),
+            'limit_indexed' => $this->modx->getOption('idimage_limit_indexed', $config, 100, true),
+            'default_thumb' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAKUlEQVR42mNgGAWjYBSMglEwCIOhGEENEBsDgmrAAGQ9gP4HAEKaBUxFSYd7AAAAAElFTkSuQmCC',
         ], $config);
 
         if (empty($this->config['site_url'])) {
@@ -62,6 +66,7 @@ class idImage
         $this->modx->addPackage('idimage', $this->config['modelPath']);
         $this->modx->lexicon->load('idimage:default');
         $this->modx->loadClass('idImageClose');
+        $this->modx->loadClass('idImageTask');
     }
 
     public function siteUrl()
@@ -82,6 +87,11 @@ class idImage
     public function statusMap()
     {
         return idImageClose::$statusMap;
+    }
+
+    public function statusMapTask()
+    {
+        return idImageTask::$statusMap;
     }
 
     public function minimumProbabilityScore(): int
@@ -168,9 +178,9 @@ class idImage
         return $this->phpThumb;
     }
 
-    public function makeThumbnail(string $path, Closure $callback): void
+    public function makeThumbnail(string $path): string
     {
-        \IdImage\Support\PhpThumb::makeThumbnail($this->modx, $path, $callback);
+        return \IdImage\Support\PhpThumb::makeThumbnail($this->modx, $path);
     }
 
     public function balance()
@@ -195,20 +205,52 @@ class idImage
         return $this->config['root_parent'] ?? 0;
     }
 
-    public function limitIndexed()
+    public function limitUpload()
     {
-        return $this->config['limit_indexed'] ?? 50;
+        $limit = (int)$this->config['limit_upload'] ?? 10;
+        if ($limit > 10) {
+            $limit = 10;
+        }
+        return $limit;
     }
-
 
     public function limitCreation()
     {
-        return $this->config['limit_creation'] ?? 50;
+        return (int)$this->config['limit_creation'] ?? 50;
     }
 
-    public function limitEmbedding()
+    public function limitPoll()
     {
-        return $this->config['limit_embedding'] ?? 10;
+        $limit = (int)$this->config['limit_poll'] ?? 1000;
+        if ($limit > 1000) {
+            $limit = 1000;
+        }
+        return $limit;
+    }
+
+    public function limitIndexed()
+    {
+        return (int)$this->config['limit_indexed'] ?? 100;
+    }
+
+    public function limitReceived()
+    {
+        $min = 1;
+        $max = 1000;
+        $limit = (int)$this->config['limit_received'] ?? 10;
+        if (empty($limit)) {
+            $limit = 10;
+        } elseif ($limit < $min) {
+            $limit = $min;
+        } elseif ($limit > $max) {
+            $limit = $max;
+        }
+        return $limit;
+    }
+
+    public function sender()
+    {
+        return new Sender($this);
     }
 
 }

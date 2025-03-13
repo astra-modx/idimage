@@ -510,3 +510,29 @@ idimage.combo.FilterSimilar = function (config) {
 };
 Ext.extend(idimage.combo.FilterSimilar, idimage.combo.Active);
 Ext.reg('idimage-combo-filter-similar', idimage.combo.FilterSimilar);
+/**
+ * Filed Resource
+ * @param config
+ * @constructor
+ */
+idimage.combo.FilterTaskStatus = function (config) {
+    config = config || {};
+    Ext.applyIf(config, {
+        name: 'status',
+        hiddenName: 'status',
+        baseParams: {
+            action: 'mgr/misc/task/status/getlist',
+            combo: true,
+            addall: config.addall || 0
+        },
+        tpl: new Ext.XTemplate(
+            '<tpl for="."><div class="x-combo-list-item">',
+            '{name}</span>',
+            '</div></tpl>', {
+                compiled: true
+            }),
+    });
+    idimage.combo.FilterTaskStatus.superclass.constructor.call(this, config);
+};
+Ext.extend(idimage.combo.FilterTaskStatus, idimage.combo.Active);
+Ext.reg('idimage-combo-filter-task-status', idimage.combo.FilterTaskStatus);

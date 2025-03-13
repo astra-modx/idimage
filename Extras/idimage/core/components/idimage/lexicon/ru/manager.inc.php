@@ -28,9 +28,18 @@ $_lang['idimage_manual_desc'] = '<h2>Быстрый старт</h2>
 ////////////////////////
 //// Install
 ////////////////////////
+$_lang['idimage_actions_api_task_received'] = 'Отправить задания';
+$_lang['idimage_actions_api_task_poll'] = 'Получить задания';
+$_lang['idimage_actions_api_task_upload'] = 'Отправить изображения';
+$_lang['idimage_actions_task_creation'] = 'Создать задания';
+$_lang['idimage_actions_task_destroy'] = 'Уничтожить все задания';
+$_lang['idimage_task_action_poll'] = 'Получить задание';
+$_lang['idimage_task_action_received'] = 'Отправить задание';
+
 $_lang['idimage_button_install'] = 'Установить компонент';
 $_lang['idimage_button_download'] = 'Скачать компонент';
 $_lang['idimage_button_download_encryption'] = 'Скачать компонент c шифрацией';
+$_lang['idimage_task_action_action/received'] = 'Получен задание';
 
 ////////////////////////
 //// Combo
@@ -50,16 +59,35 @@ $_lang['idimage_grid_search'] = 'Поиск';
 $_lang['idimage_grid_actions'] = 'Действия';
 $_lang['idimage_actions_dropdown'] = 'Действия';
 
+$_lang['idimage_task_action_send'] = 'Запрос в сервис';
+$_lang['idimage_task_action_resetattempts'] = 'Сбросить попытки';
+$_lang['idimage_task_action_remove'] = 'Удалить задание';
+$_lang['idimage_tasks'] = 'Задания';
+$_lang['idimage_tasks_intro_msg'] = 'Вы можете выделять сразу несколько предметов при помощи Shift или Ctrl.';
 
-////////////////////////
-//// Clouds
-
-$_lang['idimage_close_action_upload'] = 'Загрузить в облако';
-$_lang['idimage_close_upload'] = 'Загружено в облако';
-$_lang['idimage_close_upload_link'] = 'Ссылка в облаке';
+$_lang['idimage_pid'] = 'Pid';
+$_lang['idimage_attempt'] = 'Попытки';
+$_lang['idimage_hash'] = 'hash';
+$_lang['idimage_status'] = 'Статус';
+$_lang['idimage_type'] = 'Тип';
+$_lang['idimage_createdon'] = 'Дата создания';
+$_lang['idimage_updatedon'] = 'Дата обновления';
+$_lang['idimage_active'] = 'Включен';
+$_lang['idimage_picture'] = 'Изображение';
+$_lang['idimage_total'] = 'Кол-во';
+$_lang['idimage_task_id'] = 'Task id';
+$_lang['idimage_image_available'] = 'Изображение доступно';
+$_lang['idimage_etag'] = 'Etag';
 
 
 $_lang['idimage_action_assign'] = 'Создание товаров для категорий';
+
+////////////////////////
+//// Closes
+////////////////////////
+
+$_lang['idimage_task_confirmed'] = 'Подтвержден';
+
 
 ////////////////////////
 //// Closes

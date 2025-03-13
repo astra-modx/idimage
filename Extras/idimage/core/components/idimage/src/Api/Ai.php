@@ -9,28 +9,23 @@
 namespace IdImage\Api;
 
 use IdImage\Abstracts\ApiAbstract;
-use IdImage\Exceptions\ExceptionJsonModx;
 use IdImage\Interfaces\ApiInterfaces;
 
 class Ai extends ApiAbstract implements ApiInterfaces
 {
-    public function embedding(string $imagePath)
+    public function embedding(string $imagePath, string $etag)
     {
-        $size = @getimagesize($imagePath);
-        if ($size[0] !== 224 || $size[1] !== 224) {
-            throw new ExceptionJsonModx('Неверный размер изображения, должно быть 224х224');
-        }
-
-        if ($size['mime'] !== 'image/jpeg') {
-            throw new ExceptionJsonModx('Неверный формат изображения, должно быть jpeg');
-        }
-
-        return $this->client->embedding('ai/embedding', $imagePath);
+        return $this->client->file('ai/embedding', $imagePath, [
+            'etag' => $etag,
+        ]);
     }
 
-    public function embeddingUrl(string $url)
+    public function embeddingUrl(string $pictureUrl, string $etag)
     {
-        return $this->client->embeddingUrl('ai/embedding', $url);
+        return $this->client->post('ai/embedding', [
+            'etag' => $etag,
+            'picture' => $pictureUrl,
+        ]);
     }
 
     public function balance()

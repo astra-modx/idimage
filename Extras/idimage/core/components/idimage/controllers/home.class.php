@@ -63,6 +63,8 @@ class idimageHomeManagerController extends modExtraManagerController
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/default.window.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/closes/grid.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/closes/windows.js');
+        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/tasks/grid.js');
+        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/tasks/windows.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/settings/form.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/sync/panel.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/home.panel.js');
@@ -72,6 +74,7 @@ class idimageHomeManagerController extends modExtraManagerController
 
         $this->idimage->config['date_format'] = $this->modx->getOption('idimage_date_format', null, '%d.%m.%y <span class="gray">%H:%M</span>');
         $this->idimage->config['status_map'] = $this->idimage->statusMap();
+        $this->idimage->config['status_map_task'] = $this->idimage->statusMapTask();
 
         // Stat
         $Stat = new \IdImage\Stat($this->idimage);

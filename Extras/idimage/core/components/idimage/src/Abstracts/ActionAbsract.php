@@ -42,21 +42,34 @@ abstract class ActionAbsract
     }
 
 
-    public function add(string $key, $icon = null, $button = true, $menu = true, $cls = null)
+    public function add(string $key, $icon = null, $button = true, $menu = true, $cls = null, $multiple = false)
     {
         $icon = is_string($icon) ? 'icon '.$icon : '';
         $cls = is_string($cls) ? $cls : '';
-
+        # 'multiple' => $this->modx->lexicon('ms2_ft_selected_activate'),
 
         $lex = strtolower('idimage_'.$this->prefix.'_action_'.$key);
-        $this->actions[] = [
+        $one = $this->object->xpdo->lexicon($lex);
+        $data = [
             'cls' => $cls,
             'icon' => $icon,
-            'title' => $this->object->xpdo->lexicon($lex),
+            'title' => $one,
             'action' => $key.$this->action,
             'button' => $button,
             'menu' => $menu,
         ];
+
+
+        if ($multiple) {
+            $lex = strtolower('idimage_'.$this->prefix.'_actions_'.$key);
+            $text = $this->object->xpdo->lexicon($lex);
+            if ($text === $lex) {
+                $text = $one;
+            }
+            $data['multiple'] = $text;
+        }
+
+        $this->actions[] = $data;
 
         return $this;
     }

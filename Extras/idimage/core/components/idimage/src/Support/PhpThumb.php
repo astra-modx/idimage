@@ -8,15 +8,13 @@
 
 namespace IdImage\Support;
 
-
-use Closure;
 use Exception;
 use modPhpThumb;
 use modX;
 
 class PhpThumb
 {
-    public static function makeThumbnail(modX $modx, string $path, Closure $callback, array $options = []): void
+    public static function makeThumbnail(modX $modx, string $path, array $options = []): string
     {
         if (!class_exists('modPhpThumb')) {
             if (file_exists(MODX_CORE_PATH.'model/phpthumb/modphpthumb.class.php')) {
@@ -82,17 +80,6 @@ class PhpThumb
         file_put_contents($filePathTmp, $output);
         unset($output);
 
-        try {
-            $callback($filePathTmp);
-        } catch (Exception $e) {
-            if (file_exists($filePathTmp)) {
-                unlink($filePathTmp);
-            }
-            throw $e;
-        } finally {
-            if (file_exists($filePathTmp)) {
-                unlink($filePathTmp);
-            }
-        }
+        return $filePathTmp;
     }
 }

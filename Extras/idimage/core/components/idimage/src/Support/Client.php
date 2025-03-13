@@ -17,9 +17,6 @@ class Client
     /* @var null|array $data */
     private $data = null;
 
-    /* @var string $token */
-    private $token;
-
     /**
      * @var null|string
      */
@@ -36,8 +33,8 @@ class Client
 
     public function __construct(modX $modx)
     {
-        $this->token = $modx->getOption('idimage_token', null, null);
         $this->apiUrl = $modx->getOption('idimage_api_url', null, null);
+        $this->token = $modx->getOption('idimage_token', null, null);
         if (empty($this->token)) {
             throw new ExceptionJsonModx('Token not set, setting idimage_token');
         }
@@ -62,29 +59,26 @@ class Client
             ]);
     }
 
-    public function embedding(string $url, $imagePath)
+    public function file(string $url, $imagePath, $data = null)
     {
+        $size = @getimagesize($imagePath);
+        if ($size[0] !== 224 || $size[1] !== 224) {
+            throw new ExceptionJsonModx('Неверный размер изображения, должно быть 224х224');
+        }
+
+        if ($size['mime'] !== 'image/jpeg') {
+            throw new ExceptionJsonModx('Неверный формат изображения, должно быть jpeg');
+        }
+
+        $data = $data ?? [];
+        $data['image'] = new CURLFile($imagePath, 'image/jpeg', basename($imagePath));
+
         return $this
             ->setUrl($url)
             ->setHeaders([
                 'Accept: application/json',
             ])
-            ->setData([
-                'image' => new CURLFile($imagePath, 'image/jpeg', basename($imagePath)),
-            ]);
-    }
-
-
-    public function embeddingUrl(string $uri, $pircture)
-    {
-        return $this
-            ->setUrl($uri)
-            ->setHeaders([
-                'Accept: application/json',
-            ])
-            ->setData([
-                'picture' => $pircture,
-            ]);
+            ->setData($data);
     }
 
     public function toArray()
@@ -177,7 +171,7 @@ class Client
         return $this;
     }
 
-    protected function setHeaders(array $headers)
+    public function setHeaders(array $headers)
     {
         $this->headers = $headers;
 

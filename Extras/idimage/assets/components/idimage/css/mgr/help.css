@@ -21,6 +21,15 @@
 
 }
 
+.idimage-status-msg {
+    display: block;
+    max-width: 250px;
+    margin-top: 5px;
+    word-wrap: break-word; /* Перенос длинных слов */
+    overflow-wrap: break-word; /* Альтернативный вариант */
+    white-space: normal; /* Разрешает перенос строк */
+}
+
 
 .idimage-status {
     color: #5cb85c;
@@ -177,7 +186,17 @@
     border-color: green;
 }
 
+.idimage-status-color-pending {
+    color: #0c40ec;
+    border-color: #0c40ec;
+}
+
 .idimage-status-color-failed {
+    color: red;
+    border-color: red;
+}
+
+.idimage-status-color-attempt {
     color: red;
     border-color: red;
 }
@@ -204,6 +223,11 @@
 }
 
 .idimage-status-color-invalid {
+    color: red;
+    border-color: red;
+}
+
+.idimage-status-color-fail {
     color: red;
     border-color: red;
 }

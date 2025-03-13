@@ -1,5 +1,7 @@
 <?php
 
+use IdImage\Entites\TaskEntity;
+
 /**
  * @package idimage
  */
@@ -81,16 +83,32 @@ class idImageClose extends xPDOSimpleObject
         return (string)$this->get('pid');
     }
 
-    public function picturePath()
+    public function picturePath(bool $absolute = true)
     {
-        return MODX_BASE_PATH.ltrim($this->get('picture'), '/');
+        $path = ltrim($this->get('picture'), '/');
+        if (!$absolute) {
+            return $path;
+        }
+
+        return MODX_BASE_PATH.$path;
     }
 
-    public function embedding()
+    public function embedding(): idImageEmbedding
     {
-        return $this->getOne('Embedding');
+        /* @var idImageEmbedding $Embedding */
+        if (!$Embedding = $this->getOne('Embedding')) {
+            $Embedding = $this->xpdo->newObject('idImageEmbedding');
+            $Embedding->set('hash', $this->get('hash'));
+            $Embedding->set('pid', $this->get('pid'));
+        }
+
+        return $Embedding;
     }
 
+    public function task()
+    {
+        return $this->getOne('Task');
+    }
 
     public function getEmbedding()
     {
@@ -101,19 +119,31 @@ class idImageClose extends xPDOSimpleObject
         return $this->embedding()->getEmbedding();
     }
 
-    public function attempts()
+
+    public function action(\IdImage\Entites\TaskEntity $Task)
     {
-        $attempt = $this->get('attempt') + 1;
-        $c = $this->xpdo->newQuery($this->_class);
-        $c->command('UPDATE');
-        $c->set([
-            'attempt' => $attempt,
-        ]);
-        $c->where([
-            'id' => $this->get('id'),
-        ]);
-        $c->prepare();
-        $c->stmt->execute();
+        if ($Task->isReceived() && !$this->get('received')) {
+            $this->set('received', true);
+            $this->set('received_at', time());
+        }
+
+        if ($Task->getStatus() === TaskEntity::STATUS_COMPLETED) {
+            $embedding = $this->createOrFirst();
+            $embedding->set('hash', $this->get('hash'));
+            $this->set('embedding', $embedding);
+            $this->addOne($Embedding);
+        }
+
+        $errors = null;
+        if ($Task->getStatus() === \IdImage\Entites\TaskEntity::STATUS_FAILED) {
+            $errors = [
+                'msg' => $Task->getMsg(),
+            ];
+        }
+
+        $this->set('errors', $errors);
+        $this->save();
     }
+
 
 }

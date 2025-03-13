@@ -41,7 +41,6 @@ class xPDOQueryIdImage extends xPDOQuery_mysql
                 $callback($row);
             }
         }
-
         return $this;
     }
 
@@ -52,6 +51,13 @@ class xPDOQueryIdImage extends xPDOQuery_mysql
         if ($addSelect) {
             $this->select($field);
         }
+
+        if (strripos($field, 'as') !== false) {
+            if (preg_match('/\bas\s+(\w+)/i', $field, $matches)) {
+                $field = $matches[1];
+            }
+        }
+
         if ($this->prepare() && $this->stmt->execute()) {
             while ($row = $this->stmt->fetch(PDO::FETCH_ASSOC)) {
                 $ids[] = (int)$row[$field];

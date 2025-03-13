@@ -4,6 +4,7 @@ namespace IdImage;
 
 use idImage;
 use IdImage\Api\Ai;
+use IdImage\Api\Task;
 use IdImage\Support\Client;
 
 /**
@@ -15,15 +16,22 @@ use IdImage\Support\Client;
 class Actions
 {
     private Ai $ai;
+    private Task $task;
 
     public function __construct(idImage $idImage)
     {
         $Client = new Client($idImage->modx);
         $this->ai = new Ai($Client);
+        $this->task = new Task($Client);
     }
 
     public function ai()
     {
         return $this->ai;
+    }
+
+    public function task()
+    {
+        return $this->task;
     }
 }

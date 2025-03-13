@@ -15,6 +15,41 @@ class CrontabControllerTests extends modCrontabController
         /* @var idImage $idImage */
         $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
 
+        $Sender = new \IdImage\Sender($idImage);
+
+
+        $data = [
+            'ids' => [
+                696,
+            ],
+        ];
+
+        /* @var modProcessorResponse $response */
+        $response = $this->modx->runProcessor('actions/api/task/upload', $data, array(
+            'processors_path' => MODX_CORE_PATH.'components/idimage/processors/mgr/',
+        ));
+        dd($response->response);
+
+        if ($response->isError()) {
+            return $response->getAllErrors();
+        }
+
+        return $response->response;
+
+
+        /* @var idImageTask $Task */
+        $Task = $this->modx->getObject('idImageTask', 576);
+
+
+        $res = $Sender->poll($Task);
+        dd($Task->toArray());
+
+
+        $url = 'https://platon.site/assets/images/products/26053/b181eb18012611ed995b704d7b6583c9-ddf4ecc24f0011efb177e89c25dff007.jpg';
+        $etag = '2';
+        $Response = $idImage->api()->task()->create($url, $etag)->send();
+
+        dd($Response->toArray());
 
         $CollectionProduct = new CollectionProduct($idImage);
         $CollectionProduct

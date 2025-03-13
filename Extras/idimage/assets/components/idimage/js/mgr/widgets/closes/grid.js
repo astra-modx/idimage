@@ -59,11 +59,11 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
 
     getColumns: function () {
         return [
-            {header: _('idimage_close_id'), dataIndex: 'id', width: 20, sortable: true, hidden: true},
-            {header: _('idimage_close_picture'), dataIndex: 'picture', width: 70, sortable: true, renderer: idimage.utils.renderImage},
+            {header: _('idimage_id'), dataIndex: 'id', width: 20, sortable: true, hidden: true},
+            {header: _('idimage_picture'), dataIndex: 'picture', width: 70, sortable: true, renderer: idimage.utils.renderImage},
             //{header: _('idimage_close_pid'), dataIndex: 'pid', width: 70, sortable: true, renderer: idimage.utils.resourceLink},
             {header: _('idimage_close_pagetitle'), dataIndex: 'pagetitle', width: 70, sortable: true, renderer: idimage.utils.resourceLinkProduct},
-            {header: _('idimage_close_status'), dataIndex: 'status', width: 70, sortable: true, hidden: true, renderer: idimage.utils.statusClose},
+            {header: _('idimage_status'), dataIndex: 'status', width: 70, sortable: true, hidden: true, renderer: idimage.utils.statusClose},
 
             {
                 header: _('idimage_close_ball'), dataIndex: 'search_scope', sortable: true, width: 70, renderer: function (v, row, r) {
@@ -79,15 +79,15 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
             {header: _('idimage_close_min_scope'), dataIndex: 'min_scope', sortable: true, width: 70, hidden: true},
             {header: _('idimage_close_max_scope'), dataIndex: 'max_scope', sortable: true, width: 70, hidden: true},
             {header: _('idimage_close_errors'), dataIndex: 'errors', sortable: true, width: 70, hidden: true, renderer: idimage.utils.jsonDataError},
-            {header: _('idimage_close_total'), dataIndex: 'total', sortable: true, width: 70},
+            {header: _('idimage_total'), dataIndex: 'total', sortable: true, width: 70, hidden: true},
             {header: _('idimage_close_attempt'), dataIndex: 'attempt', width: 70, sortable: true, hidden: true},
 
             //{header: _('idimage_close_tags'), dataIndex: 'tags', sortable: true, width: 150, renderer: idimage.utils.jsonDataTags},
             {header: _('idimage_close_received'), dataIndex: 'received', sortable: true, width: 75, renderer: idimage.utils.renderBoolean},
-            {header: _('idimage_close_received_at'), dataIndex: 'received_at', sortable: true, width: 75, renderer: idimage.utils.formatDate},
-            {header: _('idimage_close_createdon'), dataIndex: 'createdon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
-            {header: _('idimage_close_updatedon'), dataIndex: 'updatedon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
-            {header: _('idimage_close_active'), dataIndex: 'active', width: 75, renderer: idimage.utils.renderBoolean, hidden: true},
+            {header: _('idimage_close_received_at'), dataIndex: 'received_at', sortable: true, width: 75, renderer: idimage.utils.formatDate, hidden: true},
+            {header: _('idimage_createdon'), dataIndex: 'createdon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
+            {header: _('idimage_updatedon'), dataIndex: 'updatedon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
+            {header: _('idimage_active'), dataIndex: 'active', width: 75, renderer: idimage.utils.renderBoolean, hidden: true},
             /*{
                 header: _('idimage_grid_actions'),
                 dataIndex: 'actions',
@@ -223,7 +223,7 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
                                 MODx.msg.alert(_('success'), 'Изменений не найдено')
                             } else {
                                 idimage.progress.updateText('В обработке 0 из ' + grid.totalRecords)
-                                grid.actionsCall('image/creation')
+                                grid.actionsCall('image/product/creation')
                             }
                             var tree = Ext.getCmp('idimage-tree-modal-categorys-assign-window')
                             tree.enable()

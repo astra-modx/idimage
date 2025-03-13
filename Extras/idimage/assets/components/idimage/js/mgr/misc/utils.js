@@ -146,7 +146,7 @@ idimage.utils.resourceLinkProduct = function (value, id, r) {
         return value;
     }
 
-    var pid =  r.data.pid
+    var pid = r.data.pid
 
 
     return String.format(
@@ -164,6 +164,18 @@ idimage.utils.statusClose = function (value) {
     return String.format(
         '<span class="idimage-status idimage-status-color-{0}">{0}</span>',
         status
+    );
+};
+idimage.utils.statusTask = function (value, col, row) {
+    var msg = row.data.msg || ''
+    if (msg) {
+        var color = value === 'failed' ? 'red' : 'green'
+        msg = String.format('<br><span class="idimage-status-msg ' + color + '">{0}</span>', msg);
+    }
+    return String.format(
+        '<span class="idimage-status idimage-status-color-{0}">{0}</span>{1}',
+        value,
+        msg
     );
 };
 
@@ -187,7 +199,7 @@ idimage.utils.formatPrice = function (value) {
 
 idimage.utils.renderImage = function (value, row, r) {
     if (Ext.isEmpty(value)) {
-        value = miniShop2.config['default_thumb'];
+        value = idimage.config['default_thumb'];
     } else {
         if (!/\/\//.test(value)) {
             if (!/^\//.test(value)) {

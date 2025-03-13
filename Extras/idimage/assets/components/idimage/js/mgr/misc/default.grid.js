@@ -120,7 +120,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
             beforerender: function (grid) {
                 var store = grid.getStore()
                 store.on('load', function (res) {
-                    console.log(22                )
+                    console.log(22)
                     ;
                     if (res.reader && res.reader['jsonData']) {
                         grid.total = res.reader['jsonData']['total'];
@@ -320,7 +320,8 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
     },
 
     actionMenu: function (action, icon, one, cls) {
-        var lex = action.replace('/', '_'); // Заменяет первый слэш
+        var lex = action.replace(/\//g, '_'); // Заменяет все слеши
+
 
         var k = 'idimage_actions_' + lex;
 
@@ -339,6 +340,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         if (cls) {
             clsd = clsd + ' ' + cls;
         }
+        console.log(k);
         return {
             cls: clsd,
             text: icon + '' + label,
@@ -415,15 +417,15 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
     actionsProgress: function (controller) {
 
         var grid = this;
-        var ids = this._getSelectedIds();
+        // var ids = this._getSelectedIds();
 
-        var total = ids.length;
+        //var total = ids.length;
 
         var text = _('idimage_actions_confirm_text')
 
-        if (!total) {
-            total = this.total
-        }
+        /* if (!total) {
+             total = this.total
+         }*/
 
         var lex = controller.replace('/', '_'); // Заменяет первый слэш
 
@@ -432,14 +434,13 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         text += '<span class="idimage_actions_window_info">' + _('actions') + ': <b>' + label + '</b></span>'
 
 
-        if (controller !== 'indexed/products') {
-            if (total > 0) {
-                text += '<span class="idimage_actions_window_info">' + _('idimage_actions_selected_records') + ': <b>' + total + '</b></span>'
-            }
-        }
+        /*  if (controller !== 'indexed/products') {
+              if (total > 0) {
+                  text += '<span class="idimage_actions_window_info">' + _('idimage_actions_selected_records') + ': <b>' + total + '</b></span>'
+              }
+          }*/
 
         var desc_key = 'idimage_actions_' + lex + '_desc';
-        console.log(desc_key);
         var desc = _(desc_key);
         if (desc !== undefined) {
             text += '<span class="idimage_actions_window_info">' + desc + '</span>'
@@ -454,9 +455,9 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
                     steps: true
                 }
 
-                if (total > 0) {
+               /* if (total > 0) {
                     params.ids = Ext.util.JSON.encode(ids)
-                }
+                }*/
                 idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
                 grid.actionsAjax(params,
                     function (grid, response) {
