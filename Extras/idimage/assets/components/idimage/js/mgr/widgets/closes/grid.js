@@ -53,48 +53,48 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
 
     getFields: function () {
         return [
-            'id', 'pid', 'max_scope', 'attempt', 'pagetitle', 'min_scope', 'search_scope', 'total', 'status', 'picture', 'upload', 'upload_link', 'tags', 'errors', 'received_at', 'received', 'createdon', 'updatedon', 'active', 'actions'
+            'id', 'pid', 'max_scope', 'pagetitle', 'images', 'min_scope', 'search_scope', 'total', 'status', 'picture', 'tags', 'errors', 'createdon', 'updatedon', 'active', 'actions'
         ];
     },
 
     getColumns: function () {
         return [
-            {header: _('idimage_id'), dataIndex: 'id', width: 20, sortable: true, hidden: true},
-            {header: _('idimage_picture'), dataIndex: 'picture', width: 70, sortable: true, renderer: idimage.utils.renderImage},
+            {header: _('id'), dataIndex: 'id', width: 20, sortable: true, hidden: true},
             //{header: _('idimage_close_pid'), dataIndex: 'pid', width: 70, sortable: true, renderer: idimage.utils.resourceLink},
-            {header: _('idimage_close_pagetitle'), dataIndex: 'pagetitle', width: 70, sortable: true, renderer: idimage.utils.resourceLinkProduct},
+            {
+                header: _('idimage_close_pagetitle'),
+                dataIndex: 'pagetitle', width: 70,
+                sortable: true,
+                renderer: idimage.utils.resourceLinkProduct
+            },
             {header: _('idimage_status'), dataIndex: 'status', width: 70, sortable: true, hidden: true, renderer: idimage.utils.statusClose},
 
+            {header: _('idimage_picture'), dataIndex: 'picture', width: 70, sortable: true, renderer: idimage.utils.renderImage},
             {
-                header: _('idimage_close_ball'), dataIndex: 'search_scope', sortable: true, width: 70, renderer: function (v, row, r) {
-                    var max = r.data.max_scope || '-';
-                    var min = r.data.min_scope || '-';
-                    var search = r.data.search_scope || '-';
-                    var total = r.data.total || '-';
-
-                    return String.format('Total: {0}<br>  Min scope: {1}<br>Max scope: {2}', total, min, max);
-                }
+                header: _('idimage_close_images'),
+                dataIndex: 'images',
+                width: 250,
+                renderer: idimage.utils.renderImages
             },
             {header: _('idimage_close_search_scope'), dataIndex: 'search_scope', sortable: true, width: 70, hidden: true},
             {header: _('idimage_close_min_scope'), dataIndex: 'min_scope', sortable: true, width: 70, hidden: true},
             {header: _('idimage_close_max_scope'), dataIndex: 'max_scope', sortable: true, width: 70, hidden: true},
-            {header: _('idimage_close_errors'), dataIndex: 'errors', sortable: true, width: 70, hidden: true, renderer: idimage.utils.jsonDataError},
+            {
+                header: _('idimage_close_errors'),
+                dataIndex: 'errors', sortable: true, width: 70, hidden: true, renderer: idimage.utils.jsonDataError
+            },
             {header: _('idimage_total'), dataIndex: 'total', sortable: true, width: 70, hidden: true},
-            {header: _('idimage_close_attempt'), dataIndex: 'attempt', width: 70, sortable: true, hidden: true},
 
-            //{header: _('idimage_close_tags'), dataIndex: 'tags', sortable: true, width: 150, renderer: idimage.utils.jsonDataTags},
-            {header: _('idimage_close_received'), dataIndex: 'received', sortable: true, width: 75, renderer: idimage.utils.renderBoolean},
-            {header: _('idimage_close_received_at'), dataIndex: 'received_at', sortable: true, width: 75, renderer: idimage.utils.formatDate, hidden: true},
             {header: _('idimage_createdon'), dataIndex: 'createdon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
             {header: _('idimage_updatedon'), dataIndex: 'updatedon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
             {header: _('idimage_active'), dataIndex: 'active', width: 75, renderer: idimage.utils.renderBoolean, hidden: true},
-            /*{
+            {
                 header: _('idimage_grid_actions'),
                 dataIndex: 'actions',
                 id: 'actions',
                 width: 50,
                 renderer: idimage.utils.renderActions
-            }*/
+            }
         ];
     },
 

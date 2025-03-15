@@ -56,6 +56,7 @@ class idImage
             'limit_creation' => $this->modx->getOption('idimage_limit_creation', $config, 1000, true),
             'limit_received' => $this->modx->getOption('idimage_limit_received', $config, 1000, true),
             'limit_indexed' => $this->modx->getOption('idimage_limit_indexed', $config, 100, true),
+            'limit_show_similar_products' => $this->modx->getOption('idimage_limit_show_similar_products', $config, 5, true),
             'default_thumb' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAKUlEQVR42mNgGAWjYBSMglEwCIOhGEENEBsDgmrAAGQ9gP4HAEKaBUxFSYd7AAAAAElFTkSuQmCC',
         ], $config);
 
@@ -211,6 +212,7 @@ class idImage
         if ($limit > 10) {
             $limit = 10;
         }
+
         return $limit;
     }
 
@@ -225,6 +227,7 @@ class idImage
         if ($limit > 1000) {
             $limit = 1000;
         }
+
         return $limit;
     }
 
@@ -245,12 +248,18 @@ class idImage
         } elseif ($limit > $max) {
             $limit = $max;
         }
+
         return $limit;
     }
 
     public function sender()
     {
         return new Sender($this);
+    }
+
+    public function limitShowSimilarProducts()
+    {
+        return (int)$this->config['limit_show_similar_products'] ?? 5;
     }
 
 }

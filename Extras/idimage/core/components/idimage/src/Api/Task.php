@@ -83,4 +83,16 @@ class Task extends ApiAbstract implements ApiInterfaces
         ]);
     }
 
+    public function completed($ids)
+    {
+        return $this->client->post("/ai/task/completed", [
+            'ids' => $ids,
+        ]);
+    }
+
+    public function stat()
+    {
+        return $this->client->post("/ai/task/stat");
+    }
+
 }

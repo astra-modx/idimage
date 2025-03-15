@@ -15,6 +15,37 @@ class CrontabControllerTests extends modCrontabController
         /* @var idImage $idImage */
         $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
 
+
+        $api = $idImage->api();
+
+
+        $query = $idImage->query()
+            ->tasks()
+            ->innerJoin('idImageClose', 'Close', 'Close.pid = idImageTask.pid')
+            ->where([
+                'idImageTask.status' => idImageTask::STATUS_PENDING,
+            ]);
+
+
+        $ids = [
+            '1d2c39f5d26c159ef49446d65a8b0aa2',
+        ];
+
+        $Response = $api->task()->completed($ids)->send();
+        if (!$Response->isOk()) {
+            $Response->exception();
+        }
+        $items = $Response->json('items');
+
+        $completed = [];
+        foreach ($items as $taskId => $status) {
+            if ($status == 2) {
+                $completed[] = $taskId;
+            }
+        }
+
+        dd(count($completed));
+
         $Sender = new \IdImage\Sender($idImage);
 
 

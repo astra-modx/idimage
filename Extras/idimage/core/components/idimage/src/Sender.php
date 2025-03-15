@@ -132,12 +132,13 @@ class Sender
             function (idImageTask $task, TaskEntity $entity) {
                 if ($entity->isReceived()) {
                     $task->set('type', $entity->getType());
+                    $task->set('hash', $entity->getEtag());
 
                     // Создаем запись для векторов
                     $embedding = $task->embedding();
                     $embedding->set('embedding', $entity->getEmbedding());
                     if (!$embedding->save()) {
-                        throw new ExceptionJsonModx('Не удалось сохранить вектора для изображения');
+                        throw new ExceptionJsonModx('Не удалось сохранить вектора для изображения taskId: '.$entity->getTaskId());
                     }
                 }
 

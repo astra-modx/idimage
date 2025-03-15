@@ -147,11 +147,16 @@ idimage.utils.resourceLinkProduct = function (value, id, r) {
     }
 
     var pid = r.data.pid
+    var max = r.data.max_scope || '-';
+    var min = r.data.min_scope || '-';
+    var search = r.data.search_scope || '-';
+    var total = r.data.total || '-';
 
+    var ball = String.format(_('idimage_close_ball'), max, min, search, total);
 
     return String.format(
         '<a href="?a=resource/update&id={0}" class="ms2-link" target="{1}">{2}</a><br>' +
-        '<span class="idimage-product-id">Product ID: {3}</span>',
+        '<span class="idimage-product-id">Product ID: {3}</span><div class="idimage-ball">' + ball + '</div>',
         pid,
         '_blank',
         value,
@@ -208,7 +213,28 @@ idimage.utils.renderImage = function (value, row, r) {
         }
     }
     var pid = r.data.pid
-    return String.format('<a href="/index.php?id=' + pid + '" target="_blank"><img src="{0}" /></a>', value);
+    return String.format('<a class="idimage-image-link" href="/index.php?id=' + pid + '" target="_blank"><img src="{0}" /></a>', value);
+};
+
+
+idimage.utils.renderImages = function (images) {
+
+    var output = [];
+    var out
+    var probability
+    for (var i = 0; i < images.length; i++) {
+        var r = images[i];
+        if (r.image) {
+            out = String.format('<a class="idimage-image-link" href="/index.php?id={1}" target="_blank"><img src="{0}" /></a>', r.image, r.pid)
+            probability = String.format('<div class="idimage-similar-probability" title="{1}">{0}%</div>', r.probability, _('idimage_probability'))
+            output.push('<div class="idimage-similar-wrapper"><div class="idimage-similar-image">' + out + '</div>' + probability + '</div>')
+        } else {
+            output.push('<div class="idimage-similar-wrapper"><div class="idimage-similar-image"><div class="idimage-placeholder">ПОХОЖИЕ</div></div></div>');
+        }
+        //String.format('<a class="idimage-image-link" href="/index.php?id=' + pid + '" target="_blank"><img src="{0}" /></a>', value)
+    }
+
+    return '<div class="idimage-similar-images">' + output.join('') + '</div>';
 };
 
 

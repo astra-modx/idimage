@@ -70,4 +70,9 @@ return [
         'value' => 100,
         'area' => 'idimage_limit',
     ],
+    'limit_show_similar_products' => [
+        'xtype' => 'numberfield',
+        'value' => 5,
+        'area' => 'idimage_limit',
+    ],
 ];

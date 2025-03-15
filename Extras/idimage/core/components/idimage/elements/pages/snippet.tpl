@@ -1,22 +1,22 @@
 <div class="idimage-row-help" style="width: 100%;">
     <div class="idimage-method-crontab" style="margin: 0">
-        <h2>Сниппет для подключение</h2>
-        <p>Разместите код на странице с товаром или в любом другом мест</p>
+        <h2>[[%idimage_snippent_title]]</h2>
+        <p>[[%idimage_snippent_text]]</p>
         <div class="idimage_help_command">
 <pre class="idimage_help_command_pre">
 
 {var $ids = $modx->runSnippet('idImageClose', [
-    'pid' => $modx->resource->id,
-    'min_scope' => 65,
-    'limit' => 4
+'pid' => $modx->resource->id,
+'min_scope' => 65,
+'limit' => 4
 ])}
-{if $ids}
-    {$modx->runSnippet('msProducts', [
+    {if $ids}
+        {$modx->runSnippet('msProducts', [
         'resources' => $ids,
         'sortby' => "FIELD(msProduct.id, {$ids})",
         'parents' => 0,
-    ])}
-{/if}
+        ])}
+    {/if}
 
 </pre>
         </div>

@@ -9,11 +9,19 @@ idimage.panel.Home = function (config) {
             layout: 'anchor',
             items: [
                 {
-                    html: _('idimage_sync_gallery_intro'),
+                    html: _('idimage_desc_sync'),
                     bodyCssClass: 'panel-desc',
                 }
                 , {
                     xtype: 'idimage-panel-sync',
+                    cls: 'main-wrapper',
+                },
+                {
+                    html: _('idimage_desc_products'),
+                    cls: 'panel-desc',
+                }
+                , {
+                    xtype: 'idimage-grid-closes',
                     cls: 'main-wrapper',
                 }
             ]
@@ -27,7 +35,21 @@ idimage.panel.Home = function (config) {
                     html: _('idimage_tasks_intro_msg'),
                     cls: 'panel-desc',
                 }, {
+                    xtype: 'idimage-panel-stat',
+                    cls: 'main-wrapper',
+                }, {
                     xtype: 'idimage-grid-tasks',
+                    cls: 'main-wrapper',
+                }
+            ]
+        },
+
+        {
+            title: _('idimage_help'),
+            layout: 'anchor',
+            items: [
+                {
+                    xtype: 'idimage-panel-help',
                     cls: 'main-wrapper',
                 }
             ]
@@ -102,22 +124,36 @@ function idImageState(wait) {
                     }
                     if (r.success) {
 
-                        document.getElementById('idimage-panel-sync-stat').innerHTML = r.object.tpl;
+
+                        function formatTotal(stat, keys) {
+                            return keys.reduce((acc, key) => {
+                                const template = _(`idimage_navbar_${key}`) || '';
+                                const value = stat[key] !== undefined ? stat[key] : '';
+                                acc[key] = template ? String.format(template, value) : value;
+                                return acc;
+                            }, {});
+                        }
 
                         var rec = r.object;
-                        var stat = rec.stat;
+                        var stat = rec.stat || {}; // Защита от undefined
 
                         var object = {
-                            status: '<span class="idimage-status idimage-status-color-' + rec.status + '">' + rec.status + '</span>',
-                            total: stat.total + ' шт.',
-                            total_similar: stat.total_similar + ' шт.',
-                            total_completed: stat.total_completed + ' шт.',
-                            total_error: stat.total_error + ' шт.',
+                            ...formatTotal(stat, [
+                                'total',
+                                'total_similar',
+                                'total_completed',
+                                'total_error',
+                                'total_embedding',
+                                'total_files',
+                                'total_tasks',
+                                'total_tasks_completed',
+                                'total_tasks_pending'
+                            ]),
                             enable: idimage.utils.renderBoolean(rec.enable),
                             balance: idimage.utils.formatPrice(rec.balance),
                         };
 
-                        form.setValues(object)
+                        form.setValues(object);
 
 
                     }

@@ -26,10 +26,10 @@ class Query
 
     public function files()
     {
-        $query = $this->create('msProductFile');
-        $query->select('msProductFile.id as file_id,msProductFile.product_id as id, msProductFile.url as image, msProductFile.path as path');
-        $query->leftJoin('idImageClose', 'Close', 'Close.pid = msProductFile.product_id');
-        $query->innerJoin('msProduct', 'msProduct', 'msProduct.id = msProductFile.product_id');
+        $query = $this->create('msProduct');
+        $query->select('File.id as file_id,File.product_id as id, File.url as image, File.path as path');
+        //$query->leftJoin('idImageClose', 'Close', 'Close.pid = msProductFile.product_id');
+        $query->innerJoin('msProductFile', 'File', 'File.product_id = msProduct.id');
 
 
         return $query;
@@ -42,8 +42,9 @@ class Query
         return $this->files()->where([
             'msProduct.published' => true,
             'msProduct.deleted:!=' => true,
-            'Close.pid:IS' => null,
-            'msProductFile.path:LIKE' => '%/'.$thumbnailSize.'/%',
+            //'Close.pid:IS' => null,
+            'File.active' => true,
+            'File.path:LIKE' => '%/'.$thumbnailSize.'/%',
         ]);
     }
 

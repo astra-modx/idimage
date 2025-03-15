@@ -20,16 +20,36 @@ class idImageApiTaskSendProcessor extends idImageActionsProcessor implements \Id
             ->innerJoin('idImageClose', 'Close', 'Close.pid = idImageTask.pid');
     }
 
+    public function apiCompletedTask()
+    {
+        $query = $this->tasks()->where(['idImageTask.status' => idImageTask::STATUS_PENDING]);
+        $ids = $query->ids('idImageTask.task_id as task_id');
+        $completed = null;
+        if (!empty($ids)) {
+            $Response = $this->idimage()->api()->task()->completed($ids)->send();
+            if (!$Response->isOk()) {
+                $Response->exception();
+            }
+            $items = $Response->json('items');
+            foreach ($items as $taskId => $status) {
+                if ($status == 2) {
+                    $completed[] = $taskId;
+                }
+            }
+        }
+
+        return $completed;
+    }
+
+
     public function withProgressIds()
     {
-        $query = $this->tasks()
-            ->where([
-                'idImageTask.status' => idImageTask::STATUS_PENDING,
-            ]);
+        if (!$completedIds = $this->apiCompletedTask()) {
+            return null;
+        }
+        $query = $this->tasks()->where(['idImageTask.task_id:IN' => $completedIds]);
 
-        $ids = $query->ids('idImageTask.id as id');
-
-        return $ids;
+        return $query->ids('idImageTask.id as id');
     }
 
 

@@ -25,7 +25,7 @@ class idimageHomeManagerController extends modExtraManagerController
      */
     public function getLanguageTopics()
     {
-        return ['idimage:manager', 'idimage:default'];
+        return ['idimage:manager', 'idimage:default', 'idimage:help', 'idimage:navbar'];
     }
 
 
@@ -63,9 +63,11 @@ class idimageHomeManagerController extends modExtraManagerController
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/default.window.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/closes/grid.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/closes/windows.js');
+        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/tasks/stat.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/tasks/grid.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/tasks/windows.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/settings/form.js');
+        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/help/panel.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/sync/panel.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/home.panel.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/sections/home.js');

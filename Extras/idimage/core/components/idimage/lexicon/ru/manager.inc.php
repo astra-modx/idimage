@@ -3,6 +3,19 @@
 include_once 'setting.inc.php';
 
 $_lang['idimage'] = 'Id Image';
+$_lang['idimage_help'] = 'Помощь';
+
+$_lang['idimage_refresh'] = '<i class="icon icon-refresh"></i> &nbsp;  Обновить';
+$_lang['idimage_queue_refresh'] = '<i class="icon icon-refresh"></i> &nbsp;  Обновить статистику';
+$_lang['idimage_button_balance'] = '<i class="icon icon-money"></i> &nbsp;  Запросить баланс';
+$_lang['idimage_help'] = 'Помощь';
+$_lang['idimage_help_intro'] = 'Каталог';
+$_lang['idimage_stat_title'] = '<h3>Информация из сервиса idimage.ru</h3>';
+$_lang['idimage_stat_title_intro'] = '<em>Дождитесь завершения обработки заданий для получения векторов.</em>';
+
+$_lang['idimage_desc_sync'] = 'Управление каталогом';
+$_lang['idimage_desc_products'] = 'Товары';
+
 $_lang['idimage_menu_desc'] = 'Похожие товары';
 $_lang['idimage_intro_msg'] = 'Вы можете выделять сразу несколько предметов при помощи Shift или Ctrl.';
 
@@ -24,17 +37,14 @@ $_lang['idimage_manual_desc'] = '<h2>Быстрый старт</h2>
 
 ';
 
+$_lang['idimage_stat_pending'] = 'В очереди на обработку';
+$_lang['idimage_stat_completed'] = 'Завершенных заданий';
+$_lang['idimage_stat_failed'] = 'Завершенных с ошибкой';
 
 ////////////////////////
 //// Install
 ////////////////////////
-$_lang['idimage_actions_api_task_received'] = 'Отправить задания';
-$_lang['idimage_actions_api_task_poll'] = 'Получить задания';
-$_lang['idimage_actions_api_task_upload'] = 'Отправить изображения';
-$_lang['idimage_actions_task_creation'] = 'Создать задания';
-$_lang['idimage_actions_task_destroy'] = 'Уничтожить все задания';
-$_lang['idimage_task_action_poll'] = 'Получить задание';
-$_lang['idimage_task_action_received'] = 'Отправить задание';
+
 
 $_lang['idimage_button_install'] = 'Установить компонент';
 $_lang['idimage_button_download'] = 'Скачать компонент';
@@ -74,7 +84,7 @@ $_lang['idimage_createdon'] = 'Дата создания';
 $_lang['idimage_updatedon'] = 'Дата обновления';
 $_lang['idimage_active'] = 'Включен';
 $_lang['idimage_picture'] = 'Изображение';
-$_lang['idimage_total'] = 'Кол-во';
+$_lang['idimage_total'] = 'Кол-во похожих';
 $_lang['idimage_task_id'] = 'Task id';
 $_lang['idimage_image_available'] = 'Изображение доступно';
 $_lang['idimage_etag'] = 'Etag';
@@ -107,6 +117,9 @@ $_lang['idimage_close_pid'] = 'Товар';
 $_lang['idimage_close_errors'] = 'Ошибки';
 $_lang['idimage_close_picture'] = 'Изображение';
 $_lang['idimage_close_attempt'] = 'Попытки';
+$_lang['idimage_close_images'] = 'Похожие изображения';
+$_lang['idimage_probability'] = 'Вероятность схожести';
+$_lang['idimage_close_ball'] = 'Похожих: {0} шт. <br>Мин. бал: {1}%<br>Макс. бал: {2}%';
 
 $_lang['idimage_close_tags'] = 'Теги фильтрации';
 $_lang['idimage_close_received'] = 'Векторы получены';
@@ -118,8 +131,6 @@ $_lang['idimage_close_active'] = 'Активно';
 
 
 # Actions
-$_lang['crontabmanager_actions_dropdown'] = 'Действия';
-$_lang['crontabmanager_actions_dropdown_status'] = 'Смена статусов';
 $_lang['idimage_actions_creation'] = 'Найти изображения';
 $_lang['idimage_actions_destroy'] = 'Удалить все';
 $_lang['idimage_actions_upload'] = 'Начать загрузку в cloud';
@@ -135,7 +146,9 @@ $_lang['idimage_actions_status_proccessing'] = 'Установить стату�
 $_lang['idimage_actions_status_queue'] = 'Установить статус "В очереди"';
 
 
+$_lang['idimage_stat_title'] = '<h3>Создание товаров</h3';
 $_lang['idimage_close_create'] = 'Создать товар';
+$_lang['idimage_close_create_intro'] = '<em>Товары с изображениями будут созданы для получения векторов и дальнейшей индексации.</em>';
 $_lang['idimage_close_update'] = 'Изменить товар';
 $_lang['idimage_close_enable'] = 'Включить товар';
 $_lang['idimage_closes_enable'] = 'Включить товары';

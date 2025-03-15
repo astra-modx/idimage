@@ -78,10 +78,6 @@ class idImageClose extends xPDOSimpleObject
         return rtrim($host, '/').'/'.ltrim($picture, '/');
     }
 
-    public function offerId()
-    {
-        return (string)$this->get('pid');
-    }
 
     public function picturePath(bool $absolute = true)
     {
@@ -120,29 +116,71 @@ class idImageClose extends xPDOSimpleObject
     }
 
 
-    public function action(\IdImage\Entites\TaskEntity $Task)
+    public function getProducts()
     {
-        if ($Task->isReceived() && !$this->get('received')) {
-            $this->set('received', true);
-            $this->set('received_at', time());
+        $similar = $this->get('similar');
+        $products = [];
+
+        $idImage = $this->xpdo->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
+        $limit = $idImage->limitShowSimilarProducts();
+        if (!empty($similar)) {
+            if (!empty($similar) && is_array($similar)) {
+                $ids = array_column($similar, 'offer_id');
+                $rows = null;
+
+                $thumbnailSize = $this->xpdo->getOption('ms2_product_thumbnail_size', null, 'small');
+
+                $q = $this->xpdo->newQuery('msProduct');
+                $q->select('msProduct.id, File.url as url');
+                $q->where(array(
+                    'msProduct.published' => true,
+                    'msProduct.id:IN' => $ids,
+                    'File.active' => true,
+                    'File.path:LIKE' => '%/'.$thumbnailSize.'/%',
+                ));
+                $q->innerJoin('msProductFile', 'File', 'File.product_id = msProduct.id');
+                if ($q->prepare() && $q->stmt->execute()) {
+                    while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $rows[(int)$row['id']] = $row['url'];
+                    }
+                }
+
+                foreach ($similar as $id => $item) {
+                    $offer_id = (int)$item['offer_id'];
+                    if (!isset($rows[$offer_id])) {
+                        continue;
+                    }
+                    $image = $rows[$offer_id];
+
+                    $products[] = [
+                        'pid' => $offer_id,
+                        'image' => $image,
+                        'probability' => $item['probability'],
+                    ];
+                }
+
+                // Сортируем массив по вероятности
+                usort($products, function ($a, $b) {
+                    return ($b['probability'] > $a['probability']) ? 1 : (($b['probability'] < $a['probability']) ? -1 : 0);
+                });
+            }
         }
 
-        if ($Task->getStatus() === TaskEntity::STATUS_COMPLETED) {
-            $embedding = $this->createOrFirst();
-            $embedding->set('hash', $this->get('hash'));
-            $this->set('embedding', $embedding);
-            $this->addOne($Embedding);
+        // Ограничиваем массив до 5 элементов
+        $products = array_slice($products, 0, $limit);
+
+        // Если в массиве меньше 5 элементов, заполняем недостающие значениями по умолчанию
+        $default_product = [
+            'pid' => 0,
+            'image' => null, // Путь к изображению по умолчанию
+            'probability' => 0,
+        ];
+
+        while (count($products) < $limit) {
+            $products[] = $default_product;
         }
 
-        $errors = null;
-        if ($Task->getStatus() === \IdImage\Entites\TaskEntity::STATUS_FAILED) {
-            $errors = [
-                'msg' => $Task->getMsg(),
-            ];
-        }
-
-        $this->set('errors', $errors);
-        $this->save();
+        return $products;
     }
 
 

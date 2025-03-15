@@ -38,8 +38,9 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
     {
         $query = $this->query()->filesCriteria();
         $this->fromCategories($query);
+        $ids = $query->ids('msProduct.id as id');
 
-        return $query->ids('file_id', false);
+        return $ids;
     }
 
     /**
@@ -49,21 +50,17 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
     {
         return $this->withProgressBar(function (array $ids) {
             $files = $this->query()->files()->where(['id:IN' => $ids]);
-
             $files->collection(function (array $row) {
                 // путь до изображения
                 $imagePath = MODX_BASE_PATH.ltrim($row['image'], '/');
                 $pid = (int)$row['id'];
                 $picture = str_ireplace(MODX_BASE_PATH, '', $imagePath);
 
-
                 /* @var idImageClose $Close */
                 if (!$Close = $this->idImage->modx->getObject('idImageClose', ['pid' => $pid])) {
                     $Close = $this->idImage->modx->newObject('idImageClose');
                     $Close->set('pid', $pid);
                 }
-
-
                 $status = idImageClose::STATUS_QUEUE;
                 $errors = null;
                 if (!file_exists($imagePath)) {
@@ -77,9 +74,13 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
                 $Close->set('hash', $Close->createHash($imagePath));
                 $Close->set('picture', $picture);
                 $Close->set('status', $status);
-                $Close->save();
+
+                if (!$Close->save()) {
+                    throw new \IdImage\Exceptions\ExceptionJsonModx('Failed to save Close object: '.$pid);
+                }
                 $this->pt();
             });
+
 
             return $this->total();
         });

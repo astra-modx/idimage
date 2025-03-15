@@ -92,7 +92,10 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
     public function prepareRow(xPDOObject $object)
     {
         $array = $object->toArray();
+        unset($array['similar']);
         $cloud = $this->setCheckbox('cloud');
+
+        $array['images'] = $object->getProducts();
 
         $IndexedAction = new \IdImage\Support\IndexedAction($object, basename(__DIR__));
         $actions = $IndexedAction->getList(function ($action) use ($cloud) {

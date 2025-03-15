@@ -120,8 +120,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
             beforerender: function (grid) {
                 var store = grid.getStore()
                 store.on('load', function (res) {
-                    console.log(22)
-                    ;
+                    idImageState()
                     if (res.reader && res.reader['jsonData']) {
                         grid.total = res.reader['jsonData']['total'];
                         var el = document.getElementById(grid.config.id + '-total_info')
@@ -340,7 +339,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         if (cls) {
             clsd = clsd + ' ' + cls;
         }
-        console.log(k);
+
         return {
             cls: clsd,
             text: icon + '' + label,
@@ -426,8 +425,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         /* if (!total) {
              total = this.total
          }*/
-
-        var lex = controller.replace('/', '_'); // Заменяет первый слэш
+        var lex = controller.replace(/\//g, '_'); // Заменяет все слеши
 
         var label = _('idimage_actions_' + lex);
 
@@ -441,6 +439,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
           }*/
 
         var desc_key = 'idimage_actions_' + lex + '_desc';
+        console.log(desc_key);
         var desc = _(desc_key);
         if (desc !== undefined) {
             text += '<span class="idimage_actions_window_info">' + desc + '</span>'
