@@ -7,8 +7,6 @@
         <field key="picture" dbtype="varchar" precision="500" phptype="string" null="false"/>
         <field key="hash" dbtype="varchar" precision="32" phptype="string" null="false"/>
         <field key="status" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="1"/>
-        <field key="received" dbtype="tinyint" precision="1" phptype="boolean" null="false" default="0"/>
-        <field key="received_at" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
         <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
         <field key="similar" dbtype="text" phptype="json" null="true"/>
         <field key="errors" dbtype="text" phptype="json" null="true"/>
@@ -26,9 +24,6 @@
         </index>
         <index alias="hash" name="hash" primary="false" unique="false" type="BTREE">
             <column key="hash" length="" collation="A" null="false"/>
-        </index>
-        <index alias="received" name="received" primary="false" unique="false" type="BTREE">
-            <column key="received" length="" collation="A" null="false"/>
         </index>
         <index alias="active" name="active" primary="false" unique="false" type="BTREE">
             <column key="active" length="" collation="A" null="false"/>

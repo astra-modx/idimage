@@ -21,62 +21,41 @@ idimage.panel.Stat = function (config) {
                 items: [
 
                     {
-                        columnWidth: 0.8,
+                        columnWidth: 0.9,
                         layout: 'form',
                         defaults: {msgTarget: 'under'},
                         border: false,
                         style: {margin: '0', padding: '0 20px 0 0'},
                         items: [
+
                             {
                                 layout: 'column',
                                 items: [
                                     {
-                                        columnWidth: 0.3,
+                                        columnWidth: 0.4,
                                         layout: 'form',
                                         border: false,
                                         items: [
                                             {
-                                                html: _('idimage_stat_title')
-                                            },
-
-                                            {
+                                                style: 'margin: 0px 0 0 0px',
                                                 html: _('idimage_stat_title_intro')
                                             },
+
+
                                             {
                                                 xtype: 'button',
-                                                style: 'margin: 20px 0 20px 0px',
-                                                text: _('idimage_button_balance'),
-                                                handler: () => apiBalance(true)
-                                            },
-                                            {
-                                                html: ''
-                                            },
-                                            {
-                                                xtype: 'button',
-                                                style: 'margin: 10px 0 0 0px',
+                                                style: 'margin: 25px 0 0 0px',
                                                 text: _('idimage_queue_refresh'),
                                                 handler: this.submit, scope: this
                                             },
-
                                         ]
                                     },
                                     {
                                         columnWidth: 0.3,
                                         layout: 'form',
                                         border: false,
-                                        style: 'margin: 25px 0 0 20px',
+                                        style: 'margin: 0px 0 0 20px',
                                         items: [
-
-
-                                            {
-                                                xtype: 'displayfield',
-                                                name: 'pending',
-                                                readOnly: true,
-                                                value: '---',
-                                                width: '99%',
-                                                allowBlank: true,
-                                                fieldLabel: _('idimage_stat_pending'),
-                                            },
                                             {
                                                 xtype: 'displayfield',
                                                 readOnly: true,
@@ -88,13 +67,23 @@ idimage.panel.Stat = function (config) {
                                             },
                                             {
                                                 xtype: 'displayfield',
+                                                name: 'pending',
+                                                readOnly: true,
+                                                value: '---',
+                                                width: '99%',
+                                                allowBlank: true,
+                                                fieldLabel: _('idimage_stat_pending'),
+                                            },
+
+                                            {
+                                                xtype: 'displayfield',
                                                 name: 'completed',
                                                 readOnly: true,
                                                 value: '---',
                                                 width: '99%',
                                                 fieldLabel: _('idimage_stat_completed'),
                                                 allowBlank: true,
-                                            },
+                                            }
 
                                         ]
 
@@ -105,12 +94,16 @@ idimage.panel.Stat = function (config) {
                                         layout: 'form',
                                         border: false,
                                         style: 'margin: 20px 0 0 20px',
-                                        items: []
+                                        items: [
+
+
+                                        ]
 
                                     },
 
                                 ]
                             },
+
 
                         ]
                     },

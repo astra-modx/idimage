@@ -1,4 +1,4 @@
-idimage.panel.Help = function (config) {
+idimage.panel.Indexed = function (config) {
     config = config || {}
 
     Ext.apply(config, {
@@ -6,7 +6,7 @@ idimage.panel.Help = function (config) {
         autoHeight: true,
         url: idimage.config.connector_url,
         progress: true,
-        id: 'idimage-panel-help',
+        id: 'idimage-panel-indexed',
         items: [
 
             {
@@ -18,22 +18,13 @@ idimage.panel.Help = function (config) {
                     {
                         xtype: 'button',
                         style: 'margin: 20px 0 20px 0px',
-                        text: _('idimage_button_balance'),
-                        handler: () => apiBalance(true)
+                        text: _('idimage_navbar_indexed_btn'),
+                        handler: () => indexedProducts()
                     },
                     {
                         html: ''
                     },
-                    {
-                        html: String.format(
-                            idimage.config.stat
-                        ),
-                    },
-                    {
-                        html: String.format(
-                            idimage.config.snippet
-                        ),
-                    },
+
                 ]
             },
 
@@ -59,10 +50,10 @@ idimage.panel.Help = function (config) {
             },
         }
     })
-    idimage.panel.Help.superclass.constructor.call(this, config)
+    idimage.panel.Indexed.superclass.constructor.call(this, config)
 
 }
 
-Ext.extend(idimage.panel.Help, MODx.FormPanel, {})
-Ext.reg('idimage-panel-help', idimage.panel.Help)
+Ext.extend(idimage.panel.Indexed, MODx.FormPanel, {})
+Ext.reg('idimage-panel-indexed', idimage.panel.Indexed)
 

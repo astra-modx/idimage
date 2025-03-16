@@ -25,7 +25,7 @@ class idimageHomeManagerController extends modExtraManagerController
      */
     public function getLanguageTopics()
     {
-        return ['idimage:manager', 'idimage:default', 'idimage:help', 'idimage:navbar'];
+        return ['idimage:manager', 'idimage:default', 'idimage:help', 'idimage:navbar', 'idimage:tabs', 'idimage:actions'];
     }
 
 
@@ -67,8 +67,8 @@ class idimageHomeManagerController extends modExtraManagerController
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/tasks/grid.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/tasks/windows.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/settings/form.js');
+        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/navbar.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/help/panel.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/sync/panel.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/home.panel.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/sections/home.js');
 
@@ -83,6 +83,7 @@ class idimageHomeManagerController extends modExtraManagerController
         $this->idimage->config['stat'] = $Stat->process()->tpl();
         $this->idimage->config['snippet'] = $this->snippet();
         $this->idimage->config['context'] = 'web';
+        $this->idimage->config['actions'] = $this->actionsController();
 
 
         $this->addHtml(
@@ -93,6 +94,14 @@ class idimageHomeManagerController extends modExtraManagerController
         </script>'
         );
     }
+
+    public function actionsController()
+    {
+        return [
+            'product_creation' => 'mgr/actions/product/creation',
+        ];
+    }
+
 
     /**
      * @return string

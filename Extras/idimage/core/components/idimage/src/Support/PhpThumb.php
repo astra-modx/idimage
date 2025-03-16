@@ -54,17 +54,12 @@ class PhpThumb
         }
 
         $output = false;
+
         if ($phpThumb->GenerateThumbnail() && $phpThumb->RenderOutput()) {
-            $modx->log(
-                modX::LOG_LEVEL_INFO,
-                '[miniShop2] phpThumb messages for .'.print_r($phpThumb->debugmessages, true)
-            );
+            //$modx->log(modX::LOG_LEVEL_INFO,'[miniShop2] phpThumb messages for .'.print_r($phpThumb->debugmessages, true));
             $output = $phpThumb->outputImageData;
         } else {
-            $modx->log(
-                modX::LOG_LEVEL_ERROR,
-                '[miniShop2] Could not generate thumbnail for '.print_r($phpThumb->debugmessages, true)
-            );
+            $modx->log( modX::LOG_LEVEL_ERROR, '[miniShop2] Could not generate thumbnail for '.print_r($phpThumb->debugmessages, true));
         }
 
         if (file_exists($phpThumb->sourceFilename)) {

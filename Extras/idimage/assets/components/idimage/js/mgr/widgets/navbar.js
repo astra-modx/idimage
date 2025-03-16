@@ -1,60 +1,23 @@
-idimage.panel.Sync = function (config) {
+idimage.panel.Navbar = function (config) {
     config = config || {}
 
     Ext.apply(config, {
-        cls: 'container form-with-labels',
+        cls: 'container form-with-labels main-wrapper',
         autoHeight: true,
         url: idimage.config.connector_url,
         progress: true,
-        id: 'idimage-panel-sync',
-        baseParams: {
-            action: 'mgr/poll'
-        },
+        id: 'idimage-panel-navbar',
         items: [
             {
                 columnWidth: 0.9,
-                layout: 'form',
                 defaults: {msgTarget: 'under'},
                 border: false,
                 cls: 'idimage-navbar',
-                style: {margin: 'margin: 0px 0 0px 20px', padding: '0 20px 0px 20px'},
+                style: {margin: 'margin: 0px 0 20px 20px', padding: '0 20px 20px 20px'},
                 items: [
                     {
                         layout: 'column',
                         items: [
-
-                            /*{
-                                columnWidth: 0.3,
-                                border: false,
-                                style: 'margin: 0px 0 0 20px',
-                                items: [
-                                    {
-                                        html: _('idimage_navbar_statistic_title')
-                                    },
-
-
-                                    {
-                                        xtype: 'displayfield',
-                                        name: 'total_completed',
-                                        readOnly: true,
-                                        value: '---',
-                                        width: '99%',
-                                        allowBlank: true,
-                                    },
-
-
-                                    {
-                                        xtype: 'button',
-                                        cls: 'primary-button',
-                                        style: 'margin: 20px 0 20px 0px',
-                                        text: '<i class=" icon icon-refresh"></i> ' + _('idimage_navbar_statistic_btn'),
-                                        handler: () => indexedPoll(true)
-                                    },
-
-                                ]
-
-                            },
-*/
                             {
                                 columnWidth: 0.3,
                                 border: false,
@@ -80,23 +43,14 @@ idimage.panel.Sync = function (config) {
                                         allowBlank: true,
                                     },
                                     {
-                                        xtype: 'button',
-                                        cls: 'primary-button',
-                                        style: 'margin: 20px 0 20px 0px',
-                                        text: '<i class=" icon icon-play"></i> ' + _('idimage_navbar_create_product_btn'),
-                                        handler: () => productCreation()
-                                    },
-                                    {
-                                        html: _('idimage_navbar_create_product_text'),
-                                        cls: 'idimage-navbar-text'
+                                        xtype: 'displayfield',
+                                        readOnly: true,
+                                        name: 'total_similar',
+                                        value: '---',
+                                        width: '99%',
+                                        allowBlank: true,
                                     },
 
-                                    {
-                                        xtype: 'button',
-                                        style: 'margin: 20px 0 20px 0px',
-                                        text: '<i class=" icon icon-refresh"></i> ' + _('idimage_navbar_statistic_btn'),
-                                        handler: () => indexedPoll(true)
-                                    },
 
                                 ]
                             },
@@ -106,9 +60,8 @@ idimage.panel.Sync = function (config) {
                                 style: 'margin: 0px 0 0 20px',
                                 items: [
                                     {
-                                        html: _('idimage_navbar_embedding_title')
+                                        html: _('idimage_navbar_tasks_title')
                                     },
-
 
 
                                     {
@@ -136,25 +89,13 @@ idimage.panel.Sync = function (config) {
                                         width: '99%',
                                         allowBlank: true,
                                     },
-
-
                                     {
-                                        xtype: 'button',
-                                        cls: 'primary-button',
-                                        style: 'margin: 20px 0 20px 0px',
-                                        text: '<i class=" icon icon-refresh"></i> ' + _('idimage_navbar_embedding_btn'),
-                                        handler: () => taskCreation()
-                                    },
-                                    {
-                                        xtype: 'button',
-                                        cls: 'primary-button',
-                                        style: 'margin: 20px 0 20px 20px',
-                                        text: '<i class=" icon icon-refresh"></i> ' + _('idimage_navbar_embedding_pull'),
-                                        handler: () => taskPoll()
-                                    },
-                                    {
-                                        html: _('idimage_navbar_embedding_text'),
-                                        cls: 'idimage-navbar-text'
+                                        xtype: 'displayfield',
+                                        name: 'total_tasks_error',
+                                        readOnly: true,
+                                        value: '---',
+                                        width: '99%',
+                                        allowBlank: true,
                                     },
 
                                 ]
@@ -162,7 +103,7 @@ idimage.panel.Sync = function (config) {
                             },
 
                             {
-                                columnWidth: 0.3,
+                                columnWidth: 0.2,
                                 border: false,
                                 style: 'margin: 0px 0 0 20px',
                                 items: [
@@ -187,30 +128,40 @@ idimage.panel.Sync = function (config) {
                                         width: '99%',
                                         allowBlank: true,
                                     },
+
+
+                                ]
+
+                            },
+                            {
+                                columnWidth: 0.1,
+                                border: false,
+                                style: 'margin: 0px 0 0 20px',
+                                items: [
+
                                     {
-                                        xtype: 'displayfield',
-                                        readOnly: true,
-                                        name: 'total_similar',
-                                        value: '---',
-                                        width: '99%',
-                                        allowBlank: true,
+                                        html: '',
+                                        cls: 'idimage-navbar-title'
+                                    },
+
+                                    {
+                                        xtype: 'button',
+                                        style: 'margin: 20px 0 20px 0px',
+                                        text: '<i class=" icon icon-refresh"></i> ' + _('idimage_navbar_statistic_btn'),
+                                        handler: () => indexedPoll(true)
                                     },
                                     {
                                         xtype: 'button',
                                         cls: 'primary-button',
-                                        style: 'margin: 20px 0 20px 0px',
-                                        text: '<i class=" icon icon-play"></i> ' + _('idimage_navbar_indexed_btn'),
+                                        style: 'margin: 0px 0 20px 0px',
+                                        text: _('idimage_navbar_indexed_btn'),
                                         handler: () => indexedProducts()
                                     },
-                                    {
-                                        html: _('idimage_navbar_indexed_text'),
-                                        cls: 'idimage-navbar-text'
-                                    },
+
+
                                 ]
 
                             },
-
-
                         ]
                     },
 
@@ -239,12 +190,48 @@ idimage.panel.Sync = function (config) {
         }
     })
 
-    idimage.panel.Sync.superclass.constructor.call(this, config)
+    idimage.panel.Navbar.superclass.constructor.call(this, config)
 
 }
 
-Ext.extend(idimage.panel.Sync, MODx.FormPanel, {})
-Ext.reg('idimage-panel-sync', idimage.panel.Sync)
+Ext.extend(idimage.panel.Navbar, MODx.FormPanel, {
+
+    formatTotal: function (stat, keys) {
+        return keys.reduce((acc, key) => {
+            const template = _(`idimage_navbar_${key}`) || '';
+            const value = stat[key] !== undefined ? stat[key] : '';
+            acc[key] = template ? String.format(template, value) : value;
+            return acc;
+        }, {});
+    },
+
+    formFill: function (data) {
+
+        var navbarForm = Ext.getCmp('idimage-panel-navbar').getForm();
+
+        var stat = data.stat || {}; // Защита от undefined
+
+        var object = {
+            ...this.formatTotal(stat, [
+                'total',
+                'total_similar',
+                'total_completed',
+                'total_error',
+                'total_embedding',
+                'total_files',
+                'total_tasks',
+                'total_tasks_completed',
+                'total_tasks_pending',
+                'total_tasks_error'
+            ]),
+            enable: idimage.utils.renderBoolean(data.enable),
+            balance: idimage.utils.formatPrice(data.balance),
+        };
+
+        navbarForm.setValues(object);
+    }
+})
+Ext.reg('idimage-panel-navbar', idimage.panel.Navbar)
 
 
 function gridDefault() {

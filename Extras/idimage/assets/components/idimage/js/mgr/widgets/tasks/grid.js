@@ -111,13 +111,13 @@ Ext.extend(idimage.grid.Tasks, idimage.grid.Default, {
                 cls: 'primary-button',
                 menu: [
                     this.actionMenu('task/creation', 'icon-plus'),
-                    this.actionMenu('api/task/received', 'icon-send'),
                     buttonUpload,
                     '-',
                     this.actionMenu('task/destroy', 'icon-trash action-red'),
                 ]
             },
 
+            this.actionMenu('api/task/received', 'icon-send'),
             this.actionMenu('api/task/poll', 'icon-download'),
 
             {

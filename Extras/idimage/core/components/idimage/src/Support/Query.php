@@ -31,7 +31,6 @@ class Query
         //$query->leftJoin('idImageClose', 'Close', 'Close.pid = msProductFile.product_id');
         $query->innerJoin('msProductFile', 'File', 'File.product_id = msProduct.id');
 
-
         return $query;
     }
 

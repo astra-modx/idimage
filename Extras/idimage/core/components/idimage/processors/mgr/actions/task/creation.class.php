@@ -33,37 +33,8 @@ class idImageTaskCreationProcessor extends idImageActionsProcessor implements \I
         return $this->withProgressBar(function (array $ids) {
             $closes = $this->query()->closes()->where(['id:IN' => $ids]);
             $closes->each(function (idImageClose $close) {
-                /* @var idImageTask $task */
-                if (!$task = $close->task()) {
-                    $task = $this->modx->newObject('idImageTask');
-                }
-
-
-                $status = idImageTask::STATUS_CREATED;
-                $task->set('pid', $close->get('pid'));
-                $task->set('etag', (string)$close->get('hash'));
-                $task->set('offer_id', (string)$close->get('pid'));
-
-                if ($this->idImage->isSendFile()) {
-                    $task->set('picture_path', $close->picturePath(false));
-                    if ($task->isNew()) {
-                        $status = idImageTask::STATUS_UPLOAD;
-                        $task->set('image_available', false); // Метка установиться после загрузки файлов
-                    } else {
-                        // Если изменился etag, то устанавливаем метку на загрузку файла
-                        if ($close->get('etag') !== $task->get('etag')) {
-                            $status = idImageTask::STATUS_UPLOAD;
-                            $task->set('image_available', false);
-                        }
-                    }
-                } else {
-                    // Отправка прямой ссылки на изображение
-                    $task->set('picture', $close->link($this->idImage->siteUrl()));
-                    $task->set('image_available', true);
-                }
-
-                $task->set('status', $status);
-
+                // Создание задания для получения векторов
+                $task = $close->createTask($this->idimage());
 
                 if (!$task->save()) {
                     throw new ExceptionJsonModx('Не удалось сохранить задачу: '.$close->get('id'));

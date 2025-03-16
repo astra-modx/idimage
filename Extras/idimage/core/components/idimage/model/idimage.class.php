@@ -113,7 +113,7 @@ class idImage
      * @param  string  $action  Path to processor
      * @param  array  $data  Data to be transmitted to the processor
      *
-     * @return mixed The result of the processor
+     * @return mixed|modProcessorResponse The result of the processor
      */
     public function runProcessor($action = '', $data = array())
     {

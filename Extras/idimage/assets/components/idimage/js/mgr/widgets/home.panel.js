@@ -5,20 +5,12 @@ idimage.panel.Home = function (config) {
     var tabs = [
 
         {
-            title: _('idimage_sync'),
+            title: _('idimage_tab_products'),
             layout: 'anchor',
             items: [
                 {
-                    html: _('idimage_desc_sync'),
+                    html: _('idimage_tab_products_desc'),
                     bodyCssClass: 'panel-desc',
-                }
-                , {
-                    xtype: 'idimage-panel-sync',
-                    cls: 'main-wrapper',
-                },
-                {
-                    html: _('idimage_desc_products'),
-                    cls: 'panel-desc',
                 }
                 , {
                     xtype: 'idimage-grid-closes',
@@ -28,13 +20,14 @@ idimage.panel.Home = function (config) {
         },
 
         {
-            title: _('idimage_tasks'),
+            title: _('idimage_tab_tasks'),
             layout: 'anchor',
             items: [
                 {
-                    html: _('idimage_tasks_intro_msg'),
-                    cls: 'panel-desc',
-                }, {
+                    html: _('idimage_tab_tasks_desc'),
+                    bodyCssClass: 'panel-desc',
+                }
+                , {
                     xtype: 'idimage-panel-stat',
                     cls: 'main-wrapper',
                 }, {
@@ -45,54 +38,50 @@ idimage.panel.Home = function (config) {
         },
 
         {
-            title: _('idimage_help'),
+            title: _('idimage_tab_help'),
             layout: 'anchor',
             items: [
+                {
+                    html: _('idimage_tab_help_desc'),
+                    bodyCssClass: 'panel-desc',
+                },
                 {
                     xtype: 'idimage-panel-help',
                     cls: 'main-wrapper',
                 }
             ]
-        }
-        /* {
-             title: _('idimage_closes'),
-             layout: 'anchor',
-             items: [
-                 {
-                     html: _('idimage_intro_msg'),
-                     cls: 'panel-desc',
-                 }, {
-                     xtype: 'idimage-grid-closes',
-                     cls: 'main-wrapper',
-                 }
-             ]
-         }*/
+        },
+
+
     ];
 
     Ext.apply(config, {
-        baseCls: 'modx-formpanel',
+        cls: 'container',
         layout: 'anchor',
-
         hideMode: 'offsets',
-
-
-        items: [{
-            html: '<h2>' + _('idimage') + '</h2>',
-            cls: '',
-            style: {margin: '15px 0'}
-        }, {
-            xtype: 'modx-tabs',
-            defaults: {border: false, autoHeight: true},
-            border: true,
-            hideMode: 'offsets',
-            stateful: true,
-            stateId: 'idimage-panel-home',
-            stateEvents: ['tabchange'],
-            getState: function () {
-                return {activeTab: this.items.indexOf(this.getActiveTab())}
+        items: [
+            {
+                html: '<h2>' + _('idimage') + '</h2>',
+                cls: 'modx-page-header',
             },
-            items: tabs
-        }]
+            {
+                xtype: 'idimage-panel-navbar',
+                style: {margin: '15px 0'}
+            },
+            {
+                xtype: 'modx-tabs',
+                defaults: {border: false, autoHeight: true},
+                border: true,
+                hideMode: 'offsets',
+                stateful: true,
+                stateId: 'idimage-panel-home',
+                stateEvents: ['tabchange'],
+                getState: function () {
+                    return {activeTab: this.items.indexOf(this.getActiveTab())}
+                },
+                items: tabs
+            }
+        ]
     })
     idimage.panel.Home.superclass.constructor.call(this, config)
 }
@@ -107,10 +96,6 @@ function idImageState(wait) {
         progress = Ext.MessageBox.wait('', _('please_wait'))
     }
 
-    var panel = Ext.getCmp('idimage-panel-sync')
-
-    var form = panel.getForm();
-
     MODx.Ajax.request({
         url: idimage.config.connectorUrl,
         params: {
@@ -123,39 +108,8 @@ function idImageState(wait) {
                         progress.hide()
                     }
                     if (r.success) {
-
-
-                        function formatTotal(stat, keys) {
-                            return keys.reduce((acc, key) => {
-                                const template = _(`idimage_navbar_${key}`) || '';
-                                const value = stat[key] !== undefined ? stat[key] : '';
-                                acc[key] = template ? String.format(template, value) : value;
-                                return acc;
-                            }, {});
-                        }
-
-                        var rec = r.object;
-                        var stat = rec.stat || {}; // Защита от undefined
-
-                        var object = {
-                            ...formatTotal(stat, [
-                                'total',
-                                'total_similar',
-                                'total_completed',
-                                'total_error',
-                                'total_embedding',
-                                'total_files',
-                                'total_tasks',
-                                'total_tasks_completed',
-                                'total_tasks_pending'
-                            ]),
-                            enable: idimage.utils.renderBoolean(rec.enable),
-                            balance: idimage.utils.formatPrice(rec.balance),
-                        };
-
-                        form.setValues(object);
-
-
+                        var navbarForm = Ext.getCmp('idimage-panel-navbar');
+                        navbarForm.formFill(r.object);
                     }
 
                 }, scope: this

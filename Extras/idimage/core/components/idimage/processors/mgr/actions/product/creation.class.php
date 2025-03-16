@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('idImageActionsProcessor')) {
-    include_once __DIR__.'/../../../actions.class.php';
+    include_once __DIR__.'/../../actions.class.php';
 }
 
 class idImageProductCreationProcessor extends idImageActionsProcessor implements \IdImage\Interfaces\ActionProgressBar
@@ -49,7 +49,8 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
     public function process()
     {
         return $this->withProgressBar(function (array $ids) {
-            $files = $this->query()->files()->where(['id:IN' => $ids]);
+            // Выбираем все товары с изображениями
+            $files = $this->query()->filesCriteria()->where(['id:IN' => $ids]);
             $files->collection(function (array $row) {
                 // путь до изображения
                 $imagePath = MODX_BASE_PATH.ltrim($row['image'], '/');
@@ -78,11 +79,13 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
                 if (!$Close->save()) {
                     throw new \IdImage\Exceptions\ExceptionJsonModx('Failed to save Close object: '.$pid);
                 }
-                $this->pt();
+
+                // Создаем задание для создания векторов
+                $task = $Close->createTask($this->idimage());
+                $task->save();
             });
 
-
-            return $this->total();
+            return $files->totalIteration();
         });
     }
 

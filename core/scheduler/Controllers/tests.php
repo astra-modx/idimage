@@ -1,8 +1,6 @@
 <?php
 
 use IdImage\Ai\CollectionProduct;
-use IdImage\Ai\CosineSimilarity;
-
 /**
  * Демонстрация контроллера
  */
@@ -14,6 +12,23 @@ class CrontabControllerTests extends modCrontabController
     {
         /* @var idImage $idImage */
         $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
+
+
+
+
+        $ctx = 'web';
+
+        $pdoFetch = $this->modx->getService('pdoFetch');
+
+        $products = [];
+        foreach ($categories as $category) {
+            $ids = $pdoFetch->getChildIds('msCategory', $category, 10, array('context' => $ctx));
+            $products = array_merge($products, $ids);
+        }
+        $products = array_map('intval', $products);
+        $products = array_filter(array_unique($products));
+
+
 
 
         $api = $idImage->api();

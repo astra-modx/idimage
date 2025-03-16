@@ -3,21 +3,19 @@
 include_once 'setting.inc.php';
 
 $_lang['idimage'] = 'Id Image';
-$_lang['idimage_help'] = 'Помощь';
 
 $_lang['idimage_refresh'] = '<i class="icon icon-refresh"></i> &nbsp;  Обновить';
-$_lang['idimage_queue_refresh'] = '<i class="icon icon-refresh"></i> &nbsp;  Обновить статистику';
+$_lang['idimage_queue_refresh'] = '<i class="icon icon-refresh"></i> &nbsp; Обновить';
 $_lang['idimage_button_balance'] = '<i class="icon icon-money"></i> &nbsp;  Запросить баланс';
-$_lang['idimage_help'] = 'Помощь';
-$_lang['idimage_help_intro'] = 'Каталог';
-$_lang['idimage_stat_title'] = '<h3>Информация из сервиса idimage.ru</h3>';
-$_lang['idimage_stat_title_intro'] = '<em>Дождитесь завершения обработки заданий для получения векторов.</em>';
 
-$_lang['idimage_desc_sync'] = 'Управление каталогом';
-$_lang['idimage_desc_products'] = 'Товары';
-
-$_lang['idimage_menu_desc'] = 'Похожие товары';
-$_lang['idimage_intro_msg'] = 'Вы можете выделять сразу несколько предметов при помощи Shift или Ctrl.';
+$_lang['idimage_stat_title_intro'] = '<b>Инструкция по загрузке векторов из сервиса idimage.ru.</b><br><br> 
+<ul>
+<ol>1: Создайте задания</ol>
+<ol>2: Отправьте задания в сервис</ol>
+<ol style="margin-left: 15px"><em>Дождитесь завершения обработки задания в сервисе<br> (обновляйте статистику кнопкой "Обновить")</em></ol>
+<ol>3: Получите вектора из сервиса</ol>
+</ul>
+';
 
 
 $_lang['idimage_manual_desc'] = '<h2>Быстрый старт</h2>
@@ -73,7 +71,6 @@ $_lang['idimage_task_action_send'] = 'Запрос в сервис';
 $_lang['idimage_task_action_resetattempts'] = 'Сбросить попытки';
 $_lang['idimage_task_action_remove'] = 'Удалить задание';
 $_lang['idimage_tasks'] = 'Задания';
-$_lang['idimage_tasks_intro_msg'] = 'Вы можете выделять сразу несколько предметов при помощи Shift или Ctrl.';
 
 $_lang['idimage_pid'] = 'Pid';
 $_lang['idimage_attempt'] = 'Попытки';
@@ -130,25 +127,9 @@ $_lang['idimage_close_description'] = 'Описание';
 $_lang['idimage_close_active'] = 'Активно';
 
 
-# Actions
-$_lang['idimage_actions_creation'] = 'Найти изображения';
-$_lang['idimage_actions_destroy'] = 'Удалить все';
-$_lang['idimage_actions_upload'] = 'Начать загрузку в cloud';
-$_lang['idimage_actions_poll'] = 'Опросить статус';
-$_lang['idimage_actions_reindex'] = 'Переиндексировать';
-$_lang['idimage_actions_upversion'] = 'Поднять версию';
-$_lang['idimage_actions_queue_add'] = 'Добавить в очередь';
-$_lang['idimage_actions_queue_delete'] = 'Удалить из очереди';
 
 
-$_lang['idimage_actions_status_upload'] = 'Установить статус "Загрузка в cloud"';
-$_lang['idimage_actions_status_proccessing'] = 'Установить статус "ожидание"';
-$_lang['idimage_actions_status_queue'] = 'Установить статус "В очереди"';
-
-
-$_lang['idimage_stat_title'] = '<h3>Создание товаров</h3';
 $_lang['idimage_close_create'] = 'Создать товар';
-$_lang['idimage_close_create_intro'] = '<em>Товары с изображениями будут созданы для получения векторов и дальнейшей индексации.</em>';
 $_lang['idimage_close_update'] = 'Изменить товар';
 $_lang['idimage_close_enable'] = 'Включить товар';
 $_lang['idimage_closes_enable'] = 'Включить товары';
@@ -180,6 +161,5 @@ $_lang['idimage_actions_selected_records'] = 'Выделено записей';
 $_lang['idimage_action_title'] = 'Выполнить действие';
 $_lang['idimage_action_confirm'] = 'Вы уверены что хотите выполнить это действие?';
 
-$_lang['idimage_sync'] = 'Синхронизация';
 $_lang['idimage_update_products'] = 'Обновление товаров';
 

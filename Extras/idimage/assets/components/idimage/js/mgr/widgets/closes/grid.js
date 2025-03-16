@@ -102,27 +102,20 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
     getTopBar: function (config) {
         return [
 
-            /*  {
-                  text: '<i class="icon icon-plus"></i> Создать товар',
-                  handler: this.assignSelected,
-                  scope: this
-              },*/
 
             {
                 text: '<i class="icon icon-cogs"></i> ' + _('idimage_actions_dropdown'),
                 cls: 'primary-button',
                 menu: [
-
-                    //this.actionMenu('image/status/processing', 'icon-refresh'),
-                    //this.actionMenu('image/status/queue', 'icon-refresh'),
-
-                    //'-',
-                    //this.actionMenu('image/queue/delete', 'icon-refresh'),
                     '-',
-                    this.actionMenu('image/destroy', 'icon-trash action-red'),
+                    this.actionMenu('product/destroy', 'icon-trash action-red'),
                 ]
             },
-
+            {
+                text: '<i class="icon icon-plus"></i> ' + _('idimage_navbar_create_product_btn'),
+                handler: this.assignSelected,
+                scope: this
+            },
 
             {
                 xtype: 'idimage-combo-filter-received',
@@ -223,7 +216,9 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
                                 MODx.msg.alert(_('success'), 'Изменений не найдено')
                             } else {
                                 idimage.progress.updateText('В обработке 0 из ' + grid.totalRecords)
-                                grid.actionsCall('image/product/creation')
+                                grid.actionsCall(  idimage.config.actions.product_creation)
+
+
                             }
                             var tree = Ext.getCmp('idimage-tree-modal-categorys-assign-window')
                             tree.enable()

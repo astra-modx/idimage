@@ -8,8 +8,7 @@ class idImageApiTaskUploadProcessor extends idImageActionsProcessor implements \
 {
     public function stepChunk()
     {
-        return 10;
-        #return $this->idimage()->limitUpload();
+        return $this->idimage()->limitUpload();
     }
 
     public function tasks()

@@ -59,7 +59,7 @@ abstract class idImageActionsProcessor extends modProcessor
     }
 
 
-    public function withProgressBar($callback)
+    public function withProgressBar(Closure $callback)
     {
         if ($this->setCheckbox('steps')) {
             if (!$ids = $this->ids()) {
@@ -67,8 +67,8 @@ abstract class idImageActionsProcessor extends modProcessor
             }
 
             return $this->success('', [
-                'total' => count($ids),
-                'iterations' => array_chunk($ids, $this->stepChunk()),
+                'total' => is_array($ids) ? count($ids) : 0,
+                'iterations' => is_array($ids) ? array_chunk($ids, $this->stepChunk()) : null,
             ]);
         }
         if (!$ids = $this->ids()) {

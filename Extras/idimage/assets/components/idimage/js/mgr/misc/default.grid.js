@@ -389,6 +389,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
     progress: null,
 
     actionsCall: function (controller) {
+        controller = controller.replace('mgr/actions/', '');
 
         if (this.iterations && this.iterations[this.iterationNext] && this.iterations[this.iterationNext].length > 0) {
 

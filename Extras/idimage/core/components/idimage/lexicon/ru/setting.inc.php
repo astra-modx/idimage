@@ -40,3 +40,9 @@ $_lang['setting_idimage_limit_received_desc'] = 'По умолчанию: 10. Э
 
 $_lang['setting_idimage_limit_show_similar_products'] = 'Похожих изображений в разделе синхронизации ';
 $_lang['setting_idimage_limit_show_similar_products_desc'] = 'По умолчанию: 5. В списке товаров в административной части сайта, в разделе синхронизации товаров, будут показываться похожие товары.';
+
+$_lang['setting_idimage_limit_upload'] = 'Кол-во изображений для загрузки';
+$_lang['setting_idimage_limit_upload_desc'] = 'По умолчанию: 5. Используется для режима "Включить отправку файлов"';
+
+$_lang['setting_idimage_limit_poll'] = 'Получать векторов за раз';
+$_lang['setting_idimage_limit_poll_desc'] = 'По умолчанию: 1000';

@@ -36,15 +36,24 @@ class xPDOQueryIdImage extends xPDOQuery_mysql
 
     public function collection(Closure $callback)
     {
+        $i = 0;
         if ($this->prepare() && $this->stmt->execute()) {
             while ($row = $this->stmt->fetch(PDO::FETCH_ASSOC)) {
                 $callback($row);
+                $i++;
             }
         }
+        $this->totalIteration = $i;
 
         return $this;
     }
 
+    protected $totalIteration = 0;
+
+    public function totalIteration()
+    {
+        return $this->totalIteration;
+    }
 
     public function ids($field = 'id', $addSelect = true)
     {

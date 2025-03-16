@@ -183,5 +183,38 @@ class idImageClose extends xPDOSimpleObject
         return $products;
     }
 
+    public function createTask(idImage $idImage)
+    {
+        if (!$task = $this->task()) {
+            $task = $this->xpdo->newObject('idImageTask');
+        }
+
+        $status = idImageTask::STATUS_CREATED;
+        $task->set('pid', $this->get('pid'));
+        $task->set('etag', (string)$this->get('hash'));
+        $task->set('offer_id', (string)$this->get('pid'));
+
+        if ($idImage->isSendFile()) {
+            $task->set('picture_path', $this->picturePath(false));
+            if ($task->isNew()) {
+                $status = idImageTask::STATUS_UPLOAD;
+                $task->set('image_available', false); // Метка установиться после загрузки файлов
+            } else {
+                // Если изменился etag, то устанавливаем метку на загрузку файла
+                if ($this->get('etag') !== $task->get('etag')) {
+                    $status = idImageTask::STATUS_UPLOAD;
+                    $task->set('image_available', false);
+                }
+            }
+        } else {
+            // Отправка прямой ссылки на изображение
+            $task->set('picture', $this->link($idImage->siteUrl()));
+            $task->set('image_available', true);
+        }
+
+        $task->set('status', $status);
+
+        return $task;
+    }
 
 }
