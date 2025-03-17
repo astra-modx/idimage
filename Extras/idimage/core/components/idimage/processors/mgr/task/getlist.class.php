@@ -6,7 +6,7 @@ class idImageTaskGetListProcessor extends modObjectGetListProcessor
     public $classKey = 'idImageTask';
     public $defaultSortField = 'id';
     public $defaultSortDirection = 'DESC';
-    public $languageTopics = ['idimage:manager'];
+    public $languageTopics = ['idimage:manager', 'idimage:actions'];
     //public $permission = 'list';
 
 

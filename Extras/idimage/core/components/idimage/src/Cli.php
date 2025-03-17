@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 
 class Cli
 {
-    private  $output;
+    private $output;
 
     public function __construct()
     {
@@ -50,5 +50,17 @@ class Cli
         foreach ((array)$messages as $message) {
             $this->output->writeln("  $message");
         }
+    }
+
+    public $startTime;
+
+    public function startTime()
+    {
+        $this->startTime = microtime(true);
+    }
+
+    public function endTime()
+    {
+        return round((microtime(true) - $this->startTime), 2).' s.';
     }
 }

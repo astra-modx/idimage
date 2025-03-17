@@ -29,6 +29,7 @@ class idImageIndexedProductsProcessor extends idImageActionsProcessor implements
 
     public function process()
     {
+
         $CollectionProduct = new CollectionProduct(
             $this->idImage,
             $this->idImage->minimumProbabilityScore(),

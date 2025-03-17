@@ -13,6 +13,7 @@ $_lang['idimage_actions_api_task_poll_desc'] = 'Из сервис IDimage буд
 $_lang['idimage_actions_task_creation'] = 'Создать задания';
 $_lang['idimage_actions_task_creation_desc'] = 'В сервис IDimage будут отправлены изображения товаров, полученные из базы.';
 $_lang['idimage_task_action_poll'] = 'Получить вектора';
+$_lang['idimage_task_action_upload'] = 'Загрузить изображения в сервис';
 $_lang['idimage_task_action_received'] = 'Отправить задание';
 
 $_lang['idimage_actions_indexed_products'] = 'Индексировать товары по векторам';

@@ -8,16 +8,10 @@ use IdImage\Cli;
 /* @var Cli $cli */
 require_once dirname(__FILE__, 2).'/default.php';
 
-$name = 'Task upload';
+$name = 'Task creating';
 $cli->title($name);
 
-
-if (!$idImage->isSendFile()) {
-    $cli->error('Mode send file disabled, setting idimage_send_file is not true');
-    exit;
-}
-
-$action = 'mgr/actions/api/task/upload';
+$action = 'mgr/actions/task/creation';
 $response = $idImage->runProcessor($action, [
     'steps' => true,
 ]);
@@ -28,6 +22,7 @@ if ($response->isError()) {
 }
 $data = $response->getObject();
 
+$limit = $idImage->limitCreation();
 $total = $data['total'];
 $iterations = $data['iterations'];
 
@@ -37,8 +32,6 @@ if ($iterations) {
 // Создать пошаговый процесс по согласно лимиту $limit
     foreach ($iterations as $i => $ids) {
         $modx->error->reset();
-
-        $cli->startTime();
 
         // Создать товары
         $response = $idImage->runProcessor($action, [
@@ -51,7 +44,7 @@ if ($iterations) {
         }
 
         $data = $response->getObject();
-        $cli->info('[iteration:'.$i.']['.$cli->endTime().'] '.$name.': '.$data['total']);
+        $cli->info('[iteration:'.$i.'] '.$name.': '.$data['total']);
     }
 }
 

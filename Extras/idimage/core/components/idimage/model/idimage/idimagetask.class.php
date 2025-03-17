@@ -30,6 +30,7 @@ class idImageTask extends xPDOSimpleObject
             }
             $this->set('createdon', time());
         }
+
         return parent::save($cacheFlag);
     }
 
@@ -136,5 +137,15 @@ class idImageTask extends xPDOSimpleObject
         }
 
         return $Embedding;
+    }
+
+    public function close(): ?idImageClose
+    {
+        /* @var idImageClose $close */
+        if (!$close = $this->getOne('Close')) {
+            return null;
+        }
+
+        return $close;
     }
 }

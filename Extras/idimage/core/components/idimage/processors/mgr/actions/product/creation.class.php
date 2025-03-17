@@ -64,15 +64,18 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
                 }
                 $status = idImageClose::STATUS_QUEUE;
                 $errors = null;
+                $hash = null;
                 if (!file_exists($imagePath)) {
                     $status = idImageClose::STATUS_FAILED;
                     $errors = [
                         'file not found' => $picture,
                     ];
+                } else {
+                    $hash = $Close->createHash($imagePath);
                 }
 
                 $Close->set('errors', $errors);
-                $Close->set('hash', $Close->createHash($imagePath));
+                $Close->set('hash', $hash);
                 $Close->set('picture', $picture);
                 $Close->set('status', $status);
 
@@ -81,8 +84,10 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
                 }
 
                 // Создаем задание для создания векторов
-                $task = $Close->createTask($this->idimage());
-                $task->save();
+                if ($Close->status !== idImageClose::STATUS_FAILED) {
+                    $task = $Close->createTask($this->idimage());
+                    $task->save();
+                }
             });
 
             return $files->totalIteration();

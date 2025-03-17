@@ -71,6 +71,7 @@ class Stat
 
         $tasks = [
             'creating.php' => 'Создание товаров',
+            'task/creation.php' => 'Создание заданий',
             'task/upload.php' => 'Загрузка изображений в idimage.ru (опционально, если нет доступа из глобального интернета)',
             'task/received.php' => 'Отправка задания',
             'task/poll.php' => 'Получение векторов',

@@ -27,6 +27,7 @@ $cli->info('Total products: '.$data['total']);
 
 foreach ($data['iterations'] as $i => $ids) {
     $modx->error->reset();
+    $cli->startTime();
 
     // Создать товары
     $response = $idImage->runProcessor($action, [
@@ -39,7 +40,7 @@ foreach ($data['iterations'] as $i => $ids) {
     }
 
     $data = $response->getObject();
-    $cli->info('[iteration:'.$i.'] indexed products: '.$data['total']);
+    $cli->info('[iteration:'.$i.']['.$cli->endTime().'] indexed products: '.$data['total']);
 }
 
 

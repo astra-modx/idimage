@@ -19,6 +19,7 @@ class idImageTaskCreationProcessor extends idImageActionsProcessor implements \I
             ->closes()
             ->leftJoin('idImageTask', 'Task', 'Task.pid=idImageClose.pid')
             ->where([
+                'idImageClose.status:!=' => idImageClose::STATUS_FAILED,
                 'Task.id:IS' => null,
             ])->ids('idImageClose.id as id');
 

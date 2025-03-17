@@ -14,8 +14,6 @@ $xpdo_meta_map['idImageClose']= array (
     'picture' => NULL,
     'hash' => NULL,
     'status' => 1,
-    'received' => 0,
-    'received_at' => 0,
     'active' => 1,
     'similar' => NULL,
     'errors' => NULL,
@@ -48,7 +46,7 @@ $xpdo_meta_map['idImageClose']= array (
       'dbtype' => 'varchar',
       'precision' => '32',
       'phptype' => 'string',
-      'null' => false,
+      'null' => true,
     ),
     'status' => 
     array (
@@ -58,22 +56,6 @@ $xpdo_meta_map['idImageClose']= array (
       'phptype' => 'integer',
       'null' => true,
       'default' => 1,
-    ),
-    'received' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => false,
-      'default' => 0,
-    ),
-    'received_at' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '20',
-      'phptype' => 'timestamp',
-      'null' => false,
-      'default' => 0,
     ),
     'active' => 
     array (
@@ -175,22 +157,6 @@ $xpdo_meta_map['idImageClose']= array (
       'columns' => 
       array (
         'hash' => 
-        array (
-          'length' => '',
-          'collation' => 'A',
-          'null' => false,
-        ),
-      ),
-    ),
-    'received' => 
-    array (
-      'alias' => 'received',
-      'primary' => false,
-      'unique' => false,
-      'type' => 'BTREE',
-      'columns' => 
-      array (
-        'received' => 
         array (
           'length' => '',
           'collation' => 'A',

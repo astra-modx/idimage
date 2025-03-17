@@ -5,7 +5,7 @@
     <object class="idImageClose" table="idimage_closes" extends="xPDOSimpleObject">
         <field key="pid" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false"/>
         <field key="picture" dbtype="varchar" precision="500" phptype="string" null="false"/>
-        <field key="hash" dbtype="varchar" precision="32" phptype="string" null="false"/>
+        <field key="hash" dbtype="varchar" precision="32" phptype="string" null="true"/>
         <field key="status" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="1"/>
         <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
         <field key="similar" dbtype="text" phptype="json" null="true"/>

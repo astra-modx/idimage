@@ -44,6 +44,7 @@ class TaskEntity
      */
     private ?int $id = null;
     private string $tmpPath;
+    protected ?array $similar = null;
 
     public function __construct()
     {
@@ -79,12 +80,18 @@ class TaskEntity
         }
 
         if (!empty($result)) {
+
             $this->received = true;
             $type = $result['type'] ?? 'basic';
             $this->setType($type);
             $embedding = $result['embedding'] ?? null;
             if ($embedding) {
                 $this->setEmbedding($embedding);
+            }
+
+            $similar = $data['similar'] ?? null;
+            if ($similar) {
+                $this->setSimilar($similar);
             }
         }
 
@@ -126,6 +133,7 @@ class TaskEntity
             'picture_path' => $this->picturePath,
             'received' => $this->received,
             'embedding' => $this->embedding,
+            'similar' => $this->similar,
         ];
     }
 
@@ -280,6 +288,18 @@ class TaskEntity
     public function getTmpPath()
     {
         return $this->tmpPath;
+    }
+
+    public function setSimilar(array $similar)
+    {
+        $this->similar = $similar;
+
+        return $this;
+    }
+
+    public function getSimilar()
+    {
+        return $this->similar;
     }
 
 }
