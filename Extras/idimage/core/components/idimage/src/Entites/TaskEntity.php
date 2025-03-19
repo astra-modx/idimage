@@ -17,13 +17,12 @@ class TaskEntity
     const STATUS_COMPLETED = 'completed';
     const STATUS_FAILED = 'failed';
     const STATUS_PENDING = 'pending';
-    private ?idImageTask $task = null;
+
+    protected ?string $operation = null;
 
     private ?string $task_id = null;
 
     private string $status = self::STATUS_PENDING;
-
-    private string $type = 'basic';
 
 
     private ?array $embedding = null;
@@ -36,14 +35,12 @@ class TaskEntity
      */
     private ?array $errors = null;
     private ?string $offer_id = null;
-    private ?string $etag = null;
     private ?string $picture = null;
     private ?string $picturePath = null;
     /**
      * @var mixed
      */
     private ?int $id = null;
-    private string $tmpPath;
     protected ?array $similar = null;
 
     public function __construct()
@@ -52,19 +49,10 @@ class TaskEntity
 
     public function fromArray(array $data): self
     {
-        if (isset($data['id'])) {
-            $this->setId($data['id']);
-        }
-        if (isset($data['task_id'])) {
-            $this->setTaskId($data['task_id']);
-        }
-
-        if (isset($data['etag'])) {
-            $this->setEtag($data['etag']);
-        }
         if (isset($data['offer_id'])) {
             $this->setOfferId($data['offer_id']);
         }
+
         if (isset($data['status'])) {
             $this->setStatus($data['status']);
         }
@@ -75,15 +63,13 @@ class TaskEntity
         if (isset($data['picture_path'])) {
             $this->setPicturePath($data['picture_path']);
         }
+
         if (isset($data['picture'])) {
             $this->setPicture($data['picture']);
         }
 
         if (!empty($result)) {
-
             $this->received = true;
-            $type = $result['type'] ?? 'basic';
-            $this->setType($type);
             $embedding = $result['embedding'] ?? null;
             if ($embedding) {
                 $this->setEmbedding($embedding);
@@ -99,14 +85,9 @@ class TaskEntity
     }
 
 
-    public function getTaskId(): string
+    public function getTaskId(): ?string
     {
         return $this->task_id;
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
     }
 
     public function getStatus(): string
@@ -123,13 +104,11 @@ class TaskEntity
     public function toArray(): array
     {
         return [
+            'id' => $this->id,
             'task_id' => $this->task_id,
             'status' => $this->status,
-            'etag' => $this->etag,
             'offer_id' => $this->offer_id,
             'errors' => $this->errors,
-            'type' => $this->type,
-            'picture' => $this->picture,
             'picture_path' => $this->picturePath,
             'received' => $this->received,
             'embedding' => $this->embedding,
@@ -148,13 +127,6 @@ class TaskEntity
     public function setTaskId(string $id)
     {
         $this->task_id = $id;
-
-        return $this;
-    }
-
-    public function setType($type)
-    {
-        $this->type = $type;
 
         return $this;
     }
@@ -178,29 +150,6 @@ class TaskEntity
         return $this->received;
     }
 
-    public function setUpload(string $url)
-    {
-        $this->url = $url;
-
-        return $this;
-    }
-
-    public function getUpload()
-    {
-        return $this->url;
-    }
-
-    public function getEtag()
-    {
-        return $this->etag;
-    }
-
-    public function setEtag($etag)
-    {
-        $this->etag = $etag;
-
-        return $this;
-    }
 
     public function getErrors(): ?array
     {
@@ -230,14 +179,14 @@ class TaskEntity
         return $this;
     }
 
-    public function setOfferId($offer_id)
+    public function setOfferId(string $offer_id)
     {
         $this->offer_id = $offer_id;
 
         return $this;
     }
 
-    public function getOfferId()
+    public function getOfferId(): string
     {
         return $this->offer_id;
     }
@@ -263,7 +212,7 @@ class TaskEntity
 
     public function getPicturePath()
     {
-        return MODX_BASE_PATH.$this->picturePath;
+        return $this->picturePath;
     }
 
     public function setId($id)
@@ -278,18 +227,6 @@ class TaskEntity
         return $this->id;
     }
 
-    public function setTmpPath(string $uploadPath)
-    {
-        $this->tmpPath = $uploadPath;
-
-        return $this;
-    }
-
-    public function getTmpPath()
-    {
-        return $this->tmpPath;
-    }
-
     public function setSimilar(array $similar)
     {
         $this->similar = $similar;
@@ -302,4 +239,37 @@ class TaskEntity
         return $this->similar;
     }
 
+
+    public function setOperation(string $string)
+    {
+        $this->operation = $string;
+
+        return $this;
+    }
+
+    public function getOperation(): string
+    {
+        return $this->operation;
+    }
+
+    protected bool $exists = false;
+    protected ?array $response = null;
+
+    public function setResponse(array $item)
+    {
+        $this->response = $item;
+        $this->exists = true;
+
+        return $this;
+    }
+
+    public function getResponse(): array
+    {
+        return $this->response;
+    }
+
+    public function exists()
+    {
+        return $this->exists;
+    }
 }

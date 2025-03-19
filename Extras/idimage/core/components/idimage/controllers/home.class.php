@@ -25,7 +25,7 @@ class idimageHomeManagerController extends modExtraManagerController
      */
     public function getLanguageTopics()
     {
-        return ['idimage:manager', 'idimage:default', 'idimage:help', 'idimage:navbar', 'idimage:tabs', 'idimage:actions'];
+        return ['idimage:manager', 'idimage:default', 'idimage:help', 'idimage:navbar', 'idimage:tabs', 'idimage:actions', 'idimage:filters'];
     }
 
 

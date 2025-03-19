@@ -9,12 +9,10 @@ class idImageTask extends xPDOSimpleObject
     const STATUS_PENDING = 'pending';
     // attempts
     const STATUS_UPLOAD = 'upload';
-    const STATUS_FAIL = 'fail';
 
     static $statusMap = [
         self::STATUS_CREATED,
         self::STATUS_COMPLETED,
-        self::STATUS_FAIL,
         self::STATUS_FAILED,
         self::STATUS_PENDING,
         self::STATUS_UPLOAD,
@@ -31,11 +29,49 @@ class idImageTask extends xPDOSimpleObject
             $this->set('createdon', time());
         }
 
-        return parent::save($cacheFlag);
+
+        $save = parent::save($cacheFlag);
+
+        if ($save) {
+            $this->action($this->operation(), $this->status());
+        }
+
+        return $save;
     }
 
-    public function attemptsExceeded(int $limit = 5): bool
+    public function action(string $operation, string $status): bool
     {
+        if ($status !== self::STATUS_COMPLETED) {
+            return false;
+        }
+
+        $newOperation = null;
+        $execute_at = null;
+        switch ($operation) {
+            case 'upload':
+                $newOperation = \IdImage\Sender::ACTION_EMBEDDING;
+                $execute_at = strtotime(date('Y-m-d H:i:s', strtotime('+1 minutes', time())));
+                break;
+            #case 'embedding':
+            #    $newOperation = \IdImage\Sender::ACTION_INDEXED;
+            #    break;
+            default:
+                break;
+        }
+
+        if ($newOperation) {
+            if ($close = $this->close()) {
+                $close->createTask($newOperation, $execute_at);
+            }
+        }
+
+        return true;
+    }
+
+    public function attemptsExceeded($limit = null): bool
+    {
+        $limit = is_int($limit) ? $limit : $this->service()->attemptLimit();
+
         return $this->get('attempt') > $limit;
     }
 
@@ -48,7 +84,7 @@ class idImageTask extends xPDOSimpleObject
     {
         $status = $this->get('status');
 
-        return $status === self::STATUS_CREATED;
+        return ($status === self::STATUS_CREATED || $status === self::STATUS_FAILED || $status === self::STATUS_PENDING);
     }
 
     public function status()
@@ -56,19 +92,16 @@ class idImageTask extends xPDOSimpleObject
         return $this->get('status');
     }
 
+    public function operation()
+    {
+        return $this->get('operation');
+    }
+
     public function hasStatus(string $status)
     {
         return $this->status() === $status;
     }
 
-    public function isAllowedPoll(): bool
-    {
-        if (empty($this->get('task_id'))) {
-            return false;
-        }
-
-        return (!$this->hasStatus(idImageTask::STATUS_UPLOAD) && !$this->hasStatus(idImageTask::STATUS_CREATED));
-    }
 
     public function attempts()
     {
@@ -87,38 +120,42 @@ class idImageTask extends xPDOSimpleObject
 
     public function taskId()
     {
-        return $this->get('task_id');
+        return $this->close()->get('task_id');
     }
 
     public function setErrors($errors, $status = 'failed')
     {
         $error = null;
-        if ($errors instanceof \IdImage\Support\Response) {
-            $msg = $errors->getMessage();
-            $error = [
-                'msg' => $msg,
-                'status' => $errors->getStatus(),
-            ];
-        } elseif ($errors instanceof \Throwable) {
-            $error = [
-                'msg' => '[Throwable] '.$errors->getMessage(),
-            ];
-        } elseif ($errors instanceof \Exception) {
-            $error = [
-                'msg' => '[Exception] '.$errors->getMessage(),
-            ];
-        } elseif (is_array($errors) || is_null($errors)) {
-            $error = $errors;
-        } elseif (is_string($errors)) {
-            $error = [
-                'msg' => $errors,
-            ];
-        }
+        if (!is_null($errors)) {
+            if ($errors instanceof \IdImage\Support\Response) {
+                $msg = $errors->getMessage();
+                $error = [
+                    'msg' => $msg,
+                    'status' => $errors->getStatus(),
+                ];
+            } elseif ($errors instanceof \Throwable) {
+                $error = [
+                    'msg' => '[Throwable] '.$errors->getMessage(),
+                ];
+            } elseif ($errors instanceof \Exception) {
+                $error = [
+                    'msg' => '[Exception] '.$errors->getMessage(),
+                ];
+            } elseif (is_array($errors) || is_null($errors)) {
+                $error = $errors;
+            } elseif (is_string($errors)) {
+                $error = [
+                    'msg' => $errors,
+                ];
+            }
 
-        if (is_string($status)) {
-            $this->set('status', $status);
+            if (is_string($status)) {
+                $this->set('status', $status);
+            }
         }
         $this->set('errors', $error);
+
+        return true;
     }
 
     public function sender(): \IdImage\Sender
@@ -126,18 +163,6 @@ class idImageTask extends xPDOSimpleObject
         return $this->xpdo->getService('idimage')->sender();
     }
 
-
-    public function embedding(): idImageEmbedding
-    {
-        /* @var idImageEmbedding $Embedding */
-        if (!$Embedding = $this->getOne('Embedding')) {
-            $Embedding = $this->xpdo->newObject('idImageEmbedding');
-            $Embedding->set('hash', $this->get('hash'));
-            $Embedding->set('pid', $this->get('pid'));
-        }
-
-        return $Embedding;
-    }
 
     public function close(): ?idImageClose
     {
@@ -148,4 +173,50 @@ class idImageTask extends xPDOSimpleObject
 
         return $close;
     }
+
+
+    public function service(): idImage
+    {
+        /* @var idImage $idImage */
+        $idImage = $this->xpdo->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
+
+        return $idImage;
+    }
+
+    public function send()
+    {
+        $sender = $this->service()->sender();
+
+        $collection = new \IdImage\TaskCollection();
+        $collection->add($this);
+
+        //$this->attempts();
+
+        return $sender->send($collection);
+    }
+
+    public function completed(): bool
+    {
+        return $this->status() === self::STATUS_COMPLETED;
+    }
+
+    public function resetAttempt()
+    {
+        $this->set('attempt', 0);
+    }
+
+    /**
+     * Вернет true если время отправления задания не задано или время выполнения задания наступило
+     * @return bool
+     */
+    public function isExecute()
+    {
+        $execute_at = $this->get('execute_at');
+        if (is_null($execute_at)) {
+            return true;
+        }
+
+        return strtotime($execute_at) < time();
+    }
+
 }

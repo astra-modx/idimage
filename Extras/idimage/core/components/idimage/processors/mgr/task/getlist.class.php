@@ -35,13 +35,21 @@ class idImageTaskGetListProcessor extends modObjectGetListProcessor
     {
         $c->select($this->modx->getSelectColumns('idImageTask', 'idImageTask'));
 
+
         $query = trim($this->getProperty('query'));
         if ($query) {
             $c->where([
-                'idImageTask.task_id:LIKE' => "%{$query}%",
-                'OR:idImageTask.etag:LIKE' => "%{$query}%",
+                'idImageTask.operation:LIKE' => "%{$query}%",
             ]);
+            $id = (int)$query;
+            if ($id > 0) {
+                $c->where([
+                    'OR:idImageTask.id:=' => $id,
+                    'OR:idImageTask.pid:=' => $id,
+                ]);
+            }
         }
+
 
         $status = trim($this->getProperty('status'));
         if (!empty($status)) {
@@ -66,27 +74,32 @@ class idImageTaskGetListProcessor extends modObjectGetListProcessor
 
 
         $array['error'] = !empty($errors['msg']) ? $errors['msg'] : null;
-
+        if ($object->get('status') !== idImageTask::STATUS_FAILED) {
+            $array['error'] = null;
+        }
 
         $IndexedAction = new \IdImage\Support\IndexedAction($object, basename(__DIR__));
         $actions = $IndexedAction->getList(function (\IdImage\Support\IndexedAction $action) use ($object) {
-            //$action->add('update', 'icon-edit');
+            if (!$object->completed()) {
+                $action->add('send', 'icon-send', true, true, null, true);
+            }
 
             if ($object->attemptsExceeded()) {
-                $action->add('resetAttempts', 'icon-repeat');
+                $action->add('resetAttempts', 'icon-repeat', false, true, null, true);
             }
+            /*
+                         if ($object->isAllowedSend()) {
+                             $action->add('received', 'icon icon-send action-green', true, true, null, true);
+                         }
 
-            if ($object->isAllowedSend()) {
-                $action->add('received', 'icon icon-send action-green', true, true, null, true);
-            }
+                         if ($object->isAllowedPoll()) {
+                             $action->add('poll', 'icon icon-download action-green', false, true, null, true);
+                         }
 
-            if ($object->isAllowedPoll()) {
-                $action->add('poll', 'icon icon-download action-green', false, true, null, true);
-            }
-
-            if (!$object->get('image_available')) {
-                $action->add('upload', 'icon icon-download action-green', false, true, null, true);
-            }
+                         if (!$object->get('image_available')) {
+                             $action->add('upload', 'icon icon-download action-green', false, true, null, true);
+                         }
+            */
 
 
             $action->add('remove', 'icon icon-trash-o action-red', false, true, null, true);

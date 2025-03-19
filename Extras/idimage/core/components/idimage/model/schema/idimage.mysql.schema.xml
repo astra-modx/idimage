@@ -7,14 +7,14 @@
         <field key="picture" dbtype="varchar" precision="500" phptype="string" null="false"/>
         <field key="hash" dbtype="varchar" precision="32" phptype="string" null="true"/>
         <field key="status" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="1"/>
+        <field key="upload" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="embedding" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="similar" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="indexed" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
         <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
-        <field key="similar" dbtype="text" phptype="json" null="true"/>
         <field key="errors" dbtype="text" phptype="json" null="true"/>
-        <field key="total" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
-        <field key="search_scope" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
-        <field key="min_scope" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
-        <field key="max_scope" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
 
+        <field key="task_id" dbtype="varchar" precision="32" phptype="string" null="true"/>
         <field key="updatedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
 
         <field key="createdon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
@@ -28,16 +28,52 @@
         <index alias="active" name="active" primary="false" unique="false" type="BTREE">
             <column key="active" length="" collation="A" null="false"/>
         </index>
+        <index alias="upload" name="upload" primary="false" unique="false" type="BTREE">
+            <column key="upload" length="" collation="A" null="false"/>
+        </index>
+        <index alias="indexed" name="indexed" primary="false" unique="false" type="BTREE">
+            <column key="indexed" length="" collation="A" null="false"/>
+        </index>
+        <index alias="embedding" name="embedding" primary="false" unique="false" type="BTREE">
+            <column key="embedding" length="" collation="A" null="false"/>
+        </index>
+        <index alias="similar" name="similar" primary="false" unique="false" type="BTREE">
+            <column key="similar" length="" collation="A" null="false"/>
+        </index>
+
+        <index alias="task_id" name="task_id" primary="false" unique="false" type="BTREE">
+            <column key="task_id" length="" collation="A" null="false"/>
+        </index>
 
         <aggregate alias="Product" class="msProduct" local="pid" foreign="id" cardinality="one" owner="foreign"/>
         <aggregate alias="Embedding" class="idImageEmbedding" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
-        <aggregate alias="Task" class="idImageTask" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
+        <aggregate alias="Similar" class="idImageSimilar" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
+
+        <composite alias="Task" class="idImageTask" local="pid" foreign="pid" cardinality="many" owner="local"/>
     </object>
 
     <object class="idImageEmbedding" table="idimage_embeddings" extends="xPDOSimpleObject">
         <field key="pid" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false"/>
         <field key="hash" dbtype="varchar" precision="32" phptype="string" null="false"/>
-        <field key="embedding" dbtype="text" phptype="json" null="true"/>
+        <field key="data" dbtype="text" phptype="json" null="true"/>
+        <field key="updatedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+        <field key="createdon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+
+        <index alias="pid" name="pid" primary="false" unique="true" type="BTREE">
+            <column key="pid" length="" collation="A" null="false"/>
+        </index>
+        <aggregate alias="Product" class="msProduct" local="pid" foreign="id" cardinality="one" owner="foreign"/>
+        <aggregate alias="Close" class="idImageClose" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
+    </object>
+
+    <object class="idImageSimilar" table="idimage_similars" extends="xPDOSimpleObject">
+        <field key="pid" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false"/>
+        <field key="data" dbtype="text" phptype="json" null="true"/>
+        <field key="total" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+        <field key="compared" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+        <field key="search_scope" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+        <field key="min_scope" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
+        <field key="max_scope" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="0"/>
         <field key="updatedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
         <field key="createdon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
 
@@ -51,25 +87,17 @@
 
     <object class="idImageTask" table="idimage_tasks" extends="xPDOSimpleObject">
         <field key="pid" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false"/>
-        <field key="picture" dbtype="varchar" precision="500" phptype="string" null="true"/>
-        <field key="picture_path" dbtype="varchar" precision="500" phptype="string" null="true"/>
-        <field key="image_available" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
-        <field key="etag" dbtype="varchar" precision="32" phptype="string" null="false"/>
-        <field key="offer_id" dbtype="varchar" precision="32" phptype="string" null="false"/>
         <field key="status" dbtype="varchar" precision="32" phptype="string" null="false"/>
-        <field key="task_id" dbtype="varchar" precision="32" phptype="string" null="true"/>
-        <field key="type" dbtype="varchar" precision="32" phptype="string" null="true"/>
+
+        <field key="operation" dbtype="varchar" precision="32" phptype="string" null="false"/>
         <field key="errors" dbtype="text" phptype="json" null="true"/>
         <field key="attempt" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0"/>
 
         <field key="updatedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
         <field key="createdon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+        <field key="execute_at" dbtype="int" precision="20" phptype="timestamp" null="true"/>
 
-        <index alias="pid" name="pid" primary="false" unique="true" type="BTREE">
-            <column key="pid" length="" collation="A" null="false"/>
-        </index>
-
-        <index alias="task_id" name="task_id" primary="false" unique="false" type="BTREE">
+        <index alias="pid" name="pid" primary="false" unique="false" type="BTREE">
             <column key="pid" length="" collation="A" null="false"/>
         </index>
 
@@ -77,9 +105,10 @@
             <column key="status" length="" collation="A" null="false"/>
         </index>
 
-        <index alias="etag" name="etag" primary="false" unique="false" type="BTREE">
-            <column key="etag" length="" collation="A" null="false"/>
+        <index alias="operation" name="operation" primary="false" unique="false" type="BTREE">
+            <column key="operation" length="" collation="A" null="false"/>
         </index>
+
 
         <aggregate alias="Close" class="idImageClose" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
         <aggregate alias="Embedding" class="idImageEmbedding" local="pid" foreign="pid" cardinality="one" owner="foreign"/>

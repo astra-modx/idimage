@@ -1,6 +1,7 @@
 <?php
 
 use IdImage\Ai\CollectionProduct;
+
 /**
  * Демонстрация контроллера
  */
@@ -14,6 +15,31 @@ class CrontabControllerTests extends modCrontabController
         $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
 
 
+        // Build query
+        $c = $this->modx->newQuery('idImageClose');
+        $c->where([
+            'pid' => 96,
+        ]);
+
+        /* @var idImageSimilar $object */
+        if (!$object = $this->modx->getObject('idImageSimilar', $c)) {
+            return '';
+        }
+
+
+        $similar = $object->getProducts();
+
+        dd($similar);
+
+
+        /* @var idImageTask $task */
+        if ($task = $this->modx->getObject('idImageTask', 659)) {
+        }
+
+        $task->send();
+
+
+        dd($task->toArray());
 
 
         $ctx = 'web';
@@ -27,8 +53,6 @@ class CrontabControllerTests extends modCrontabController
         }
         $products = array_map('intval', $products);
         $products = array_filter(array_unique($products));
-
-
 
 
         $api = $idImage->api();

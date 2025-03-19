@@ -1,14 +1,8 @@
 <?php
 
-include_once 'setting.inc.php';
-
-
 # products
 
 # actions
-$_lang['idimage_actions_api_task_received'] = 'Отправить задания';
-$_lang['idimage_actions_api_task_poll'] = 'Получить вектора';
-$_lang['idimage_actions_api_task_poll_desc'] = 'Из сервис IDimage будут получены векторы изображений. По завершении получения всех векторов для товаров можно будет запустить индексацию.';
 
 $_lang['idimage_actions_task_creation'] = 'Создать задания';
 $_lang['idimage_actions_task_creation_desc'] = 'В сервис IDimage будут отправлены изображения товаров, полученные из базы.';
@@ -27,7 +21,6 @@ $_lang['idimage_indexed_action_poll'] = 'Обновить статистику';
 $_lang['idimage_actions_indexed_running'] = 'Запустить индексацию';
 
 
-
 $_lang['idimage_actions_task_destroy'] = 'Уничтожить все задания';
 
 # product destroy
@@ -38,8 +31,6 @@ $_lang['idimage_actions_product_destroy_desc'] = 'Внимание!!! Уничт
 # product destroy
 $_lang['idimage_actions_api_task_upload'] = 'Отправить изображения';
 $_lang['idimage_actions_api_task_upload_desc'] = 'Превью изображения будут отправлены в сервис IDimage для доступа к локальным изображениям которые сейчас не доступны из глобального интернета.';
-
-
 
 
 $_lang['idimage_navbar_create_product_btn'] = 'Создать товары';
@@ -62,3 +53,19 @@ $_lang['idimage_actions_queue_delete'] = 'Удалить из очереди';
 $_lang['idimage_actions_status_upload'] = 'Установить статус "Загрузка в cloud"';
 $_lang['idimage_actions_status_proccessing'] = 'Установить статус "ожидание"';
 $_lang['idimage_actions_status_queue'] = 'Установить статус "В очереди"';
+
+$_lang['idimage_close_action_remove'] = 'Удалить';
+$_lang['idimage_close_action_upload'] = 'Загрузить изображение';
+$_lang['idimage_close_action_thumbnail'] = 'Создать превью';
+$_lang['idimage_close_action_embedding'] = 'Получить векторы';
+
+//
+$_lang['idimage_actions_product_task_upload'] = 'Создать задание загрузки изображений';
+$_lang['idimage_actions_product_task_embedding'] = 'Создать задание получения векторы';
+$_lang['idimage_actions_product_task_indexed'] = 'Создать задание индексации товаров';
+$_lang['idimage_actions_task_send'] = 'Запустить задания';
+
+
+$_lang['idimage_task_action_send'] = 'Запустить';
+$_lang['idimage_task_action_resetattempts'] = 'Сбросить попытки';
+$_lang['idimage_task_action_remove'] = 'Удалить задание';

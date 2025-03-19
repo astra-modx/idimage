@@ -28,9 +28,6 @@ idimage.panel.Home = function (config) {
                     bodyCssClass: 'panel-desc',
                 }
                 , {
-                    xtype: 'idimage-panel-stat',
-                    cls: 'main-wrapper',
-                }, {
                     xtype: 'idimage-grid-tasks',
                     cls: 'main-wrapper',
                 }
@@ -44,6 +41,9 @@ idimage.panel.Home = function (config) {
                 {
                     html: _('idimage_tab_help_desc'),
                     bodyCssClass: 'panel-desc',
+                }, {
+                    xtype: 'idimage-panel-stat',
+                    cls: 'main-wrapper',
                 },
                 {
                     xtype: 'idimage-panel-help',

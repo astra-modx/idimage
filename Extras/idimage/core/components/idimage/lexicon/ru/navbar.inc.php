@@ -16,7 +16,7 @@ $_lang['idimage_navbar_statistic_title'] = '<h3>Статистика</h3>';
 
 
 # statistic
-$_lang['idimage_navbar_total_similar'] = 'С похожими: <b>{0}</b> шт.';
+$_lang['idimage_navbar_total_similar'] = 'Товаров с похожими: <b>{0}</b> шт.';
 $_lang['idimage_navbar_total_completed'] = 'Завершено: <b>{0}</b> шт.';
 $_lang['idimage_navbar_total_embedding'] = 'Товаров с векторами: <b>{0}</b> шт.';
 $_lang['idimage_navbar_total_error'] = 'Товаров без векторов: <b>{0}</b> шт.';

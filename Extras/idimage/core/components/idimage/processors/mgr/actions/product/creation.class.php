@@ -54,6 +54,12 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
             $files->collection(function (array $row) {
                 // путь до изображения
                 $imagePath = MODX_BASE_PATH.ltrim($row['image'], '/');
+
+                if (!file_exists($imagePath)) {
+                    // Пропускаем если отсутствуете файлы
+                    return false;
+                }
+
                 $pid = (int)$row['id'];
                 $picture = str_ireplace(MODX_BASE_PATH, '', $imagePath);
 
@@ -61,33 +67,25 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
                 if (!$Close = $this->idImage->modx->getObject('idImageClose', ['pid' => $pid])) {
                     $Close = $this->idImage->modx->newObject('idImageClose');
                     $Close->set('pid', $pid);
-                }
-                $status = idImageClose::STATUS_QUEUE;
-                $errors = null;
-                $hash = null;
-                if (!file_exists($imagePath)) {
-                    $status = idImageClose::STATUS_FAILED;
-                    $errors = [
-                        'file not found' => $picture,
-                    ];
-                } else {
-                    $hash = $Close->createHash($imagePath);
+                    $Close->set('status', idImageClose::STATUS_QUEUE);
                 }
 
-                $Close->set('errors', $errors);
-                $Close->set('hash', $hash);
+                $hash = $Close->createHash($imagePath);
+
+                // Создаем новый превью при условии
                 $Close->set('picture', $picture);
-                $Close->set('status', $status);
+                $Close->set('hash', $hash);
 
                 if (!$Close->save()) {
                     throw new \IdImage\Exceptions\ExceptionJsonModx('Failed to save Close object: '.$pid);
+                } else {
+                    // generate image thumbnail
+                    if (!$Close->existsThumbnail()) {
+                        $Close->generateThumbnail();
+                    }
                 }
 
-                // Создаем задание для создания векторов
-                if ($Close->status !== idImageClose::STATUS_FAILED) {
-                    $task = $Close->createTask($this->idimage());
-                    $task->save();
-                }
+                return true;
             });
 
             return $files->totalIteration();

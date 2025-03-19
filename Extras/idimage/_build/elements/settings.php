@@ -51,20 +51,10 @@ return [
 
     'limit_creation' => [
         'xtype' => 'numberfield',
-        'value' => 1000,
+        'value' => 500,
         'area' => 'idimage_limit',
     ],
 
-    'limit_received' => [
-        'xtype' => 'numberfield',
-        'value' => 1000,
-        'area' => 'idimage_limit',
-    ],
-    'limit_poll' => [
-        'xtype' => 'numberfield',
-        'value' => 1000,
-        'area' => 'idimage_limit',
-    ],
     'limit_indexed' => [
         'xtype' => 'numberfield',
         'value' => 100,
@@ -73,6 +63,11 @@ return [
     'limit_show_similar_products' => [
         'xtype' => 'numberfield',
         'value' => 5,
+        'area' => 'idimage_limit',
+    ],
+    'limit_attempt' => [
+        'xtype' => 'numberfield',
+        'value' => 20,
         'area' => 'idimage_limit',
     ],
 ];

@@ -22,12 +22,11 @@ if (empty($pid)) {
 // Build query
 $c = $modx->newQuery('idImageClose');
 $c->where([
-    'status' => $status,
     'pid' => $pid,
 ]);
 
-/* @var idImageClose $object */
-if (!$object = $modx->getObject('idImageClose', $c)) {
+/* @var idImageSimilar $object */
+if (!$object = $modx->getObject('idImageSimilar', $c)) {
     return '';
 }
 
@@ -35,7 +34,7 @@ if (!$object = $modx->getObject('idImageClose', $c)) {
 
 $i = 0;
 $results = [];
-$similar = $object->get('similar');
+$similar = $object->getProducts();
 
 
 $modx->setPlaceholder('idimage_similar', $similar);
@@ -45,7 +44,7 @@ if (!empty($similar) && is_array($similar)) {
 
     foreach ($similar as $id => $item) {
         $probability = $item['probability'];
-        $pid = $item['offer_id'];
+        $pid = (int)$item['pid'];
         if ($pid === $id || ($max_scope !== 100 && $probability > $max_scope)) {
             continue;
         }
@@ -64,7 +63,6 @@ if (!empty($similar) && is_array($similar)) {
 }
 
 
-
 if (empty($results)) {
     // empty
     return '';
@@ -76,6 +74,7 @@ usort($results, function ($a, $b) {
 
 // offer_id
 $ids = array_column($results, 'pid');
+
 // Output
 return implode(',', $ids);
 

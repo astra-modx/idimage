@@ -8,17 +8,15 @@ class idimageActiveGetListProcessor extends modObjectProcessor
     /** {@inheritDoc} */
     public function process()
     {
-        $array = array(
-            0 => array(
-                'name' => $this->modx->lexicon('idimage_received'),
-                'value' => '1',
-            ),
-            1 => array(
-                'name' => $this->modx->lexicon('idimage_inreceived'),
-                'value' => '0',
-            ),
-        );
+        $actions = \IdImage\Sender::$actionsMap;
+        $array = [];
 
+        foreach ($actions as $k => $v) {
+            $array[] = array(
+                'name' => $v,
+                'value' => $v,
+            );
+        }
         $query = $this->getProperty('query');
         if (!empty($query)) {
             foreach ($array as $k => $format) {
@@ -38,7 +36,7 @@ class idimageActiveGetListProcessor extends modObjectProcessor
         if ($this->getProperty('addall')) {
             $array = array_merge_recursive(array(
                 array(
-                    'name' => $this->modx->lexicon('idimage_received_all'),
+                    'name' => $this->modx->lexicon('idimage_operation_all'),
                     'value' => '',
                 ),
             ), $array);

@@ -1,21 +1,19 @@
 <?php
 
-use IdImage\Sender;
-
 class idImageTaskReceivedProcessor extends modProcessor
 {
     public function process()
     {
         $id = (int)$this->getProperty('id');
 
-        /* @var idImageTask $Task */
-        if (!$Task = $this->modx->getObject('idImageTask', $id)) {
+        /* @var idImageClose $Close */
+        if (!$Close = $this->modx->getObject('idImageClose', $id)) {
             throw new \IdImage\Exceptions\ExceptionJsonModx('Не удалось получить Task для id');
         }
 
-        $Task->sender()->addTask($Task)->poll();
+        $Close->generateThumbnail();
 
-        return $this->success('Выполнено');
+        return $this->success('success');
     }
 }
 

@@ -18,7 +18,7 @@ use InvalidArgumentException;
 class CollectionProduct
 {
     private idImage $idImage;
-    protected $embedding = null;
+    protected ?array $items = null;
     protected $modify = null;
     private CosineSimilarity $cosineSimilarity;
     private Similar $similar;
@@ -26,7 +26,7 @@ class CollectionProduct
     public function __construct(idImage $idImage, int $minimumProbabilityScore = 70, int $maximumProductsFound = 50)
     {
         $this->idImage = $idImage;
-        $this->cosineSimilarity = new CosineSimilarity($minimumProbabilityScore, $maximumProductsFound);
+        $this->cosineSimilarity = new CosineSimilarity($this, $minimumProbabilityScore, $maximumProductsFound);
         $this->similar = new Similar();
     }
 
@@ -42,46 +42,65 @@ class CollectionProduct
         return $this;
     }
 
-    public function getSimilar(int $pid, array $embedding, array $items): Similar
+    public function compare(int $pid, array $embedding): Similar
     {
-        if (count($embedding) !== 512) {
-            throw new Exception("Вектор должен быть массивом");
-        }
-        $similar = $this->cosineSimilarity->collection($pid, $embedding, $items);
-        $this->similar->fromArray($similar);
+        $similar = $this->similar;
+        $similar->setPid($pid);
+        $similar->setEmbedding($embedding);
+        $this->cosineSimilarity->collection($similar);
 
-        return $this->similar;
+        return $similar;
     }
 
 
-    public function getEmbedding()
+    public function all()
     {
-        return $this->embedding;
+        return $this->items;
+    }
+
+
+    public function count()
+    {
+        return is_array($this->items) ? count($this->items) : 0;
+    }
+
+    // is not emoty
+    public function isEmpty()
+    {
+        return $this->count() === 0;
+    }
+
+    public function isNotEmpty()
+    {
+        return !$this->isEmpty();
+    }
+
+
+    public function get(int $pid)
+    {
+        $this->loadEmbedding();
+
+        if (!isset($this->items[$pid])) {
+            return null;
+        }
+
+        return $this->items[$pid];
     }
 
     public function loadEmbedding()
     {
-        if (is_null($this->embedding)) {
+        if (is_null($this->items)) {
+            $this->items = [];
             $query = $this->query();
-
             if ($this->modify) {
                 call_user_func($this->modify, $query);
             }
-
-            $items = $query->toArray();
-
-            $items = array_map(function ($item) {
-                return [
-                    'pid' => $item['pid'],
-                    'embedding' => json_decode($item['embedding'], true),
-                ];
-            }, $items);
-
-            $items = array_filter($items, function ($item) {
-                return (is_array($item['embedding']) && count($item['embedding']) === 512);
+            $query->collection(function ($item) use (&$items) {
+                $embedding = json_decode($item['data'], true);
+                if (is_array($embedding) && count($embedding) === 512) {
+                    $this->items[$item['pid']] = $embedding;
+                }
             });
-
-            $this->embedding = $items;
         }
     }
 

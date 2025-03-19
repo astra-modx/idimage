@@ -464,31 +464,7 @@ Ext.extend(idimage.combo.StatusService, MODx.combo.ComboBox);
 Ext.reg('idimage-combo-status-service', idimage.combo.StatusService);
 
 
-/**
- * Filed Resource
- * @param config
- * @constructor
- */
-idimage.combo.FilterReceived = function (config) {
-    config = config || {};
-    Ext.applyIf(config, {
-        name: 'received',
-        hiddenName: 'received',
-        displayField: 'name',
-        valueField: 'value',
-        editable: true,
-        fields: ['value', 'name'],
-        pageSize: 20,
-        baseParams: {
-            action: 'mgr/misc/received/getlist',
-            combo: true,
-            addall: config.addall || 0
-        },
-    });
-    idimage.combo.FilterReceived.superclass.constructor.call(this, config);
-};
-Ext.extend(idimage.combo.FilterReceived, idimage.combo.Active);
-Ext.reg('idimage-combo-filter-received', idimage.combo.FilterReceived);
+
 
 /**
  * Filed Resource
@@ -536,3 +512,30 @@ idimage.combo.FilterTaskStatus = function (config) {
 };
 Ext.extend(idimage.combo.FilterTaskStatus, idimage.combo.Active);
 Ext.reg('idimage-combo-filter-task-status', idimage.combo.FilterTaskStatus);
+
+/**
+ * Filed Operation
+ * @param config
+ * @constructor
+ */
+idimage.combo.FilterTaskOperation = function (config) {
+    config = config || {};
+    Ext.applyIf(config, {
+        name: 'operation',
+        hiddenName: 'operation',
+        baseParams: {
+            action: 'mgr/misc/operation/getlist',
+            combo: true,
+            addall: config.addall || 0
+        },
+        tpl: new Ext.XTemplate(
+            '<tpl for="."><div class="x-combo-list-item">',
+            '{name}</span>',
+            '</div></tpl>', {
+                compiled: true
+            }),
+    });
+    idimage.combo.FilterTaskOperation.superclass.constructor.call(this, config);
+};
+Ext.extend(idimage.combo.FilterTaskOperation, idimage.combo.Active);
+Ext.reg('idimage-combo-filter-task-operation', idimage.combo.FilterTaskOperation);

@@ -67,14 +67,13 @@ $_lang['idimage_grid_search'] = 'Поиск';
 $_lang['idimage_grid_actions'] = 'Действия';
 $_lang['idimage_actions_dropdown'] = 'Действия';
 
-$_lang['idimage_task_action_send'] = 'Запрос в сервис';
-$_lang['idimage_task_action_resetattempts'] = 'Сбросить попытки';
-$_lang['idimage_task_action_remove'] = 'Удалить задание';
+
 $_lang['idimage_tasks'] = 'Задания';
 
 $_lang['idimage_pid'] = 'Pid';
 $_lang['idimage_attempt'] = 'Попытки';
 $_lang['idimage_hash'] = 'hash';
+$_lang['idimage_processing'] = 'В процессе';
 $_lang['idimage_status'] = 'Статус';
 $_lang['idimage_type'] = 'Тип';
 $_lang['idimage_createdon'] = 'Дата создания';
@@ -82,9 +81,13 @@ $_lang['idimage_updatedon'] = 'Дата обновления';
 $_lang['idimage_active'] = 'Включен';
 $_lang['idimage_picture'] = 'Изображение';
 $_lang['idimage_total'] = 'Кол-во похожих';
-$_lang['idimage_task_id'] = 'Task id';
+$_lang['idimage_operation'] = 'Операция';
 $_lang['idimage_image_available'] = 'Изображение доступно';
 $_lang['idimage_etag'] = 'Etag';
+$_lang['idimage_exists_thumbnail'] = 'Изображение создано';
+$_lang['idimage_upload'] = 'Изображение загружено';
+$_lang['idimage_error'] = 'Ошибка';
+$_lang['idimage_task_id'] = 'Task id';
 
 
 $_lang['idimage_action_assign'] = 'Создание товаров для категорий';
@@ -101,6 +104,8 @@ $_lang['idimage_task_confirmed'] = 'Подтвержден';
 ////////////////////////
 $_lang['idimage_closes'] = 'Товары';
 $_lang['idimage_close_id'] = 'Id';
+$_lang['idimage_embedding'] = 'Вектора получены';
+$_lang['idimage_indexed'] = 'Индексация произведена';
 $_lang['idimage_close_ball'] = 'Информация о похожих';
 $_lang['idimage_close_pagetitle'] = 'Название';
 $_lang['idimage_close_status'] = 'Статус';
@@ -125,8 +130,7 @@ $_lang['idimage_close_createdon'] = 'Дата создания';
 $_lang['idimage_close_updatedon'] = 'Дата обновления';
 $_lang['idimage_close_description'] = 'Описание';
 $_lang['idimage_close_active'] = 'Активно';
-
-
+$_lang['idimage_execute_at'] = 'Время исполнения';
 
 
 $_lang['idimage_close_create'] = 'Создать товар';
@@ -163,3 +167,7 @@ $_lang['idimage_action_confirm'] = 'Вы уверены что хотите вы
 
 $_lang['idimage_update_products'] = 'Обновление товаров';
 
+
+include_once 'filters.inc.php';
+include_once 'error.inc.php';
+include_once 'actions.inc.php';

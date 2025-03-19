@@ -16,9 +16,11 @@ class CosineSimilarity
 {
     private int $minimumProbabilityScore = 70;
     private int $maximumProductsFound;
+    private CollectionProduct $products;
 
-    public function __construct(int $minimumProbabilityScore = 70, int $maximumProductsFound = 50)
+    public function __construct(CollectionProduct $products, int $minimumProbabilityScore = 70, int $maximumProductsFound = 50)
     {
+        $this->products = $products;
         $this->minimumProbabilityScore = $minimumProbabilityScore;
         $this->maximumProductsFound = $maximumProductsFound;
     }
@@ -33,32 +35,43 @@ class CosineSimilarity
         return $this->maximumProductsFound;
     }
 
-    public function collection(int $pid, array $vectorA, array $items)
-    {
-        $percentage = [];
+    protected $total = 0;
 
-        foreach ($items as $item) {
+    public function total()
+    {
+        return $this->total;
+    }
+
+    public function collection(Similar $similar): Similar
+    {
+        $searchPid = $similar->getPid();
+        $vectorA = $similar->getEmbedding();
+
+        $percentage = [];
+        $compared = 0;
+
+        foreach ($this->products->all() as $pid => $vectorB) {
             // offset for current item
-            if ($pid == $item['pid']) {
+            if ($pid == $searchPid) {
                 continue;
             }
-            if (!is_array($item['embedding'])) {
+            if (!is_array($vectorB)) {
                 throw new Exception("Вектор должен быть массивом pid: {$pid}");
             }
 
-            if (count($item['embedding']) != 512) {
+            if (count($vectorB) != 512) {
                 throw new Exception("Вектор должен быть длиной 512 pid: {$pid}");
             }
 
-            $vectorB = $item['embedding'];
             $score = $this->compare($vectorA, $vectorB);
             $probability = $this->parserPercentage($score);
             if ($probability >= $this->minimumProbabilityScore()) {
                 $percentage[] = [
-                    'offer_id' => $item['pid'],
+                    'offer_id' => $pid,
                     'probability' => $probability,
                 ];
             }
+            $compared++;
         }
 
         // sort by probability
@@ -69,10 +82,13 @@ class CosineSimilarity
 
         // Получаем только первые 50 элемент
         if (count($percentage) > $this->maximumProductsFound()) {
-            return array_slice($percentage, 0, $this->maximumProductsFound());
+            $percentage = array_slice($percentage, 0, $this->maximumProductsFound());
         }
 
-        return $percentage;
+        $similar->setCompared($compared);
+        $similar->setData($percentage);
+
+        return $similar;
     }
 
     function parserPercentage(float $value)

@@ -326,6 +326,10 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
 
         var label = _(k);
 
+        if (label === undefined) {
+            console.warn('lexicon not found: '+k);
+        }
+
         label = label === undefined ? action : label;
 
         icon = icon !== undefined ? '<i class="icon ' + icon + '"></i>&nbsp;' : '';

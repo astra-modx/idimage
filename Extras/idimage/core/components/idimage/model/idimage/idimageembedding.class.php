@@ -16,10 +16,10 @@ class idImageEmbedding extends xPDOSimpleObject
 
     public function getEmbedding()
     {
-        if ($this->get('embedding') == 0) {
+        if (empty($this->get('data'))) {
             return null;
         }
-        $embedding = $this->get('embedding');
+        $embedding = $this->get('data');
         if (empty($embedding)) {
             return null;
         }

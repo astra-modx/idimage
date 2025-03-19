@@ -51,7 +51,6 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
             }
         }
 
-
         $received = $this->getProperty('received');
         if ($received != '') {
             $c->where("{$this->objectType}.received={$received}");
@@ -60,9 +59,9 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
         $similar = $this->getProperty('similar');
         if ($similar != '') {
             if ($similar == '1') {
-                $c->where("{$this->objectType}.total!=0");
+                $c->where("Similar.total!=0");
             } else {
-                $c->where("{$this->objectType}.total=0");
+                $c->where("Similar.total=0");
             }
         }
 
@@ -76,9 +75,11 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
             $c->where("{$this->objectType}.status={$status}");
         }
 
-
         $c->leftJoin('msProduct', 'msProduct', 'msProduct.id=idImageClose.pid');
         $c->select('msProduct.pagetitle AS pagetitle');
+
+        $c->leftJoin('idImageSimilar', 'Similar', 'Similar.pid=idImageClose.pid');
+        $c->select('Similar.total AS total');
 
         return $c;
     }
@@ -91,27 +92,44 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
      */
     public function prepareRow(xPDOObject $object)
     {
+        /* @var idImageClose $object */
         $array = $object->toArray();
         unset($array['similar']);
-        $cloud = $this->setCheckbox('cloud');
 
-        $array['images'] = $object->getProducts();
+        $array['images'] = $object->getProductsSlice();
+
+
+        if ($object->get('status') === idImageClose::STATUS_COMPLETED) {
+            $array['errors'] = null;
+        }
+        $array['exists_thumbnail'] = $object->existsThumbnail();
 
         $IndexedAction = new \IdImage\Support\IndexedAction($object, basename(__DIR__));
-        $actions = $IndexedAction->getList(function ($action) use ($cloud) {
-            if (!$cloud) {
-                //$action->add('update', 'icon-edit');
+        $actions = $IndexedAction->getList(function (\IdImage\Support\IndexedAction $action) use ($object) {
+            $upload = $object->get('upload');
 
-                /*if (!$action->get('active')) {
-                    $action->add('enable', 'icon-power-off action-green');
-                } else {
-                    $action->add('disable', 'icon-power-off action-gray');
-                }
-
-                $action->add('remove', 'icon icon-trash-o action-red');*/
+            if (!$object->existsThumbnail()) {
+                $action->add('thumbnail', 'icon-camera action-green');
             } else {
-                $action->add('upload', 'icon icon-upload');
+                $button = !$upload;
+                $action->add('upload', 'icon icon-upload', $button, true, null, true);
             }
+
+
+            if ($upload && $object->get('task_id')) {
+                $button = !$object->get('embedding');
+                $action->add('embedding', 'icon icon-download', $button, true, null, true);
+            }
+
+            //$action->add('update', 'icon-edit');
+
+            /*if (!$action->get('active')) {
+                $action->add('enable', 'icon-power-off action-green');
+            } else {
+                $action->add('disable', 'icon-power-off action-gray');
+            }*/
+
+            $action->add('remove', 'icon icon-trash-o action-red', false);
         });
         $array['actions'] = $actions;
 

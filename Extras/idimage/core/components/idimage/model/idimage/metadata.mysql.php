@@ -5,6 +5,7 @@ $xpdo_meta_map = array (
   array (
     0 => 'idImageClose',
     1 => 'idImageEmbedding',
-    2 => 'idImageTask',
+    2 => 'idImageSimilar',
+    3 => 'idImageTask',
   ),
 );

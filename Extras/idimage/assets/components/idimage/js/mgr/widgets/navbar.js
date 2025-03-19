@@ -42,14 +42,7 @@ idimage.panel.Navbar = function (config) {
                                         width: '99%',
                                         allowBlank: true,
                                     },
-                                    {
-                                        xtype: 'displayfield',
-                                        readOnly: true,
-                                        name: 'total_similar',
-                                        value: '---',
-                                        width: '99%',
-                                        allowBlank: true,
-                                    },
+
 
 
                                 ]
@@ -122,12 +115,20 @@ idimage.panel.Navbar = function (config) {
                                     },
                                     {
                                         xtype: 'displayfield',
+                                        readOnly: true,
+                                        name: 'total_similar',
+                                        value: '---',
+                                        width: '99%',
+                                        allowBlank: true,
+                                    },
+                                  /*  {
+                                        xtype: 'displayfield',
                                         name: 'total_error',
                                         readOnly: true,
                                         value: '---',
                                         width: '99%',
                                         allowBlank: true,
-                                    },
+                                    },*/
 
 
                                 ]

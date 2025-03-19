@@ -11,18 +11,13 @@ $xpdo_meta_map['idImageTask']= array (
   'fields' => 
   array (
     'pid' => NULL,
-    'picture' => NULL,
-    'picture_path' => NULL,
-    'image_available' => 0,
-    'etag' => NULL,
-    'offer_id' => NULL,
     'status' => NULL,
-    'task_id' => NULL,
-    'type' => NULL,
+    'operation' => NULL,
     'errors' => NULL,
     'attempt' => 0,
     'updatedon' => 0,
     'createdon' => 0,
+    'execute_at' => NULL,
   ),
   'fieldMeta' => 
   array (
@@ -34,42 +29,6 @@ $xpdo_meta_map['idImageTask']= array (
       'phptype' => 'integer',
       'null' => false,
     ),
-    'picture' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '500',
-      'phptype' => 'string',
-      'null' => true,
-    ),
-    'picture_path' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '500',
-      'phptype' => 'string',
-      'null' => true,
-    ),
-    'image_available' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'etag' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '32',
-      'phptype' => 'string',
-      'null' => false,
-    ),
-    'offer_id' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '32',
-      'phptype' => 'string',
-      'null' => false,
-    ),
     'status' => 
     array (
       'dbtype' => 'varchar',
@@ -77,19 +36,12 @@ $xpdo_meta_map['idImageTask']= array (
       'phptype' => 'string',
       'null' => false,
     ),
-    'task_id' => 
+    'operation' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '32',
       'phptype' => 'string',
-      'null' => true,
-    ),
-    'type' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '32',
-      'phptype' => 'string',
-      'null' => true,
+      'null' => false,
     ),
     'errors' => 
     array (
@@ -122,28 +74,19 @@ $xpdo_meta_map['idImageTask']= array (
       'null' => false,
       'default' => 0,
     ),
+    'execute_at' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '20',
+      'phptype' => 'timestamp',
+      'null' => true,
+    ),
   ),
   'indexes' => 
   array (
     'pid' => 
     array (
       'alias' => 'pid',
-      'primary' => false,
-      'unique' => true,
-      'type' => 'BTREE',
-      'columns' => 
-      array (
-        'pid' => 
-        array (
-          'length' => '',
-          'collation' => 'A',
-          'null' => false,
-        ),
-      ),
-    ),
-    'task_id' => 
-    array (
-      'alias' => 'task_id',
       'primary' => false,
       'unique' => false,
       'type' => 'BTREE',
@@ -173,15 +116,15 @@ $xpdo_meta_map['idImageTask']= array (
         ),
       ),
     ),
-    'etag' => 
+    'operation' => 
     array (
-      'alias' => 'etag',
+      'alias' => 'operation',
       'primary' => false,
       'unique' => false,
       'type' => 'BTREE',
       'columns' => 
       array (
-        'etag' => 
+        'operation' => 
         array (
           'length' => '',
           'collation' => 'A',

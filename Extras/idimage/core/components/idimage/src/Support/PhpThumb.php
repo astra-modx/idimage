@@ -14,7 +14,7 @@ use modX;
 
 class PhpThumb
 {
-    public static function makeThumbnail(modX $modx, string $path, array $options = []): string
+    public static function makeThumbnail(modX $modx, string $source, string $target, array $options = []): string
     {
         if (!class_exists('modPhpThumb')) {
             if (file_exists(MODX_CORE_PATH.'model/phpthumb/modphpthumb.class.php')) {
@@ -26,23 +26,22 @@ class PhpThumb
         }
 
 
-        $tmpPath = MODX_CORE_PATH.'cache/idimage/tmp/';
+        $tmpPath = dirname($target);
         if (!is_dir($tmpPath)) {
             if (!mkdir($tmpPath, 0777, true)) {
                 throw new Exception('Failed to create cache folder');
             }
         }
 
-
         $options = array_merge([
             'w' => 224,
             'h' => 224,
-            'q' => 50,
-            'zc' => 'T',
-            'bg' => '000000',
+            'q' => 70,
+            'zc' => '0',
+            'bg' => 'FFFFFF',
             'f' => 'jpg',
         ], $options);
-        $content = file_get_contents($path);
+        $content = file_get_contents($source);
         $phpThumb = new modPhpThumb($modx);
         $phpThumb->initialize();
         $tf = tempnam(MODX_BASE_PATH, 'idimage_');
@@ -59,7 +58,7 @@ class PhpThumb
             //$modx->log(modX::LOG_LEVEL_INFO,'[miniShop2] phpThumb messages for .'.print_r($phpThumb->debugmessages, true));
             $output = $phpThumb->outputImageData;
         } else {
-            $modx->log( modX::LOG_LEVEL_ERROR, '[miniShop2] Could not generate thumbnail for '.print_r($phpThumb->debugmessages, true));
+            $modx->log(modX::LOG_LEVEL_ERROR, '[miniShop2] Could not generate thumbnail for '.print_r($phpThumb->debugmessages, true));
         }
 
         if (file_exists($phpThumb->sourceFilename)) {
@@ -68,13 +67,11 @@ class PhpThumb
         @unlink($tf);
 
 
-        $newFileName = uniqid('file_', true).'.jpg'; // Генерируем уникальное имя
-        $filePathTmp = $tmpPath.$newFileName; // Полный путь к файлу
-
-
-        file_put_contents($filePathTmp, $output);
+        //$newFileName = uniqid('file_', true).'.jpg'; // Генерируем уникальное имя
+        //$filePathTmp = $tmpPath.$newFileName; // Полный путь к файлу
+        file_put_contents($target, $output);
         unset($output);
 
-        return $filePathTmp;
+        return $target;
     }
 }

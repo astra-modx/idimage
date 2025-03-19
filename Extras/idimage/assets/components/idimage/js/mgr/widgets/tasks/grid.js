@@ -53,34 +53,22 @@ Ext.extend(idimage.grid.Tasks, idimage.grid.Default, {
 
     getFields: function () {
         return [
-            'id', 'task_id', 'picture', 'etag', 'attempt', 'msg', 'pid', 'error', 'status', 'image_available', 'type', 'createdon', 'updatedon', 'active', 'actions'
+            'id', 'operation', 'processing', 'attempt', 'execute_at', 'msg', 'pid', 'error', 'status', 'createdon', 'updatedon', 'actions'
         ];
     },
 
     getColumns: function () {
         return [
-            {header: _('id'), dataIndex: 'id', width: 20, sortable: true, hidden: true},
-            {header: _('idimage_task_id'), dataIndex: 'task_id', width: 20, sortable: true, hidden: true},
-            {
-                header: _('idimage_image_available'),
-                dataIndex: 'image_available',
-                width: 20,
-                sortable: true,
-                hidden: true,
-                renderer: idimage.utils.renderBoolean
-            },
-            {header: _('idimage_error'), dataIndex: 'error', width: 20, sortable: true, hidden: true},
-            {header: _('idimage_etag'), dataIndex: 'etag', width: 20, sortable: true, hidden: true},
-            {header: _('idimage_picture'), dataIndex: 'picture', width: 20, sortable: true, hidden: true},
-            {header: _('idimage_pid'), dataIndex: 'pid', width: 20, sortable: true},
+            {header: _('id'), dataIndex: 'id', width: 50, sortable: true, hidden: false},
+            {header: _('idimage_pid'), dataIndex: 'pid', width: 70, sortable: true},
+            {header: _('idimage_operation'), dataIndex: 'operation', width: 70, sortable: true},
             {header: _('idimage_status'), dataIndex: 'status', width: 70, sortable: true, renderer: idimage.utils.statusTask},
-            {header: _('idimage_type'), dataIndex: 'type', width: 70, sortable: true, hidden: true},
             {header: _('idimage_attempt'), dataIndex: 'attempt', width: 70, sortable: true},
-            {header: _('idimage_task_confirmed'), dataIndex: 'confirmed', width: 70, sortable: true, hidden: true, renderer: idimage.utils.renderBoolean},
+            {header: _('idimage_error'), dataIndex: 'error', width: 70, sortable: true, hidden: true},
+            {header: _('idimage_execute_at'), dataIndex: 'execute_at', width: 70, sortable: true, hidden: true},
 
             {header: _('idimage_createdon'), dataIndex: 'createdon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
             {header: _('idimage_updatedon'), dataIndex: 'updatedon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
-            {header: _('idimage_active'), dataIndex: 'active', width: 75, renderer: idimage.utils.renderBoolean, hidden: true},
             {
                 header: _('idimage_grid_actions'),
                 dataIndex: 'actions',
@@ -94,35 +82,44 @@ Ext.extend(idimage.grid.Tasks, idimage.grid.Default, {
 
     getTopBar: function (config) {
 
-        buttonUpload = {}
-        if (idimage.config.send_file) {
-            buttonUpload = this.actionMenu('api/task/upload', 'icon-upload');
-        }
         return [
-
-            /*  {
-                  text: '<i class="icon icon-plus"></i> Создать товар',
-                  handler: this.assignSelected,
-                  scope: this
-              },*/
-
             {
                 text: '<i class="icon icon-cogs"></i> ' + _('idimage_actions_dropdown'),
                 cls: 'primary-button',
                 menu: [
-                    this.actionMenu('task/creation', 'icon-plus'),
-                    buttonUpload,
+
+                    this.actionMenu('product/task/upload', 'icon-upload'),
+                    this.actionMenu('product/task/embedding', 'icon-upload'),
+                    this.actionMenu('product/task/indexed', 'icon-refresh'),
                     '-',
-                    this.actionMenu('task/destroy', 'icon-trash action-red'),
+                    this.actionMenu('task/destroy', 'icon-trash action-red')
                 ]
             },
 
-            this.actionMenu('api/task/received', 'icon-send'),
-            this.actionMenu('api/task/poll', 'icon-download'),
+            this.actionMenu('task/send', 'icon-send'),
 
             {
                 xtype: 'idimage-combo-filter-task-status',
                 name: 'status',
+                width: 210,
+                custm: true,
+                clear: true,
+                addall: true,
+                value: '',
+                listeners: {
+                    select: {
+                        fn: this._filterByCombo,
+                        scope: this
+                    },
+                    afterrender: {
+                        fn: this._filterByCombo,
+                        scope: this
+                    }
+                }
+            },
+
+            {
+                xtype: 'idimage-combo-filter-task-operation',
                 width: 210,
                 custm: true,
                 clear: true,
@@ -174,6 +171,10 @@ Ext.extend(idimage.grid.Tasks, idimage.grid.Default, {
     ,
     resetAttemptsTask: function () {
         this.action('resetAttempts')
+    }
+    ,
+    sendTask: function () {
+        this.action('action/send')
     }
     ,
 

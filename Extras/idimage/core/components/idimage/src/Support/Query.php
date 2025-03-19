@@ -53,6 +53,11 @@ class Query
         return $this->create('idImageClose');
     }
 
+    public function similar()
+    {
+        return $this->create('idImageSimilar');
+    }
+
     public function tasks()
     {
         return $this->create('idImageTask');

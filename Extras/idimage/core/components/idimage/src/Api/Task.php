@@ -24,8 +24,6 @@ class Task extends ApiAbstract implements ApiInterfaces
         $collection->each(function (TaskEntity $entity) use (&$items) {
             $items[] = [
                 'offer_id' => $entity->getOfferId(),
-                'etag' => $entity->getEtag(),
-                'picture' => $entity->getPicture(),
             ];
 
             return true;
@@ -43,21 +41,31 @@ class Task extends ApiAbstract implements ApiInterfaces
 
         $collection->each(function (TaskEntity $entity) use (&$postFields, &$i) {
             $offerId = $entity->getOfferId();
-            $imagePath = $entity->getTmpPath();
+            $imagePath = $entity->getPicturePath();
+            $error = null;
 
-            $size = @getimagesize($imagePath);
-            if ($size[0] !== 224 || $size[1] !== 224) {
-                throw new ExceptionJsonModx('Неверный размер изображения, должно быть 224х224');
+            if (!file_exists($imagePath)) {
+                $error = 'Файл не существует: '.$imagePath;
+            } else {
+                $size = @getimagesize($imagePath);
+                if ($size[0] !== 224 || $size[1] !== 224) {
+                    $error = 'Неверный размер изображения, должно быть 224х224';
+                }
+
+                if ($size['mime'] !== 'image/jpeg') {
+                    $error = 'Неверный формат изображения, должно быть jpeg';
+                }
             }
 
-            if ($size['mime'] !== 'image/jpeg') {
-                throw new ExceptionJsonModx('Неверный формат изображения, должно быть jpeg');
+            if ($error) {
+                $entity->setErrors($error);
+            } else {
+                $postFields["files[$i]"] = new CURLFile($imagePath, 'image/jpeg', basename($imagePath));
+                $postFields["file_ids[$i]"] = $offerId; // Добавляем ID
+                $i++;
             }
-
-            $postFields["files[$i]"] = new CURLFile($imagePath, 'image/jpeg', basename($imagePath));
-            $postFields["file_ids[$i]"] = $offerId; // Добавляем ID
-            $i++;
         });
+
 
         return $this->client->post('/ai/upload', $postFields)->setHeaders([
             'Accept: application/json',
@@ -80,6 +88,45 @@ class Task extends ApiAbstract implements ApiInterfaces
 
         return $this->client->post("/ai/task", [
             'ids' => $ids,
+        ]);
+    }
+
+
+    public function embedding(TaskCollection $collection)
+    {
+        $ids = [];
+        $collection->each(function (TaskEntity $entity) use (&$ids) {
+            if (!$taskId = $entity->getTaskId()) {
+                throw new ExceptionJsonModx('No offer id');
+            }
+            $ids[] = $taskId;
+
+            return true;
+        });
+
+        return $this->client->post("/ai/task", [
+            'ids' => $ids,
+            'embedding' => true,
+            'similar' => false,
+        ]);
+    }
+
+    public function similar(TaskCollection $collection)
+    {
+        $ids = [];
+        $collection->each(function (TaskEntity $entity) use (&$ids) {
+            if (!$taskId = $entity->getTaskId()) {
+                throw new ExceptionJsonModx('No offer id');
+            }
+            $ids[] = $taskId;
+
+            return true;
+        });
+
+        return $this->client->post("/ai/task", [
+            'ids' => $ids,
+            'embedding' => false,
+            'similar' => true,
         ]);
     }
 

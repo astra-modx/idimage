@@ -21,19 +21,6 @@ abstract class idImageActionsProcessor extends modProcessor
         return $this->idImage;
     }
 
-    public function calculationSteps($query, $chunk)
-    {
-        $ids = $query->where([
-            'status:!=' => idImageClose::STATUS_PROCESSING,
-        ])->ids();
-        $total = count($ids);
-        $ids = array_chunk($ids, $chunk);
-
-        return [
-            'iterations' => $ids,
-            'total' => $total,
-        ];
-    }
 
     public function ids()
     {
@@ -68,7 +55,7 @@ abstract class idImageActionsProcessor extends modProcessor
 
             return $this->success('', [
                 'total' => is_array($ids) ? count($ids) : 0,
-                'iterations' => is_array($ids) ? array_chunk($ids, $this->stepChunk()) : null,
+                'iterations' => (!empty($ids) && is_array($ids)) ? array_chunk($ids, $this->stepChunk()) : null,
             ]);
         }
         if (!$ids = $this->ids()) {
@@ -79,7 +66,7 @@ abstract class idImageActionsProcessor extends modProcessor
 
         $total = $callback($ids);
 
-        return $this->success('upload', [
+        return $this->success($this->modx->lexicon('success'), [
             'total' => $total,
         ]);
     }

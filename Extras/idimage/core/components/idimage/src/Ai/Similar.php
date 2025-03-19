@@ -17,8 +17,8 @@ use InvalidArgumentException;
 class Similar
 {
 
-    private int $total;
-    private array $similar;
+    private int $total = 0;
+    private ?array $data = null;
     private int $status;
     /**
      * @var int|mixed
@@ -28,19 +28,9 @@ class Similar
      * @var int|mixed
      */
     private $max_value;
-
-    public function fromArray(array $similar)
-    {
-        $this->total = count($similar);
-        $this->similar = $similar;
-        $this->status = $similar ? IdImageClose::STATUS_COMPLETED : IdImageClose::STATUS_NOT_FOUND_SIMILAR;
-
-        $probability = array_column($similar, 'probability');
-        $this->min_value = $similar ? min($probability) : 0;
-        $this->max_value = $similar ? max($probability) : 0;
-
-        return $this;
-    }
+    private int $compared = 0;
+    private ?int $pid = null;
+    private ?array $embedding = null;
 
 
     public function minValue()
@@ -59,15 +49,6 @@ class Similar
         return $this->total;
     }
 
-    public function status()
-    {
-        return $this->status;
-    }
-
-    public function getSimilar(): array
-    {
-        return $this->similar;
-    }
 
     public function toArray()
     {
@@ -75,8 +56,87 @@ class Similar
             'min_value' => $this->min_value,
             'max_value' => $this->max_value,
             'total' => $this->total,
-            'status' => $this->status,
-            'similar' => $this->similar,
+            'data' => $this->similar,
+            'compared' => $this->compared,
         ];
     }
+
+    public function setCompared(int $total)
+    {
+        $this->compared = $total;
+
+        return $this;
+    }
+
+    public function compared()
+    {
+        return $this->compared;
+    }
+
+    public function status()
+    {
+        return $this->status;
+    }
+
+    public function setStatus(int $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function setPid(int $pid)
+    {
+        $this->pid = $pid;
+
+        return $this;
+    }
+
+    public function getPid()
+    {
+        return $this->pid;
+    }
+
+    public function setEmbedding(array $embedding)
+    {
+        $this->embedding = $embedding;
+
+        return $this;
+    }
+
+    public function getEmbedding(): array
+    {
+        return $this->embedding;
+    }
+
+    public function setData(array $percentage)
+    {
+        $this->total = count($percentage);
+        $this->data = $percentage;
+        $probability = array_column($percentage, 'probability');
+        $this->min_value = $percentage ? min($probability) : 0;
+        $this->max_value = $percentage ? max($probability) : 0;
+
+        return $this;
+    }
+
+    public function data(): ?array
+    {
+        return $this->data;
+    }
+
+    public function setMinValue(int $value)
+    {
+        $this->min_value = $value;
+
+        return $this;
+    }
+
+    public function setMaxValue(int $value)
+    {
+        $this->max_value = $value;
+
+        return $this;
+    }
+
 }

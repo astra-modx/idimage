@@ -51,12 +51,11 @@ class idImage
             'root_parent' => $this->modx->getOption('idimage_root_parent', $config, 0, true),
             'site_url' => $this->modx->getOption('idimage_site_url', $config, null),
             'send_file' => $this->modx->getOption('idimage_send_file', $config, false),
-            'limit_poll' => $this->modx->getOption('idimage_limit_poll', $config, 1000, true),
             'limit_upload' => $this->modx->getOption('idimage_limit_upload', $config, 10, true),
             'limit_creation' => $this->modx->getOption('idimage_limit_creation', $config, 1000, true),
-            'limit_received' => $this->modx->getOption('idimage_limit_received', $config, 1000, true),
             'limit_indexed' => $this->modx->getOption('idimage_limit_indexed', $config, 100, true),
             'limit_show_similar_products' => $this->modx->getOption('idimage_limit_show_similar_products', $config, 5, true),
+            'limit_attempt' => $this->modx->getOption('idimage_limit_attempt', $config, 20, true),
             'default_thumb' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAKUlEQVR42mNgGAWjYBSMglEwCIOhGEENEBsDgmrAAGQ9gP4HAEKaBUxFSYd7AAAAAElFTkSuQmCC',
         ], $config);
 
@@ -170,18 +169,9 @@ class idImage
         return $this->api;
     }
 
-    public function phpThumb()
+    public function makeThumbnail(string $source, string $target): string
     {
-        if (is_null($this->phpThumb)) {
-            $this->phpThumb = new \IdImage\Support\PhpThumb($this->modx);
-        }
-
-        return $this->phpThumb;
-    }
-
-    public function makeThumbnail(string $path): string
-    {
-        return \IdImage\Support\PhpThumb::makeThumbnail($this->modx, $path);
+        return \IdImage\Support\PhpThumb::makeThumbnail($this->modx, $source, $target);
     }
 
     public function balance()
@@ -209,8 +199,8 @@ class idImage
     public function limitUpload()
     {
         $limit = (int)$this->config['limit_upload'] ?? 10;
-        if ($limit > 10) {
-            $limit = 10;
+        if ($limit > 20) {
+            $limit = 20;
         }
 
         return $limit;
@@ -221,45 +211,43 @@ class idImage
         return (int)$this->config['limit_creation'] ?? 50;
     }
 
-    public function limitPoll()
-    {
-        $limit = (int)$this->config['limit_poll'] ?? 1000;
-        if ($limit > 1000) {
-            $limit = 1000;
-        }
-
-        return $limit;
-    }
 
     public function limitIndexed()
     {
         return (int)$this->config['limit_indexed'] ?? 100;
     }
 
-    public function limitReceived()
-    {
-        $min = 1;
-        $max = 1000;
-        $limit = (int)$this->config['limit_received'] ?? 10;
-        if (empty($limit)) {
-            $limit = 10;
-        } elseif ($limit < $min) {
-            $limit = $min;
-        } elseif ($limit > $max) {
-            $limit = $max;
-        }
 
-        return $limit;
-    }
 
     public function sender()
     {
         return new Sender($this);
     }
 
+
+    public function taskCollection()
+    {
+        return new \IdImage\TaskCollection($this);
+    }
+
     public function limitShowSimilarProducts()
     {
         return (int)$this->config['limit_show_similar_products'] ?? 5;
+    }
+
+    public function attemptLimit()
+    {
+        $limit = (int)$this->config['limit_attempt'] ?? 100;
+        if ($limit > 100) {
+            $limit = 100;
+        }
+
+        return $limit;
+    }
+
+    public function limitPoll()
+    {
+        return 1000;
     }
 
 }

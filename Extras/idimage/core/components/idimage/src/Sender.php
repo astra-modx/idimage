@@ -10,88 +10,144 @@ namespace IdImage;
 
 use IdImage\Abstracts\SenderAbsract;
 use IdImage\Entites\TaskEntity;
-use IdImage\Exceptions\ExceptionJsonModx;
+use IdImage\Interfaces\ApiInterfaces;
 use idImageTask;
 
 class Sender extends SenderAbsract
 {
-    public function poll(): bool
+    public function embedding(TaskCollection $collection): bool
     {
         return $this->handle(
-            self::ACTION_POLL,
+            $collection,
+            function (ApiInterfaces $api, TaskCollection $collection) {
+                return $api->embedding($collection);
+            },
             function (idImageTask $task, TaskEntity $entity) {
-                if ($entity->isReceived()) {
-                    $task->set('type', $entity->getType());
-                    $task->set('hash', $entity->getEtag());
+                $response = $entity->getResponse();
+
+                if ($response['status'] === 'pending') {
+                    return idImageTask::STATUS_PENDING;
+                }
+
+                $close = $task->close();
+
+                // Создаем запись для векторов
+                $dataEmbedding = !empty($response['embedding']) ? $response['embedding'] : null;
+
+                if ($dataEmbedding) {
+                    $embedding = $close->embedding(true);
+                    $embedding->set('data', $dataEmbedding);
+                    if (!$embedding->save()) {
+                        throw $this->exception('Не удалось сохранить вектора для изображения taskId: '.$entity->getId());
+                    }
+                    $close->set('embedding', true);
+                }
+
+                if ($close->isDirty('embedding')) {
+                    if (!$close->save()) {
+                        throw $this->exception('Не удалось сохранить вектора для изображения taskId: '.$entity->getId());
+                    }
+                }
 
 
-                 /*   // Создаем запись для векторов
-                    if ($dataEmbedding = $entity->getEmbedding()) {
-                        $embedding = $task->embedding();
-                        $embedding->set('embedding', $dataEmbedding);
-                        if (!$embedding->save()) {
-                            throw new ExceptionJsonModx('Не удалось сохранить вектора для изображения taskId: '.$entity->getTaskId());
-                        }
-                    }*/
+                return true;
+            }
+        );
+    }
 
+    public function upload(TaskCollection $collection): bool
+    {
+        return $this->handle(
+            $collection,
+            function (ApiInterfaces $api, TaskCollection $collection) {
+                return $api->upload($collection);
+            },
+            function (idImageTask $task, TaskEntity $entity) {
+                $response = $entity->getResponse();
 
-                    if ($dataSimilar = $entity->getSimilar()) {
-                        $close = $task->close();
-
-                        $min_scope = (int)$dataSimilar['min_scope'] ?? 0;
-                        $total = (int)$dataSimilar['total'] ?? 0;
-                        $similar = (is_array($dataSimilar['similar']) && !empty($dataSimilar['similar'])) ? $dataSimilar['similar'] : null;
-                        $close->set('total', $total);
-                        $close->set('similar', $similar);
-                        $close->set('min_scope', $min_scope);
-
-                        if (!$close->save()) {
-                            throw new ExceptionJsonModx('Не удалось сохранить вектора для изображения taskId: '.$entity->getTaskId());
+                // Получаем только ссылку на изображение
+                if ($response['status'] === 'failed') {
+                    $errors = '';
+                    if (!empty($response['errors'])) {
+                        if (is_array($response['errors'])) {
+                            $errors = json_encode($errors);
                         }
                     }
-
+                    throw $this->exception('error upload: '.$errors);
                 }
 
-                return $entity->getStatus();
-            }
-        );
-    }
-
-    public function received(): bool
-    {
-        return $this->handle(
-            self::ACTION_RECEIVED,
-            function (idImageTask $task, TaskEntity $entity) {
-                $task->set('task_id', $entity->getTaskId());
-
-                return $entity->getStatus();
-            }
-        );
-    }
-
-    public function upload(): bool
-    {
-        return $this->handle(
-            self::ACTION_UPLOAD,
-            function (idImageTask $task, TaskEntity $entity) {
-                // Получаем только ссылку на изображение
-                $picture = $entity->getPicture();
-
-
-                $status = idImageTask::STATUS_CREATED;
-                $image_available = false;
-                if (empty($picture)) {
-                    $task->setErrors('Не удалось загрузить изображение');
-                    $status = idImageTask::STATUS_FAILED;
-                } else {
-                    $image_available = true;
-                    $task->set('picture', $picture);
+                if (empty($response['task_id'])) {
+                    throw $this->exception('task empty task_id');
                 }
 
-                $task->set('image_available', $image_available);
+                // Записываем task по которому будем синхронизироваться
+
+
+                $Close = $task->close();
+                $Close->set('upload', true);
+                $Close->set('task_id', $response['task_id']);
+                $Close->save();
 
                 // Если удалось загрузить ставим статус на CREATED для добавления в очередь на обработку
-                return $status;
+                return true;
+            }
+        );
+    }
+
+    public function indexed(TaskCollection $collection): bool
+    {
+        return $this->handle(
+            $collection,
+            function (ApiInterfaces $api, TaskCollection $collection) {
+                $IndexedProducts = new IndexedProducts($this->idImage);
+
+                return $IndexedProducts->run($collection->pids());
+            },
+            function (idImageTask $task, TaskEntity $entity) {
+                $response = $entity->getResponse();
+
+                if ($response['status'] === 'pending') {
+                    return idImageTask::STATUS_PENDING;
+                }
+
+                if ($response['status'] === 'failed') {
+                    throw $this->exception($response['errors']);
+                }
+
+                // Проверка что результат похожих товаров есть
+                $dataSimilar = (!empty($response['similar']) && is_array($response['similar'])) ? $response['similar'] : null;
+                if (!$dataSimilar) {
+                    return false;
+                }
+
+                // Получаем результаты индексации похожих товаров
+                $close = $task->close();
+                $similar = $close->similar(true);
+                $min_scope = (int)$dataSimilar['min_scope'] ?? 0;
+                $total = (int)$dataSimilar['total'] ?? 0;
+                $compared = (int)$dataSimilar['compared'] ?? 0;
+
+                $data = (is_array($dataSimilar['similar']) && !empty($dataSimilar['similar'])) ? $dataSimilar['similar'] : null;
+
+                $similar->set('total', $total);
+                $similar->set('data', $data);
+                $similar->set('min_scope', $min_scope);
+                $similar->set('compared', $compared);
+
+                $close->set('similar', true);
+
+                if (!$similar->save()) {
+                    throw $this->exception('Не удалось сохранить похожие для изображения taskId: '.$entity->getId());
+                }
+
+                if ($close->isDirty('similar')) {
+                    if (!$close->save()) {
+                        throw $this->exception('Не удалось сохранить вектора для изображения taskId: '.$entity->getId());
+                    }
+                }
+
+
+                return true;
             }
         );
     }

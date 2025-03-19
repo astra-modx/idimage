@@ -9,7 +9,7 @@ class idImageDestroyProcessor extends idImageActionsProcessor implements \IdImag
 
     public function stepChunk()
     {
-        return 100;
+        return 1000;
     }
 
     public function withProgressIds()

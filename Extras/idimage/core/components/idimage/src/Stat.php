@@ -47,14 +47,18 @@ class Stat
         $stat = [
             'total' => $this->idimage->query()->closes()->count(),
             'total_tasks' => $this->idimage->query()->tasks()->count(),
-            'total_tasks_pending' => $this->idimage->query()->tasks()->where(['status' => idImageTask::STATUS_PENDING])->count(),
-            'total_tasks_completed' => $this->idimage->query()->tasks()->where(['status' => idImageTask::STATUS_COMPLETED])->count(),
+            'total_tasks_pending' => $this->idimage->query()->tasks()->where([
+                'status:IN' => [idImageTask::STATUS_CREATED, idImageTask::STATUS_PENDING],
+            ])->count(),
+            'total_tasks_completed' => $this->idimage->query()->tasks()->where([
+                'status' => idImageTask::STATUS_COMPLETED,
+            ])->count(),
             'total_tasks_error' => $this->idimage->query()->tasks()->where(['status' => idImageTask::STATUS_FAILED])->count(),
             'total_files' => $files,
             'total_error' => $query->closes()->where(['status' => idImageClose::STATUS_FAILED])->count(),
             'total_completed' => $query->closes()->where(['status' => idImageClose::STATUS_COMPLETED])->count(),
             'total_embedding' => $query->embeddings()->count(),
-            'total_similar' => $query->closes()->where(['total:!=' => 0])->count(),
+            'total_similar' => $query->similar()->where(['total:!=' => 0])->count(),
         ];
 
         $data['stat'] = $stat;

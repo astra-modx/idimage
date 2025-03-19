@@ -1,8 +1,8 @@
 <?php
-$xpdo_meta_map['idImageEmbedding']= array (
+$xpdo_meta_map['idImageSimilar']= array (
   'package' => 'idimage',
   'version' => '1.1',
-  'table' => 'idimage_embeddings',
+  'table' => 'idimage_similars',
   'extends' => 'xPDOSimpleObject',
   'tableMeta' => 
   array (
@@ -11,8 +11,12 @@ $xpdo_meta_map['idImageEmbedding']= array (
   'fields' => 
   array (
     'pid' => NULL,
-    'hash' => NULL,
     'data' => NULL,
+    'total' => 0,
+    'compared' => 0,
+    'search_scope' => 0,
+    'min_scope' => 0,
+    'max_scope' => 0,
     'updatedon' => 0,
     'createdon' => 0,
   ),
@@ -26,18 +30,56 @@ $xpdo_meta_map['idImageEmbedding']= array (
       'phptype' => 'integer',
       'null' => false,
     ),
-    'hash' => 
-    array (
-      'dbtype' => 'varchar',
-      'precision' => '32',
-      'phptype' => 'string',
-      'null' => false,
-    ),
     'data' => 
     array (
       'dbtype' => 'text',
       'phptype' => 'json',
       'null' => true,
+    ),
+    'total' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => true,
+      'default' => 0,
+    ),
+    'compared' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => true,
+      'default' => 0,
+    ),
+    'search_scope' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => true,
+      'default' => 0,
+    ),
+    'min_scope' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => true,
+      'default' => 0,
+    ),
+    'max_scope' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => true,
+      'default' => 0,
     ),
     'updatedon' => 
     array (

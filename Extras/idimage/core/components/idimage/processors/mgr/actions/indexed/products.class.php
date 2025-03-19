@@ -18,10 +18,10 @@ class idImageIndexedProductsProcessor extends idImageActionsProcessor implements
     {
         $ids = $this->query()
             ->closes()
-            ->leftJoin('idImageTask', 'Task', 'Task.pid=idImageClose.pid')
             ->where([
-                'Task.id:IS NOT' => null,
-            ])->ids('idImageClose.id as id');
+                'idImageClose.embedding' => 1,
+            ])
+            ->ids('idImageClose.id as id');
 
         return $ids;
     }
@@ -29,7 +29,6 @@ class idImageIndexedProductsProcessor extends idImageActionsProcessor implements
 
     public function process()
     {
-
         $CollectionProduct = new CollectionProduct(
             $this->idImage,
             $this->idImage->minimumProbabilityScore(),
@@ -43,25 +42,40 @@ class idImageIndexedProductsProcessor extends idImageActionsProcessor implements
             // Выбираем все товары с изображениями
             $closes = $this->query()->closes()->where(['id:IN' => $ids]);
 
+
             $closes->each(function (idImageClose $close) use ($CollectionProduct) {
-                $pid = $close->get('pid');;
+                $pid = $close->get('pid');
 
 
                 // Получаем похожие товары
                 $errors = null;
-                if (!$embedding = $close->embedding()->getEmbedding()) {
+                if (!$embedding = $close->embedding(false)->getEmbedding()) {
                     $errors = [
                         'error' => 'No embedding',
                     ];
                 } else {
                     try {
-                        $Similar = $CollectionProduct->getSimilar($pid, $embedding, $CollectionProduct->getEmbedding());
+                        // запускаем поиск по всей коллекции
+                        $Similar = $CollectionProduct->getSimilar($pid, $embedding);
+
+                        // получаем статус поиска
                         $status = $Similar->status();
-                        $close->set('similar', $Similar->getSimilar());
-                        $close->set('search_scope', $this->idImage->minimumProbabilityScore());
-                        $close->set('min_scope', $Similar->minValue());
-                        $close->set('max_scope', $Similar->maxValue());
-                        $close->set('total', $Similar->total());
+
+
+                        // Создаем запись с похожими товарами
+                        $similar = $close->similar(true);
+                        $similar->fromArray([
+                            'total' => $Similar->total(),
+                            'search_scope' => $this->idImage->minimumProbabilityScore(),
+                            'min_scope' => $Similar->minValue(),
+                            'max_scope' => $Similar->maxValue(),
+                            'data' => $Similar->getSimilar(),
+                            'compared' => $Similar->compared(),
+                        ]);
+
+                        if (!$similar->save()) {
+                            throw new Exception("Ошибка при сохранении похожих товаров");
+                        }
                     } catch (Exception $e) {
                         $errors = [
                             'error' => $e->getMessage(),
