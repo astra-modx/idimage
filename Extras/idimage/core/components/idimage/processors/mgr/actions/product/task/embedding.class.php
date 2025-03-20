@@ -45,14 +45,11 @@ class idImageProductEmbeddingProcessor extends idImageProductTaskProcessor imple
     }
 
 
-    public function criteria()
+    public function criteria(): array
     {
         // Только завершеные задания
         #  $taskIds = $this->apiCompletedTask();
-
         return [
-            # 'task_id:IN' => $taskIds,
-            'embedding' => false,
             'task_id:!=' => null,
         ];
     }

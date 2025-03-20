@@ -49,9 +49,14 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
     public function process()
     {
         return $this->withProgressBar(function (array $ids) {
+            $created = 0;
+            $updated = 0;
+            $created_thumbnail = 0;
+            $task_upload = 0;
+
             // Выбираем все товары с изображениями
             $files = $this->query()->filesCriteria()->where(['id:IN' => $ids]);
-            $files->collection(function (array $row) {
+            $files->collection(function (array $row) use (&$created, &$updated, &$created_thumbnail, &$task_upload) {
                 // путь до изображения
                 $imagePath = MODX_BASE_PATH.ltrim($row['image'], '/');
 
@@ -76,17 +81,42 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
                 $Close->set('picture', $picture);
                 $Close->set('hash', $hash);
 
+                // Проверка наличия векторов
+                // Если вектора есть то ставим метку что изобаржение загружено
+                if ($Close->isNew()) {
+                    $created++;
+                } else {
+                    if ($Close->isDirty('hash')) {
+                        $updated++;
+                    }
+                }
+
+
+
                 if (!$Close->save()) {
                     throw new \IdImage\Exceptions\ExceptionJsonModx('Failed to save Close object: '.$pid);
                 } else {
                     // generate image thumbnail
                     if (!$Close->existsThumbnail()) {
                         $Close->generateThumbnail();
+                        $created_thumbnail++;
                     }
+                }
+
+                // После сохранения
+                if ($Close->isCreateTaskUpload()) {
+                    $task_upload++;
                 }
 
                 return true;
             });
+
+            $this->setStat([
+                'created' => $created,
+                'updated' => $updated,
+                'task_upload' => $task_upload,
+                'created_thumbnail' => $created_thumbnail,
+            ]);
 
             return $files->totalIteration();
         });

@@ -173,14 +173,16 @@ idimage.utils.statusClose = function (value) {
 };
 idimage.utils.statusTask = function (value, col, row) {
     var msg = row.data.msg || ''
+    var can_be_launched = row.data.can_be_launched || ''
     if (msg) {
         var color = value === 'failed' ? 'red' : 'green'
         msg = String.format('<br><span class="idimage-status-msg ' + color + '">{0}</span>', msg);
     }
     return String.format(
-        '<span class="idimage-status idimage-status-color-{0}">{0}</span>{1}',
+        '<span class="idimage-status idimage-status-color-{0}">{0}</span>{1}{2}',
         value,
-        msg
+        msg,
+        can_be_launched
     );
 };
 

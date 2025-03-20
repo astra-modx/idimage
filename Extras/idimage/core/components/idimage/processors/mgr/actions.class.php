@@ -45,6 +45,19 @@ abstract class idImageActionsProcessor extends modProcessor
         return $this->idimage()->query();
     }
 
+    protected $stat = null;
+
+    public function setStat(array $stat)
+    {
+        $this->stat = $stat;
+
+        return $this;
+    }
+
+    public function getStat(): ?array
+    {
+        return $this->stat;
+    }
 
     public function withProgressBar(Closure $callback)
     {
@@ -53,10 +66,13 @@ abstract class idImageActionsProcessor extends modProcessor
                 $ids = $this->withProgressIds();
             }
 
-            return $this->success('', [
+
+            $data = [
                 'total' => is_array($ids) ? count($ids) : 0,
                 'iterations' => (!empty($ids) && is_array($ids)) ? array_chunk($ids, $this->stepChunk()) : null,
-            ]);
+            ];
+
+            return $this->success('', $data);
         }
         if (!$ids = $this->ids()) {
             return $this->success('upload', [
@@ -66,9 +82,14 @@ abstract class idImageActionsProcessor extends modProcessor
 
         $total = $callback($ids);
 
-        return $this->success($this->modx->lexicon('success'), [
+        $data = [
             'total' => $total,
-        ]);
+        ];
+        if ($stat = $this->getStat()) {
+            $data['stat'] = $stat;
+        }
+
+        return $this->success($this->modx->lexicon('success'), $data);
     }
 
 
@@ -101,6 +122,10 @@ abstract class idImageActionsProcessor extends modProcessor
 
     public function canToken()
     {
+        if (!$this->idImage->option('enable')) {
+            throw new ExceptionJsonModx($this->modx->lexicon('idimage_error_disabled_sync'));
+        }
+
         $this->idimage()->canToken();
     }
 }

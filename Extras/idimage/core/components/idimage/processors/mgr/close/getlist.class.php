@@ -79,7 +79,12 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
         $c->select('msProduct.pagetitle AS pagetitle');
 
         $c->leftJoin('idImageSimilar', 'Similar', 'Similar.pid=idImageClose.pid');
-        $c->select('Similar.total AS total');
+        $c->select('COUNT(Similar.id) AS similar_exists, Similar.total AS total');
+
+        $c->leftJoin('idImageEmbedding', 'Embedding', 'Embedding.pid=idImageClose.pid');
+        $c->select('COUNT(Embedding.id) AS embedding_exists');
+
+        $c->groupBy('idImageClose.id');
 
         return $c;
     }
@@ -96,6 +101,8 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
         $array = $object->toArray();
         unset($array['similar']);
 
+        $array['similar_exists'] = (bool)$array['similar_exists'];
+        $array['embedding_exists'] = (bool)$array['embedding_exists'];
         $array['images'] = $object->getProductsSlice();
 
 

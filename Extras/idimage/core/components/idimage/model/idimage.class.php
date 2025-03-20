@@ -36,6 +36,7 @@ class idImage
         $corePath = MODX_CORE_PATH.'components/idimage/';
         $assetsUrl = MODX_ASSETS_URL.'components/idimage/';
 
+
         $this->config = array_merge([
             'corePath' => $corePath,
             'modelPath' => $corePath.'model/',
@@ -56,6 +57,8 @@ class idImage
             'limit_indexed' => $this->modx->getOption('idimage_limit_indexed', $config, 100, true),
             'limit_show_similar_products' => $this->modx->getOption('idimage_limit_show_similar_products', $config, 5, true),
             'limit_attempt' => $this->modx->getOption('idimage_limit_attempt', $config, 20, true),
+            'enable' => (bool)$this->modx->getOption('idimage_enable', $config, false),
+            'indexed_service' => (bool)$this->modx->getOption('idimage_indexed_service', $config, false),
             'default_thumb' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAKUlEQVR42mNgGAWjYBSMglEwCIOhGEENEBsDgmrAAGQ9gP4HAEKaBUxFSYd7AAAAAElFTkSuQmCC',
         ], $config);
 
@@ -211,12 +214,21 @@ class idImage
         return (int)$this->config['limit_creation'] ?? 50;
     }
 
+    public function limitTask()
+    {
+        return 1000;
+    }
+
 
     public function limitIndexed()
     {
         return (int)$this->config['limit_indexed'] ?? 100;
     }
 
+    public function isIndexedService()
+    {
+        return $this->option('indexed_service');
+    }
 
 
     public function sender()
@@ -245,9 +257,23 @@ class idImage
         return $limit;
     }
 
+    public function attemptFailureLimit()
+    {
+        return 3;
+    }
+
     public function limitPoll()
     {
         return 1000;
     }
 
+    public function option(string $key, $default = null)
+    {
+        // indexed_service
+        if (!array_key_exists($key, $this->config)) {
+            return $default;
+        }
+
+        return $this->config[$key];
+    }
 }

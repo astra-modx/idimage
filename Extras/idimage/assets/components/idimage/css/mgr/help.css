@@ -52,6 +52,11 @@
     border: 1px solid darkred;
 }
 
+.idimage-status.retry {
+    color: #e7d15f;
+    border: 1px solid #e7d15f;
+}
+
 
 .idimage-scroll-button {
     position: absolute;
@@ -199,6 +204,11 @@
 .idimage-status-color-attempt {
     color: red;
     border-color: red;
+}
+
+.idimage-status-color-retry {
+    color: #b845e5;
+    border-color: #b845e5;
 }
 
 .idimage-status-color-created, .idimage-status-color-clear, .idimage-status-color-unknown {

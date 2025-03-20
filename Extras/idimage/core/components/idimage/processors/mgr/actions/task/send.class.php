@@ -10,22 +10,17 @@ class idImageActionsTaskSendProcessor extends idImageActionsProcessor implements
 {
     public function stepChunk()
     {
-        return 500;
+        return $this->getProperty('step_limit', 500);
     }
 
     public function withProgressIds()
     {
-        $query = $this->query()
-            ->tasks()
-            ->where([
-                'status:!=' => idImageTask::STATUS_COMPLETED,
-                'attempt:<' => $this->idimage()->attemptLimit(),
-            ])
-            ->andCondition(array(
-                'execute_at:<=' => time(), // Только если время исполнения настало
-                'OR:execute_at:=' => null, // Только если время исполнения настало
-            ));
-
+        $query = $this->query()->tasksQueue();
+        $limit = $this->getProperty('limit');
+        if (!empty($limit)) {
+            // лимит для фоновых заданий
+            $query->limit($limit);
+        }
 
         return $query->ids();
     }
@@ -51,6 +46,7 @@ class idImageActionsTaskSendProcessor extends idImageActionsProcessor implements
                     return false;
                 }
 
+                // Считаем количество попыток отправки задания
                 if ($task->attemptsExceeded()) {
                     $task->setErrors($this->modx->lexicon('idimage_error_maxtries'));
 

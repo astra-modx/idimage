@@ -31,36 +31,46 @@ class idImageClose extends xPDOSimpleObject
             $this->set('createdon', time());
         }
 
+
         if (!$this->isNew() && $this->isDirty('hash')) {
             // remove thumb or hash changed
             $this->removeThumbnail();
         }
 
-        if ($this->isDirty('upload') && $this->get('upload') === false) {
-            // create task
+
+        $upload = false;
+        if ($this->isNew() || $this->isDirty('hash')) {
+
+            $criteria = [
+                'pid' => $this->get('pid'),
+                'hash' => $this->get('hash'),
+            ];
+
+            // если hash изменился, по ключам pid и hash ничего не найдено
+            // то необходимо загрузить изображение в сервис
+            if ($this->xpdo->getCount('idImageEmbedding', $criteria) === 0) {
+                $upload = true;
+            }
+        }
+
+
+        if ($upload) {
+            $this->set('upload', false);
             $this->taskUpload();
+            $this->createTask = true;
         }
 
         // Создаем задание для создания векторов
         return parent::save($cacheFlag);
     }
 
-    public function change(string $imagePath)
+    protected $createTask = false;
+
+    public function isCreateTaskUpload()
     {
-        if ($this->isNew() || !$this->get('received')) {
-            return true;
-        }
-
-        if (empty($this->get('hash'))) {
-            return true;
-        }
-
-        if (!$hash = $this->createHash($imagePath)) {
-            return false;
-        }
-
-        return $hash != $this->get('hash');
+        return $this->createTask;
     }
+
 
     public function createHash(string $imagePath)
     {
@@ -197,11 +207,6 @@ class idImageClose extends xPDOSimpleObject
     public function getTargetPath()
     {
         return MODX_ASSETS_PATH.'images/idimage/'.$this->get('pid').'.jpg';
-    }
-
-    public function compareHash(string $hash): bool
-    {
-        return $this->get('hash') === $hash;
     }
 
     public function existsThumbnail()

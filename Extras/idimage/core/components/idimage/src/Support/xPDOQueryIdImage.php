@@ -26,10 +26,13 @@ class xPDOQueryIdImage extends xPDOQuery_mysql
 
     public function each($callback)
     {
+        $i = 0;
         $collection = $this->xpdo->getCollection($this->_class, $this);
         foreach ($collection as $object) {
             $callback($object);
+            $i++;
         }
+        $this->totalIteration = $i;
 
         return $this;
     }
@@ -59,6 +62,9 @@ class xPDOQueryIdImage extends xPDOQuery_mysql
     {
         $ids = [];
         if ($addSelect) {
+            if (!empty($this->query['from']['joins'])) {
+                $field = $this->_class.'.'.$field. ' as '.$field;
+            }
             $this->select($field);
         }
 

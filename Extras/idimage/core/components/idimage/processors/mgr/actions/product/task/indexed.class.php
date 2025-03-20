@@ -10,6 +10,15 @@ class idImageProductIndexedProcessor extends idImageProductTaskProcessor impleme
     {
         return 'indexed';
     }
+
+    public function withProgressIds()
+    {
+        $query = $this->query()->closesEmbedding();
+
+        return $query->ids();
+    }
+
+
 }
 
 return 'idImageProductIndexedProcessor';

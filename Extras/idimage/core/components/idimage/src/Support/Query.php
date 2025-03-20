@@ -3,6 +3,7 @@
 namespace IdImage\Support;
 
 use idImage;
+use idImageTask;
 
 /**
  * Created by Andrey Stepanenko.
@@ -41,7 +42,7 @@ class Query
         return $this->files()->where([
             'msProduct.published' => true,
             'msProduct.deleted:!=' => true,
-            //'Close.pid:IS' => null,
+            'File.rank' => 0,
             'File.active' => true,
             'File.path:LIKE' => '%/'.$thumbnailSize.'/%',
         ]);
@@ -53,6 +54,11 @@ class Query
         return $this->create('idImageClose');
     }
 
+    public function closesEmbedding()
+    {
+        return $this->closes()->innerJoin('idImageEmbedding', 'Embedding', 'Embedding.pid = idImageClose.pid');
+    }
+
     public function similar()
     {
         return $this->create('idImageSimilar');
@@ -61,6 +67,32 @@ class Query
     public function tasks()
     {
         return $this->create('idImageTask');
+    }
+
+    public function tasksExecuteAt()
+    {
+        return $this->tasks()->where([
+            'execute_at:>=' => time(),
+            'AND:execute_at:!=' => null,
+        ]);
+    }
+
+    public function tasksQueue()
+    {
+        $query = $this->tasks()
+            ->where([
+                'status:IN' => [
+                    idImageTask::STATUS_PENDING,
+                    idImageTask::STATUS_CREATED,
+                    idImageTask::STATUS_RETRY, // Повторны статус по кол-ву ошибок
+                ],
+            ])
+            ->andCondition(array(
+                'execute_at:<=' => time(), // Только если время исполнения настало
+                'OR:execute_at:=' => null, // Только если время исполнения настало
+            ));
+
+        return $query;
     }
 
     public function embeddings()

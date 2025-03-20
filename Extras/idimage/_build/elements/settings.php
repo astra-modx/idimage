@@ -6,6 +6,11 @@ return [
         'value' => true,
         'area' => 'idimage_main',
     ],
+    'indexed_service' => [
+        'xtype' => 'combo-boolean',
+        'value' => false,
+        'area' => 'idimage_main',
+    ],
     'token' => [
         'xtype' => 'textfield',
         'value' => '',

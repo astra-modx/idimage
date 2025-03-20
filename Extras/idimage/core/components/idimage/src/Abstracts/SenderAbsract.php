@@ -47,7 +47,12 @@ abstract class SenderAbsract
     {
         $this->idImage = $idImage;
         $this->statuses = idImageTask::$statusMap;
+        if ($this->idImage->isIndexedService()) {
+            // Лимит на получения данных от сервиса индексации
+            $this->limits[self::ACTION_INDEXED] = 1000;
+        }
     }
+
 
     public function exception($msg)
     {
@@ -83,8 +88,8 @@ abstract class SenderAbsract
             }
 
             // Разбиваем на чанки по операциям
-            $chunks = array_chunk($tasks, $this->limit($operation));
-
+            $limit = $this->limit($operation);
+            $chunks = array_chunk($tasks, $limit);
 
             foreach ($chunks as $chunk) {
                 if (!in_array($operation, $map)) {
@@ -122,9 +127,8 @@ abstract class SenderAbsract
 
         $request = $apiCallback($api, $collection);
 
-
         // Отправляем данные в сервис
-        /* @var Response $Response */
+        /* @var Response|\IdImage\Support\Client $Response */
         $Response = $request instanceof Response ? $request : $request->send();
 
         // Обработка ответа
@@ -173,10 +177,12 @@ abstract class SenderAbsract
         // обработка ответа
         // Получаем ответ
         $error = null;
+        $operation = $entity->getOperation();
         try {
             $status = $handle($task, $entity);
-            if ($status === true) {
-                $status = idImageTask::STATUS_COMPLETED;
+            if (!is_string($status)) {
+                $status = idImageTask::STATUS_FAILED;
+                $error = 'Ответ должен быть строкой';
             }
         } catch (Exception $e) {
             $error = $e->getMessage();
@@ -184,10 +190,19 @@ abstract class SenderAbsract
         }
 
         if (!in_array($status, $this->statuses)) {
-            throw new ExceptionJsonModx('Неизвестный статус: '.$status.' taskId: '.$task->get('id'));
+            throw new ExceptionJsonModx('Неизвестный статус: '.$status.' taskId: '.$task->get('id').' operation: '.$operation);
         }
 
-        $task->setErrors($error);
+        if ($status === idImageTask::STATUS_FAILED) {
+            $task->attemptsFailure();
+            if (!$task->attemptFailureExceeded()) {
+                // Если кол-во попыток еще не превышено
+                // Пробуем перевести задание в статус "retry"
+                $status = idImageTask::STATUS_RETRY;
+            }
+        }
+
+        $task->setErrors($error, $status);
         $task->set('status', $status);
 
         return true;

@@ -8,8 +8,6 @@
         <field key="hash" dbtype="varchar" precision="32" phptype="string" null="true"/>
         <field key="status" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="1"/>
         <field key="upload" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
-        <field key="embedding" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
-        <field key="similar" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
         <field key="indexed" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
         <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
         <field key="errors" dbtype="text" phptype="json" null="true"/>
@@ -33,12 +31,6 @@
         </index>
         <index alias="indexed" name="indexed" primary="false" unique="false" type="BTREE">
             <column key="indexed" length="" collation="A" null="false"/>
-        </index>
-        <index alias="embedding" name="embedding" primary="false" unique="false" type="BTREE">
-            <column key="embedding" length="" collation="A" null="false"/>
-        </index>
-        <index alias="similar" name="similar" primary="false" unique="false" type="BTREE">
-            <column key="similar" length="" collation="A" null="false"/>
         </index>
 
         <index alias="task_id" name="task_id" primary="false" unique="false" type="BTREE">
@@ -92,6 +84,7 @@
         <field key="operation" dbtype="varchar" precision="32" phptype="string" null="false"/>
         <field key="errors" dbtype="text" phptype="json" null="true"/>
         <field key="attempt" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0"/>
+        <field key="attempt_failure" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0"/>
 
         <field key="updatedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
         <field key="createdon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>

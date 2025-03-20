@@ -10,6 +10,14 @@ class idImageProductUploadProcessor extends idImageProductTaskProcessor implemen
     {
         return 'upload';
     }
+
+    public function criteria()
+    {
+        return [
+            'upload' => false,
+            'OR:task_id:=' => null,
+        ];
+    }
 }
 
 return 'idImageProductUploadProcessor';

@@ -9,6 +9,7 @@ class idImageTask extends xPDOSimpleObject
     const STATUS_PENDING = 'pending';
     // attempts
     const STATUS_UPLOAD = 'upload';
+    const STATUS_RETRY = 'retry';
 
     static $statusMap = [
         self::STATUS_CREATED,
@@ -16,6 +17,7 @@ class idImageTask extends xPDOSimpleObject
         self::STATUS_FAILED,
         self::STATUS_PENDING,
         self::STATUS_UPLOAD,
+        self::STATUS_RETRY,
     ];
 
     public function save($cacheFlag = null)
@@ -30,6 +32,13 @@ class idImageTask extends xPDOSimpleObject
         }
 
 
+        /*if ($this->isDirty('status')) {
+            if ($this->operation() === 'embedding' && $this->status() === self::STATUS_PENDING) {
+                // После отправки
+                $this->set('execute_at', $this->addExecuteAt());
+            }
+        }*/
+
         $save = parent::save($cacheFlag);
 
         if ($save) {
@@ -37,6 +46,11 @@ class idImageTask extends xPDOSimpleObject
         }
 
         return $save;
+    }
+
+    public function addExecuteAt(int $minutes = 1): int
+    {
+        return strtotime(date('Y-m-d H:i:s', strtotime('+'.$minutes.' minutes', time())));
     }
 
     public function action(string $operation, string $status): bool
@@ -50,7 +64,7 @@ class idImageTask extends xPDOSimpleObject
         switch ($operation) {
             case 'upload':
                 $newOperation = \IdImage\Sender::ACTION_EMBEDDING;
-                $execute_at = strtotime(date('Y-m-d H:i:s', strtotime('+1 minutes', time())));
+                $execute_at = $this->addExecuteAt();
                 break;
             #case 'embedding':
             #    $newOperation = \IdImage\Sender::ACTION_INDEXED;
@@ -74,6 +88,22 @@ class idImageTask extends xPDOSimpleObject
 
         return $this->get('attempt') > $limit;
     }
+
+
+    public function attemptFailureExceeded(): bool
+    {
+        $limit = $this->service()->attemptFailureLimit();
+
+        return $this->get('attempt_failure') > $limit;
+    }
+
+
+    public function attemptsFailure()
+    {
+        $attempt = $this->get('attempt_failure') + 1;
+        $this->set('attempt_failure', $attempt);
+    }
+
 
     public function getErrors()
     {
@@ -217,6 +247,16 @@ class idImageTask extends xPDOSimpleObject
         }
 
         return strtotime($execute_at) < time();
+    }
+
+    public function executeTime()
+    {
+        $execute_at = $this->get('execute_at');
+        if (is_null($execute_at)) {
+            return true;
+        }
+
+        return date('H:i:s', strtotime($execute_at));
     }
 
 }

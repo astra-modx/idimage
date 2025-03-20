@@ -15,8 +15,6 @@ $xpdo_meta_map['idImageClose']= array (
     'hash' => NULL,
     'status' => 1,
     'upload' => 0,
-    'embedding' => 0,
-    'similar' => 0,
     'indexed' => 0,
     'active' => 1,
     'errors' => NULL,
@@ -58,22 +56,6 @@ $xpdo_meta_map['idImageClose']= array (
       'default' => 1,
     ),
     'upload' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'embedding' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
-    ),
-    'similar' => 
     array (
       'dbtype' => 'tinyint',
       'precision' => '1',
@@ -202,38 +184,6 @@ $xpdo_meta_map['idImageClose']= array (
       'columns' => 
       array (
         'indexed' => 
-        array (
-          'length' => '',
-          'collation' => 'A',
-          'null' => false,
-        ),
-      ),
-    ),
-    'embedding' => 
-    array (
-      'alias' => 'embedding',
-      'primary' => false,
-      'unique' => false,
-      'type' => 'BTREE',
-      'columns' => 
-      array (
-        'embedding' => 
-        array (
-          'length' => '',
-          'collation' => 'A',
-          'null' => false,
-        ),
-      ),
-    ),
-    'similar' => 
-    array (
-      'alias' => 'similar',
-      'primary' => false,
-      'unique' => false,
-      'type' => 'BTREE',
-      'columns' => 
-      array (
-        'similar' => 
         array (
           'length' => '',
           'collation' => 'A',

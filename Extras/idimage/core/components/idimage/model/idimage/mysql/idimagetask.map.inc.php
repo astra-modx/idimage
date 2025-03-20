@@ -15,6 +15,7 @@ $xpdo_meta_map['idImageTask']= array (
     'operation' => NULL,
     'errors' => NULL,
     'attempt' => 0,
+    'attempt_failure' => 0,
     'updatedon' => 0,
     'createdon' => 0,
     'execute_at' => NULL,
@@ -50,6 +51,15 @@ $xpdo_meta_map['idImageTask']= array (
       'null' => true,
     ),
     'attempt' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => false,
+      'default' => 0,
+    ),
+    'attempt_failure' => 
     array (
       'dbtype' => 'int',
       'precision' => '10',

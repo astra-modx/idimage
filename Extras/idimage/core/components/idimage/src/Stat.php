@@ -74,19 +74,12 @@ class Stat
         $path = $this->idimage->config['corePath'];
 
         $tasks = [
-            'creating.php' => 'Создание товаров',
-            'task/creation.php' => 'Создание заданий',
-            'task/upload.php' => 'Загрузка изображений в idimage.ru (опционально, если нет доступа из глобального интернета)',
-            'task/received.php' => 'Отправка задания',
-            'task/poll.php' => 'Получение векторов',
-            'indexed.php' => 'Индексация товаров',
+            'task.php' => 'Запуск очереди заданий',
+            'creation.php' => 'Создание товаров и проверка новых изображений',
         ];
         $crontabs = [];
         foreach ($tasks as $file => $name) {
             $cmd = sprintf('%s %scli/%s', $bin, $path, $file);
-
-            #$cmd = sprintf('*/5 * * * *   %s >> %s/processors/%s.log 2>&1', $cmd, $path, $file);
-
             $crontabs[] = '# '.$name.PHP_EOL.$cmd.PHP_EOL;
         }
 

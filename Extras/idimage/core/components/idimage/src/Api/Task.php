@@ -116,7 +116,7 @@ class Task extends ApiAbstract implements ApiInterfaces
         $ids = [];
         $collection->each(function (TaskEntity $entity) use (&$ids) {
             if (!$taskId = $entity->getTaskId()) {
-                throw new ExceptionJsonModx('No offer id');
+                throw new ExceptionJsonModx('No offer task_id: '.$entity->getId());
             }
             $ids[] = $taskId;
 

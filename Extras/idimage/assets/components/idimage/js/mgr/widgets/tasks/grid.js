@@ -53,7 +53,7 @@ Ext.extend(idimage.grid.Tasks, idimage.grid.Default, {
 
     getFields: function () {
         return [
-            'id', 'operation', 'processing', 'attempt', 'execute_at', 'msg', 'pid', 'error', 'status', 'createdon', 'updatedon', 'actions'
+            'id', 'operation', 'processing', 'attempt', 'can_be_launched', 'execute_at', 'attempt_failure', 'msg', 'pid', 'error', 'status', 'createdon', 'updatedon', 'actions'
         ];
     },
 
@@ -64,6 +64,7 @@ Ext.extend(idimage.grid.Tasks, idimage.grid.Default, {
             {header: _('idimage_operation'), dataIndex: 'operation', width: 70, sortable: true},
             {header: _('idimage_status'), dataIndex: 'status', width: 70, sortable: true, renderer: idimage.utils.statusTask},
             {header: _('idimage_attempt'), dataIndex: 'attempt', width: 70, sortable: true},
+            {header: _('idimage_attempt_failure'), dataIndex: 'attempt_failure', width: 70, sortable: true},
             {header: _('idimage_error'), dataIndex: 'error', width: 70, sortable: true, hidden: true},
             {header: _('idimage_execute_at'), dataIndex: 'execute_at', width: 70, sortable: true, hidden: true},
 

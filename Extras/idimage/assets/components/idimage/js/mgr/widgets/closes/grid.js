@@ -53,7 +53,7 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
 
     getFields: function () {
         return [
-            'id', 'pid', 'task_id', 'upload', 'exists_thumbnail', 'pagetitle', 'similar', 'embedding', 'hash', 'images', 'total', 'status', 'picture', 'tags', 'errors', 'createdon', 'updatedon', 'active', 'actions'
+            'id', 'pid', 'task_id', 'upload', 'exists_thumbnail','similar_exists','embedding_exists', 'pagetitle', 'similar', 'embedding', 'hash', 'images', 'total', 'status', 'picture', 'tags', 'errors', 'createdon', 'updatedon', 'active', 'actions'
         ];
     },
 
@@ -70,8 +70,8 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
             {header: _('idimage_pid'), dataIndex: 'pid', width: 70, sortable: true},
             {header: _('idimage_task_id'), dataIndex: 'task_id', width: 70, sortable: true},
             {header: _('idimage_upload'), dataIndex: 'upload', width: 75, renderer: idimage.utils.renderBoolean, sortable: true},
-            {header: _('idimage_embedding'), dataIndex: 'embedding', width: 75, renderer: idimage.utils.renderBoolean, sortable: true},
-            {header: _('idimage_similar'), dataIndex: 'similar', width: 75, renderer: idimage.utils.renderBoolean, sortable: true},
+            {header: _('idimage_embedding_exists'), dataIndex: 'embedding_exists', width: 75, renderer: idimage.utils.renderBoolean, sortable: true},
+            {header: _('idimage_similar_exists'), dataIndex: 'similar_exists', width: 75, renderer: idimage.utils.renderBoolean, sortable: true},
             {header: _('idimage_exists_thumbnail'), dataIndex: 'exists_thumbnail', width: 75, renderer: idimage.utils.renderBoolean},
             {header: _('idimage_status'), dataIndex: 'status', width: 70, sortable: true, hidden: true, renderer: idimage.utils.statusClose},
 

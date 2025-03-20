@@ -11,15 +11,6 @@ abstract class idImageProductTaskProcessor extends idImageActionsProcessor imple
         return $this->idImage->limitCreation();
     }
 
-    public function criteria()
-    {
-        $operation = $this->operation();
-        $criteria = [
-            $operation => false,
-        ];
-
-        return $criteria;
-    }
 
     public function withProgressIds()
     {

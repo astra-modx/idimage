@@ -40,17 +40,9 @@ class Sender extends SenderAbsract
                     if (!$embedding->save()) {
                         throw $this->exception('Не удалось сохранить вектора для изображения taskId: '.$entity->getId());
                     }
-                    $close->set('embedding', true);
                 }
 
-                if ($close->isDirty('embedding')) {
-                    if (!$close->save()) {
-                        throw $this->exception('Не удалось сохранить вектора для изображения taskId: '.$entity->getId());
-                    }
-                }
-
-
-                return true;
+                return idImageTask::STATUS_COMPLETED;
             }
         );
     }
@@ -64,7 +56,6 @@ class Sender extends SenderAbsract
             },
             function (idImageTask $task, TaskEntity $entity) {
                 $response = $entity->getResponse();
-
                 // Получаем только ссылку на изображение
                 if ($response['status'] === 'failed') {
                     $errors = '';
@@ -89,7 +80,7 @@ class Sender extends SenderAbsract
                 $Close->save();
 
                 // Если удалось загрузить ставим статус на CREATED для добавления в очередь на обработку
-                return true;
+                return idImageTask::STATUS_COMPLETED;
             }
         );
     }
@@ -99,13 +90,17 @@ class Sender extends SenderAbsract
         return $this->handle(
             $collection,
             function (ApiInterfaces $api, TaskCollection $collection) {
-                $IndexedProducts = new IndexedProducts($this->idImage);
+                // Получение векторов из сервиса
+                if ($this->idImage->isIndexedService()) {
+                    return $api->similar($collection);
+                } else {
+                    $IndexedProducts = new IndexedProducts($this->idImage);
 
-                return $IndexedProducts->run($collection->pids());
+                    return $IndexedProducts->run($collection->pids());
+                }
             },
             function (idImageTask $task, TaskEntity $entity) {
                 $response = $entity->getResponse();
-
                 if ($response['status'] === 'pending') {
                     return idImageTask::STATUS_PENDING;
                 }
@@ -117,7 +112,7 @@ class Sender extends SenderAbsract
                 // Проверка что результат похожих товаров есть
                 $dataSimilar = (!empty($response['similar']) && is_array($response['similar'])) ? $response['similar'] : null;
                 if (!$dataSimilar) {
-                    return false;
+                    return idImageTask::STATUS_PENDING;
                 }
 
                 // Получаем результаты индексации похожих товаров
@@ -134,20 +129,11 @@ class Sender extends SenderAbsract
                 $similar->set('min_scope', $min_scope);
                 $similar->set('compared', $compared);
 
-                $close->set('similar', true);
-
                 if (!$similar->save()) {
                     throw $this->exception('Не удалось сохранить похожие для изображения taskId: '.$entity->getId());
                 }
 
-                if ($close->isDirty('similar')) {
-                    if (!$close->save()) {
-                        throw $this->exception('Не удалось сохранить вектора для изображения taskId: '.$entity->getId());
-                    }
-                }
-
-
-                return true;
+                return idImageTask::STATUS_COMPLETED;
             }
         );
     }
