@@ -2,22 +2,19 @@
 
 class idImageTask extends xPDOSimpleObject
 {
-
-    const STATUS_CREATED = 'created';
-    const STATUS_COMPLETED = 'completed';
-    const STATUS_FAILED = 'failed';
-    const STATUS_PENDING = 'pending';
+    const STATUS_QUEUE = 1;
+    const STATUS_COMPLETED = 2;
+    const STATUS_FAILED = 3;
+    const STATUS_PENDING = 4;
     // attempts
-    const STATUS_UPLOAD = 'upload';
-    const STATUS_RETRY = 'retry';
+    const STATUS_RETRY = 5;
 
     static $statusMap = [
-        self::STATUS_CREATED,
-        self::STATUS_COMPLETED,
-        self::STATUS_FAILED,
-        self::STATUS_PENDING,
-        self::STATUS_UPLOAD,
-        self::STATUS_RETRY,
+        self::STATUS_QUEUE => 'queue',
+        self::STATUS_COMPLETED => 'completed',
+        self::STATUS_FAILED => 'failed',
+        self::STATUS_PENDING => 'pending',
+        self::STATUS_RETRY => 'retry',
     ];
 
     public function save($cacheFlag = null)
@@ -26,18 +23,11 @@ class idImageTask extends xPDOSimpleObject
             $this->set('updatedon', time());
         } else {
             if (empty($this->get('status'))) {
-                $this->set('status', self::STATUS_CREATED);
+                $this->set('status', self::STATUS_QUEUE);
             }
             $this->set('createdon', time());
         }
 
-
-        /*if ($this->isDirty('status')) {
-            if ($this->operation() === 'embedding' && $this->status() === self::STATUS_PENDING) {
-                // После отправки
-                $this->set('execute_at', $this->addExecuteAt());
-            }
-        }*/
 
         $save = parent::save($cacheFlag);
 
@@ -59,25 +49,22 @@ class idImageTask extends xPDOSimpleObject
             return false;
         }
 
-        $newOperation = null;
-        $execute_at = null;
-        switch ($operation) {
-            case 'upload':
-                $newOperation = \IdImage\Sender::ACTION_EMBEDDING;
-                $execute_at = $this->addExecuteAt();
-                break;
-            #case 'embedding':
-            #    $newOperation = \IdImage\Sender::ACTION_INDEXED;
-            #    break;
-            default:
-                break;
-        }
+        /* $newOperation = null;
+         $execute_at = null;
+         switch ($operation) {
+             case 'upload':
+                 $newOperation = \IdImage\Sender::ACTION_INDEXED;
+                 $execute_at = $this->addExecuteAt();
+                 break;
+             default:
+                 break;
+         }
 
-        if ($newOperation) {
-            if ($close = $this->close()) {
-                $close->createTask($newOperation, $execute_at);
-            }
-        }
+         if ($newOperation) {
+             if ($close = $this->close()) {
+                 $close->createTask($newOperation, $execute_at);
+             }
+         }*/
 
         return true;
     }
@@ -114,7 +101,7 @@ class idImageTask extends xPDOSimpleObject
     {
         $status = $this->get('status');
 
-        return ($status === self::STATUS_CREATED || $status === self::STATUS_FAILED || $status === self::STATUS_PENDING);
+        return ($status === self::STATUS_QUEUE || $status === self::STATUS_FAILED || $status === self::STATUS_PENDING);
     }
 
     public function status()
@@ -219,10 +206,7 @@ class idImageTask extends xPDOSimpleObject
 
         $collection = new \IdImage\TaskCollection();
         $collection->add($this);
-
-        //$this->attempts();
-
-        return $sender->send($collection);
+        $sender->send($collection);
     }
 
     public function completed(): bool

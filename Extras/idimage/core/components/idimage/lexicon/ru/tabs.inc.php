@@ -3,6 +3,9 @@
 include_once 'setting.inc.php';
 
 
+$_lang['idimage_tasks'] = 'Задания';
+
+
 # products
 $_lang['idimage_tab_products'] = 'Товары';
 $_lang['idimage_tab_products_desc'] = 'Здесь показаны созданные товары с изображениями. Товары будут использоваться для получения векторов из сервиса idimage.ru, и дальнейшей индексации для поиск среди похожих товаров';
@@ -20,4 +23,9 @@ $_lang['idimage_tab_indexed_desc'] = 'По завершении индексац
 # help
 $_lang['idimage_tab_help'] = 'Помощь';
 $_lang['idimage_tab_help_desc'] = 'Помощь';
+
+
+# help
+$_lang['idimage_tab_setting'] = 'Настройки';
+$_lang['idimage_tab_setting_desc'] = 'Управление настройками';
 

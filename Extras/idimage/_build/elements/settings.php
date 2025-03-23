@@ -6,6 +6,11 @@ return [
         'value' => true,
         'area' => 'idimage_main',
     ],
+    'indexed_type' => [
+        'xtype' => 'textfield',
+        'value' => 'index_all',
+        'area' => 'idimage_main',
+    ],
     'indexed_service' => [
         'xtype' => 'combo-boolean',
         'value' => false,
@@ -50,7 +55,7 @@ return [
 
     'limit_upload' => [
         'xtype' => 'numberfield',
-        'value' => 5,
+        'value' => 20,
         'area' => 'idimage_limit',
     ],
 
@@ -73,6 +78,11 @@ return [
     'limit_attempt' => [
         'xtype' => 'numberfield',
         'value' => 20,
+        'area' => 'idimage_limit',
+    ],
+    'limit_task' => [
+        'xtype' => 'numberfield',
+        'value' => 1000,
         'area' => 'idimage_limit',
     ],
 ];

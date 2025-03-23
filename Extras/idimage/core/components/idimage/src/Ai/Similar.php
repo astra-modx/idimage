@@ -16,7 +16,6 @@ use InvalidArgumentException;
 
 class Similar
 {
-
     private int $total = 0;
     private ?array $data = null;
     private int $status;
@@ -29,9 +28,32 @@ class Similar
      */
     private $max_value;
     private int $compared = 0;
-    private ?int $pid = null;
+    private ?int $offerId = null;
     private ?array $embedding = null;
+    private $parent = null;
 
+    private $search_scope = 0;
+    private $maximumFound = 10;
+    private $minimumScore = 70;
+
+    public function __construct(
+        int $maximumFound,
+        int $minimumScore
+    ) {
+        $this->search_scope = $maximumFound;
+        $this->maximumFound = $maximumFound;
+        $this->minimumScore = $minimumScore;
+    }
+
+    public function maximumFound()
+    {
+        return $this->maximumFound;
+    }
+
+    public function minimumScore()
+    {
+        return $this->minimumScore;
+    }
 
     public function minValue()
     {
@@ -53,11 +75,12 @@ class Similar
     public function toArray()
     {
         return [
-            'min_value' => $this->min_value,
-            'max_value' => $this->max_value,
+            'min_scope' => $this->min_value,
+            'max_scope' => $this->max_value,
+            'search_scope' => $this->search_scope,
             'total' => $this->total,
-            'data' => $this->similar,
             'compared' => $this->compared,
+            'similar' => $this->data(),
         ];
     }
 
@@ -73,28 +96,26 @@ class Similar
         return $this->compared;
     }
 
-    public function status()
-    {
-        return $this->status;
-    }
 
-    public function setStatus(int $status): self
+    public function create(int $offerId, int $parent, array $embedding): self
     {
-        $this->status = $status;
+        $this->setOfferId($offerId)
+            ->setParent($parent)
+            ->setEmbedding($embedding);
 
         return $this;
     }
 
-    public function setPid(int $pid)
+    public function setOfferId(int $offerId)
     {
-        $this->pid = $pid;
+        $this->offerId = $offerId;
 
         return $this;
     }
 
-    public function getPid()
+    public function getOfferId()
     {
-        return $this->pid;
+        return $this->offerId;
     }
 
     public function setEmbedding(array $embedding)
@@ -109,13 +130,9 @@ class Similar
         return $this->embedding;
     }
 
-    public function setData(array $percentage)
+    public function setData(array $data)
     {
-        $this->total = count($percentage);
-        $this->data = $percentage;
-        $probability = array_column($percentage, 'probability');
-        $this->min_value = $percentage ? min($probability) : 0;
-        $this->max_value = $percentage ? max($probability) : 0;
+        $this->data = $data;
 
         return $this;
     }
@@ -135,6 +152,31 @@ class Similar
     public function setMaxValue(int $value)
     {
         $this->max_value = $value;
+
+        return $this;
+    }
+
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    public function setParent(int $parent)
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+
+    public function comparison(ProductIndexer $productIndexer)
+    {
+        return $this;
+    }
+
+    public function setTotal(int $count)
+    {
+        $this->total = $count;
 
         return $this;
     }

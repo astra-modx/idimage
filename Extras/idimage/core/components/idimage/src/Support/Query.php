@@ -3,7 +3,10 @@
 namespace IdImage\Support;
 
 use idImage;
+use IdImage\Sender;
 use idImageTask;
+use msOption;
+use PDO;
 
 /**
  * Created by Andrey Stepanenko.
@@ -28,7 +31,7 @@ class Query
     public function files()
     {
         $query = $this->create('msProduct');
-        $query->select('File.id as file_id,File.product_id as id, File.url as image, File.path as path');
+        $query->select('File.id as file_id,File.product_id as id, File.url as image, File.path as path, File.hash as hash');
         //$query->leftJoin('idImageClose', 'Close', 'Close.pid = msProductFile.product_id');
         $query->innerJoin('msProductFile', 'File', 'File.product_id = msProduct.id');
 
@@ -56,7 +59,7 @@ class Query
 
     public function closesEmbedding()
     {
-        return $this->closes()->innerJoin('idImageEmbedding', 'Embedding', 'Embedding.pid = idImageClose.pid');
+        return $this->closes()->innerJoin('idImageEmbedding', 'Embedding', 'Embedding.hash = idImageClose.hash');
     }
 
     public function similar()
@@ -77,13 +80,19 @@ class Query
         ]);
     }
 
-    public function tasksQueue()
+    public function tasksQueue(string $operation)
     {
+        $map = Sender::$operationsMap;
+        if (!in_array($operation, $map)) {
+            throw new \Exception('Invalid operation: '.$operation);
+        }
+
         $query = $this->tasks()
             ->where([
+                'operation' => $operation,
                 'status:IN' => [
                     idImageTask::STATUS_PENDING,
-                    idImageTask::STATUS_CREATED,
+                    idImageTask::STATUS_QUEUE,
                     idImageTask::STATUS_RETRY, // Повторны статус по кол-ву ошибок
                 ],
             ])
@@ -110,6 +119,31 @@ class Query
         return $this->closes()->where([
             'active' => 1,
         ]);
+    }
+
+
+    /**
+     * Вернет категории по ключу idimage
+     * @return null|array
+     */
+    public function optionCategories(): ?array
+    {
+        $categories = null;
+        /* @var msOption $option */
+        if ($option = $this->idImage->modx->getObject('msOption', ['key' => 'idimage'])) {
+            $q = $this->idImage->modx->newQuery('msCategoryOption');
+            $q->select('category_id');
+            $q->where(array(
+                'option_id' => $option->id,
+            ));
+            if ($q->prepare() && $q->stmt->execute()) {
+                while ($row = $q->stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $categories[] = (int)$row['category_id'];
+                }
+            }
+        }
+
+        return $categories;
     }
 
 

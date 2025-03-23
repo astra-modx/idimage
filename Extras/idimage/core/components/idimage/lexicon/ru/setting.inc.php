@@ -3,10 +3,10 @@
 $_lang['area_idimage_main'] = 'Основные';
 
 $_lang['setting_idimage_api_url'] = 'Адрес сервиса Id Image';
-$_lang['setting_idimage_api_url_desc'] = 'По умолчанию: http://idimage.ru/api/.';
+$_lang['setting_idimage_api_url_desc'] = 'По умолчанию: https://idimage.ru/api/.';
 
 $_lang['setting_idimage_token'] = 'Токен для сервисов AI';
-$_lang['setting_idimage_token_desc'] = 'Укажите токен для сервисов AI, чтобы использовать для получения векторных данных изображений.';
+$_lang['setting_idimage_token_desc'] = 'Укажите токен для сервисов Id image, получить токен можно в личном кабинете на сайте <a href="https://idimage.ru/account/" target="_blank">idimage.ru</a>.';
 
 $_lang['setting_idimage_enable'] = 'Включить получение векторов изображений';
 $_lang['setting_idimage_enable_desc'] = 'По умолчанию включено. Если выбрать "Нет", сайт не будет получать вектора изображений из сервиса Id Image.';
@@ -45,3 +45,10 @@ $_lang['setting_idimage_limit_upload_desc'] = 'По умолчанию: 5. Ис�
 $_lang['setting_idimage_indexed_service'] = 'Индексация товаров в сервисе IDimage';
 $_lang['setting_idimage_indexed_service_desc'] = 'По умолчанию Нет. Если выбрать Да, сайт будет получать похожие товары из сервиса IDimage. Для больших каталогов, лучше использовать индексацию товаров в сервисе IDimage, а не на сайте.';
 
+
+$_lang['setting_idimage_limit_task'] = 'Кол-во заданий для запуска';
+$_lang['setting_idimage_limit_task_desc'] = 'По умолчанию 1000.';
+
+
+$_lang['setting_idimage_indexed_type'] = 'Тип индексации';
+$_lang['setting_idimage_indexed_type_desc'] = 'Подробней см. на сайте <a href="https://docs.modx.pro/components/idimage" target="_blank">docs.modx.pro</a>';

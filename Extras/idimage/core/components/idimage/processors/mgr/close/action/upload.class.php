@@ -1,6 +1,6 @@
 <?php
 
-class idImageTaskReceivedProcessor extends modProcessor
+class idImageCloseActionUploadProcessor extends modProcessor
 {
     public function process()
     {
@@ -8,7 +8,7 @@ class idImageTaskReceivedProcessor extends modProcessor
 
         /* @var idImageClose $Close */
         if (!$Close = $this->modx->getObject('idImageClose', $id)) {
-            throw new \IdImage\Exceptions\ExceptionJsonModx('Не удалось получить Task для id');
+            return $this->failure($this->modx->lexicon('idimage_error_close_not_found'));
         }
 
         $task = $Close->taskUpload();
@@ -18,4 +18,4 @@ class idImageTaskReceivedProcessor extends modProcessor
     }
 }
 
-return 'idImageTaskReceivedProcessor';
+return 'idImageCloseActionUploadProcessor';

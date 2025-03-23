@@ -15,7 +15,8 @@ class idImageActionsTaskSendProcessor extends idImageActionsProcessor implements
 
     public function withProgressIds()
     {
-        $query = $this->query()->tasksQueue();
+        $operation = $this->getProperty('operation');
+        $query = $this->query()->tasksQueue($operation);
         $limit = $this->getProperty('limit');
         if (!empty($limit)) {
             // лимит для фоновых заданий

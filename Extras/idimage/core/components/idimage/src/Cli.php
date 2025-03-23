@@ -14,6 +14,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 class Cli
 {
     private $output;
+    //private bool $interactive = true;
 
     public function __construct()
     {
@@ -63,4 +64,11 @@ class Cli
     {
         return round((microtime(true) - $this->startTime), 2).' s.';
     }
+
+   /* public function interactive(bool $value = true)
+    {
+        $this->interactive = $value;
+
+        return $this;
+    }*/
 }

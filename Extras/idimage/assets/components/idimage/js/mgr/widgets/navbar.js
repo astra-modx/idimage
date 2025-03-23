@@ -151,13 +151,13 @@ idimage.panel.Navbar = function (config) {
                                         text: '<i class=" icon icon-refresh"></i> ' + _('idimage_navbar_statistic_btn'),
                                         handler: () => indexedPoll(true)
                                     },
-                                    {
+                                    /*{
                                         xtype: 'button',
                                         cls: 'primary-button',
                                         style: 'margin: 0px 0 20px 0px',
                                         text: _('idimage_navbar_indexed_btn'),
                                         handler: () => indexedProducts()
-                                    },
+                                    },*/
 
 
                                 ]

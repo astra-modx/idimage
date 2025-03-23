@@ -11,7 +11,7 @@ $xpdo_meta_map['idImageTask']= array (
   'fields' => 
   array (
     'pid' => NULL,
-    'status' => NULL,
+    'status' => 1,
     'operation' => NULL,
     'errors' => NULL,
     'attempt' => 0,
@@ -32,10 +32,12 @@ $xpdo_meta_map['idImageTask']= array (
     ),
     'status' => 
     array (
-      'dbtype' => 'varchar',
-      'precision' => '32',
-      'phptype' => 'string',
-      'null' => false,
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => true,
+      'default' => 1,
     ),
     'operation' => 
     array (
@@ -94,22 +96,6 @@ $xpdo_meta_map['idImageTask']= array (
   ),
   'indexes' => 
   array (
-    'pid' => 
-    array (
-      'alias' => 'pid',
-      'primary' => false,
-      'unique' => false,
-      'type' => 'BTREE',
-      'columns' => 
-      array (
-        'pid' => 
-        array (
-          'length' => '',
-          'collation' => 'A',
-          'null' => false,
-        ),
-      ),
-    ),
     'status' => 
     array (
       'alias' => 'status',
@@ -119,6 +105,22 @@ $xpdo_meta_map['idImageTask']= array (
       'columns' => 
       array (
         'status' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
+    ),
+    'pid' => 
+    array (
+      'alias' => 'pid',
+      'primary' => false,
+      'unique' => false,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'pid' => 
         array (
           'length' => '',
           'collation' => 'A',
@@ -148,14 +150,6 @@ $xpdo_meta_map['idImageTask']= array (
     'Close' => 
     array (
       'class' => 'idImageClose',
-      'local' => 'pid',
-      'foreign' => 'pid',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
-    ),
-    'Embedding' => 
-    array (
-      'class' => 'idImageEmbedding',
       'local' => 'pid',
       'foreign' => 'pid',
       'cardinality' => 'one',

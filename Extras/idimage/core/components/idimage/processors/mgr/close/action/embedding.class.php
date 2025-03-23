@@ -1,6 +1,6 @@
 <?php
 
-class idImageTaskEmbeddingProcessor extends modProcessor
+class idImageCloseActionEmbeddingProcessor extends modProcessor
 {
     public function process()
     {
@@ -8,7 +8,7 @@ class idImageTaskEmbeddingProcessor extends modProcessor
 
         /* @var idImageClose $Close */
         if (!$Close = $this->modx->getObject('idImageClose', $id)) {
-            return $this->failure($this->modx->lexicon('idimage_error_close_get_task'));
+            return $this->failure($this->modx->lexicon('idimage_error_close_not_found'));
         }
 
         if (!$Close->taskId()) {
@@ -22,4 +22,4 @@ class idImageTaskEmbeddingProcessor extends modProcessor
     }
 }
 
-return 'idImageTaskEmbeddingProcessor';
+return 'idImageCloseActionEmbeddingProcessor';

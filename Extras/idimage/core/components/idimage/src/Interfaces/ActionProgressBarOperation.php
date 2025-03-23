@@ -8,7 +8,11 @@
 
 namespace IdImage\Interfaces;
 
+use IdImage\Support\xPDOQueryIdImage;
+
 interface ActionProgressBarOperation
 {
     public function operation(): string;
+
+    public function criteria(xPDOQueryIdImage $query): void;
 }

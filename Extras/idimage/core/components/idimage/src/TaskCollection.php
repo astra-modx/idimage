@@ -71,13 +71,23 @@ class TaskCollection
     public function each(callable $callback): self
     {
         /* @var TaskEntity $item */
-        foreach ($this->items as $item) {
+        foreach ($this->items as $key => $item) {
             $task = $this->task($item->getOfferId());
-            $callback($item, $task);
+            $callback($item, $task, $key);
         }
 
         return $this;
     }
+
+    public function forget(int $key)
+    {
+        if (isset($this->items[$key])) {
+            unset($this->items[$key]);
+        }
+
+        return $this;
+    }
+
 
     public function task($id): ?idImageTask
     {

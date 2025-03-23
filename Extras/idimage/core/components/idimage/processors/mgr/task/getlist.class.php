@@ -38,9 +38,6 @@ class idImageTaskGetListProcessor extends modObjectGetListProcessor
 
         $query = trim($this->getProperty('query'));
         if ($query) {
-            $c->where([
-                'idImageTask.operation:LIKE' => "%{$query}%",
-            ]);
             $id = (int)$query;
             if ($id > 0) {
                 $c->where([
@@ -54,6 +51,11 @@ class idImageTaskGetListProcessor extends modObjectGetListProcessor
         $status = trim($this->getProperty('status'));
         if (!empty($status)) {
             $c->where("{$this->objectType}.status='{$status}'");
+        }
+
+        $operation = trim($this->getProperty('operation'));
+        if (!empty($operation)) {
+            $c->where("{$this->objectType}.operation='{$operation}'");
         }
 
         return $c;
@@ -72,7 +74,7 @@ class idImageTaskGetListProcessor extends modObjectGetListProcessor
 
         $errors = $object->getErrors();
         $array['error'] = !empty($errors['msg']) ? $errors['msg'] : json_encode($errors);
-        if ($object->get('status') !== idImageTask::STATUS_FAILED) {
+        if ($object->get('status') !== idImageTask::STATUS_COMPLETED) {
             $array['error'] = null;
         }
 

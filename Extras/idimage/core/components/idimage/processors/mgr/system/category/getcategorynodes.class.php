@@ -459,7 +459,8 @@ class msOptionCategoryGetNodesProcessor extends modResourceGetNodesProcessor
         }
 
 
-        $idNote = $this->modx->hasPermission('tree_show_resource_ids') ? ' <span dir="ltr">('.$resource->id.')</span>' : '';
+        $idNote = $this->modx->hasPermission('tree_show_resource_ids') ? ' ('.$resource->id.')' : '';
+        #$idNote = $this->modx->hasPermission('tree_show_resource_ids') ? ' <span dir="ltr">('.$resource->id.')</span>' : '';
         $count = $this->modx->getCount('modResource', array('parent' => $resource->id));
         $disabled = false;
         #$disabled = !empty($count) ? true : false;

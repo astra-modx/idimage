@@ -34,7 +34,7 @@ class Task extends ApiAbstract implements ApiInterfaces
         ]);
     }
 
-    public function upload(TaskCollection $collection)
+    public function upload(TaskCollection $collection, bool $force = false)
     {
         $postFields = [];
         $i = 0;
@@ -42,55 +42,19 @@ class Task extends ApiAbstract implements ApiInterfaces
         $collection->each(function (TaskEntity $entity) use (&$postFields, &$i) {
             $offerId = $entity->getOfferId();
             $imagePath = $entity->getPicturePath();
-            $error = null;
-
-            if (!file_exists($imagePath)) {
-                $error = 'Файл не существует: '.$imagePath;
-            } else {
-                $size = @getimagesize($imagePath);
-                if ($size[0] !== 224 || $size[1] !== 224) {
-                    $error = 'Неверный размер изображения, должно быть 224х224';
-                }
-
-                if ($size['mime'] !== 'image/jpeg') {
-                    $error = 'Неверный формат изображения, должно быть jpeg';
-                }
-            }
-
-            if ($error) {
-                $entity->setErrors($error);
-            } else {
-                $postFields["files[$i]"] = new CURLFile($imagePath, 'image/jpeg', basename($imagePath));
-                $postFields["file_ids[$i]"] = $offerId; // Добавляем ID
-                $i++;
-            }
+            $postFields["files[$i]"] = new CURLFile($imagePath, 'image/jpeg', basename($imagePath));
+            $postFields["file_ids[$i]"] = $offerId; // Добавляем ID
+            $i++;
         });
 
+        if ($force) {
+            $postFields['force'] = true; // Быстрое получение векторов
+        }
 
         return $this->client->post('/ai/upload', $postFields)->setHeaders([
             'Accept: application/json',
         ]);
     }
-
-    public function poll(TaskCollection $collection)
-    {
-        $ids = [];
-        $collection->each(function (TaskEntity $entity) use (&$ids) {
-            $taskId = $entity->getTaskId();
-            if (empty($taskId)) {
-                throw new ExceptionJsonModx('No task id');
-            }
-
-            $ids[] = $taskId;
-
-            return true;
-        });
-
-        return $this->client->post("/ai/task", [
-            'ids' => $ids,
-        ]);
-    }
-
 
     public function embedding(TaskCollection $collection)
     {

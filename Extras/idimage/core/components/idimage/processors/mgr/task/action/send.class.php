@@ -2,12 +2,14 @@
 
 class idImageTaskSendProcessor extends modProcessor
 {
+    public $languageTopics = ['idimage:manager'];
+
     public function process()
     {
         $id = (int)$this->getProperty('id');
         /* @var idImageTask $Task */
         if (!$Task = $this->modx->getObject('idImageTask', $id)) {
-            throw new \IdImage\Exceptions\ExceptionJsonModx('Не удалось получить Task для id');
+            return $this->failure($this->modx->lexicon('idimage_error_close_get_task'));
         }
 
         /* @var idImage $idImage */

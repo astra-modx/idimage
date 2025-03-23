@@ -1,46 +1,12 @@
+<br>
+<hr>
 <div id="idimage-panel-sync-stat">
     <div class="idimage-wrapper-help">
         <div class="idimage-row-help">
-            <hr>
-
             <div class="idimage-stat-section">
-                <h2>Инструкция</h2>
+                <h2>[[%idimage_help_system_info]]</h2>
                 <div class="idimage-row-help-check">
-                    <ol>
-                        <li class="idimage-availability">
-                            1: Создайте товары
-                        </li>
-                        <li class="idimage-availability">
-                            2: Создайте задания
-                        </li>
-                        <li class="idimage-availability">
-                            3: Отправьте задания в сервис idimage.ru
-                        </li>
-                        <li class="idimage-availability">
-                            3.1: Загрузите изображений в idimage.ru (опционально, если нет доступа из глобального интернета к изображениям)
-                        </li>
-                        <li class="idimage-availability">
-                            4: Дождитесь пока сервис завершит задания
-                        </li>
 
-                        <li class="idimage-availability">
-                            5: Получите вектора из сервиса
-                        </li>
-                        <li class="idimage-availability">
-                            6: Нажмите "Индексировать товары"
-                        </li>
-                        <li class="idimage-availability">
-                            7: Добавьте сниппет на страницу с товаром
-                        </li>
-                    </ol>
-
-
-                </div>
-            </div>
-
-            <div class="idimage-stat-section">
-                <h2>Информация о системе</h2>
-                <div class="idimage-row-help-check">
                     <div class="idimage-availability">
                         <span class="idimage-availability-name">Получение векторов:</span>
                         [[+enable:is=`1`:then=`
@@ -67,6 +33,12 @@
                         <span class="idimage-status error">Несовместимая версия [[+php_current]]</span>
                         `]]
                     </div>
+
+                    <span class="idimage-btn x-btn x-btn-small x-btn-icon-small-left primary-button x-btn-noicon" onclick="apiBalance(true)">
+                        <button type="button" class=" x-btn-text">
+                             [[%idimage_button_balance]]
+                        </button>
+                    </span>
                 </div>
             </div>
 

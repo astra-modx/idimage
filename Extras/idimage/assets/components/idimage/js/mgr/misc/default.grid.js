@@ -327,7 +327,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         var label = _(k);
 
         if (label === undefined) {
-            console.warn('lexicon not found: '+k);
+            console.warn('lexicon not found: ' + k);
         }
 
         label = label === undefined ? action : label;
@@ -346,11 +346,12 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
 
         return {
             cls: clsd,
-            text: icon + '' + label,
+            text: icon + ' ' + label,
             handler: handlerFunction,
             scope: this
         };
     },
+
 
     actions: function (name) {
 
@@ -415,6 +416,50 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         } else {
             idimage.progress.hide()
             this.refresh()
+
+            this.actionsProgressNext(controller)
+        }
+    },
+
+    actionsProgressNext: function (name) {
+
+        var nextTask;
+        switch (name) {
+            case 'product/task/indexed':
+                nextTask = 'task/indexed'
+                break;
+            case 'product/task/upload':
+                nextTask = 'task/upload'
+                break;
+            default:
+                break;
+        }
+
+        if (nextTask) {
+            this.actionsProgress(nextTask)
+            /* Ext.MessageBox.show({
+                 title: title,
+                 msg: desc,
+                 width: 500,
+                 buttons: {
+                     yes: _('idimage_process_task_btn_yes'),
+                     cancel: _('idimage_process_task_btn_cancel'),
+                 },
+                 fn: function (e) {
+
+                     // Обработает только выбранные записи со страницы
+                     if (e == 'yes') {
+
+                         return false
+                     }
+
+                     // Будут обрабатываться все найденные ресрурсы с учетом фильтров
+                     if (e == 'no') {
+                         console.log('Отмена')
+                     }
+                 },
+                 icon: Ext.MessageBox.QUESTION
+             })*/
         }
     },
 
@@ -459,9 +504,9 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
                     steps: true
                 }
 
-               /* if (total > 0) {
-                    params.ids = Ext.util.JSON.encode(ids)
-                }*/
+                /* if (total > 0) {
+                     params.ids = Ext.util.JSON.encode(ids)
+                 }*/
                 idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
                 grid.actionsAjax(params,
                     function (grid, response) {

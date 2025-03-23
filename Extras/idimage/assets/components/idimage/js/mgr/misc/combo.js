@@ -464,8 +464,6 @@ Ext.extend(idimage.combo.StatusService, MODx.combo.ComboBox);
 Ext.reg('idimage-combo-status-service', idimage.combo.StatusService);
 
 
-
-
 /**
  * Filed Resource
  * @param config
@@ -539,3 +537,29 @@ idimage.combo.FilterTaskOperation = function (config) {
 };
 Ext.extend(idimage.combo.FilterTaskOperation, idimage.combo.Active);
 Ext.reg('idimage-combo-filter-task-operation', idimage.combo.FilterTaskOperation);
+
+/**
+ * Filed Operation
+ * @param config
+ * @constructor
+ */
+idimage.combo.FilterIndexedType = function (config) {
+    config = config || {};
+    Ext.applyIf(config, {
+        name: 'indexed_type',
+        hiddenName: 'indexed_type',
+        baseParams: {
+            action: 'mgr/misc/type/getlist',
+            combo: true,
+        },
+        tpl: new Ext.XTemplate(
+            '<tpl for="."><div class="x-combo-list-item">',
+            '{name}</span>',
+            '</div></tpl>', {
+                compiled: true
+            }),
+    });
+    idimage.combo.FilterIndexedType.superclass.constructor.call(this, config);
+};
+Ext.extend(idimage.combo.FilterIndexedType, idimage.combo.Active);
+Ext.reg('idimage-combo-filter-indexed-type', idimage.combo.FilterIndexedType);

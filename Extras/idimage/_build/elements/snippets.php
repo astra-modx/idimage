@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'idImageClose' => [
-        'file' => 'idimageclose',
-        'description' => 'idimage snippet to list items',
+    'idImageSimilar' => [
+        'file' => 'idimagesimilar',
+        'description' => 'snippet return most similar items',
         'properties' => [
             'pid' => [
                 'type' => 'numberfield',
@@ -11,7 +11,7 @@ return [
             ],
             'min_scope' => [
                 'type' => 'numberfield',
-                'value' => 80,
+                'value' => 70,
             ],
             'max_scope' => [
                 'type' => 'numberfield',

@@ -12,9 +12,8 @@ $xpdo_meta_map['idImageClose']= array (
   array (
     'pid' => NULL,
     'picture' => NULL,
-    'hash' => NULL,
+    'hash' => '',
     'status' => 1,
-    'upload' => 0,
     'indexed' => 0,
     'active' => 1,
     'errors' => NULL,
@@ -41,10 +40,12 @@ $xpdo_meta_map['idImageClose']= array (
     ),
     'hash' => 
     array (
-      'dbtype' => 'varchar',
-      'precision' => '32',
+      'dbtype' => 'char',
+      'precision' => '40',
       'phptype' => 'string',
       'null' => true,
+      'default' => '',
+      'index' => 'index',
     ),
     'status' => 
     array (
@@ -54,14 +55,6 @@ $xpdo_meta_map['idImageClose']= array (
       'phptype' => 'integer',
       'null' => true,
       'default' => 1,
-    ),
-    'upload' => 
-    array (
-      'dbtype' => 'tinyint',
-      'precision' => '1',
-      'phptype' => 'boolean',
-      'null' => true,
-      'default' => 0,
     ),
     'indexed' => 
     array (
@@ -159,22 +152,6 @@ $xpdo_meta_map['idImageClose']= array (
         ),
       ),
     ),
-    'upload' => 
-    array (
-      'alias' => 'upload',
-      'primary' => false,
-      'unique' => false,
-      'type' => 'BTREE',
-      'columns' => 
-      array (
-        'upload' => 
-        array (
-          'length' => '',
-          'collation' => 'A',
-          'null' => false,
-        ),
-      ),
-    ),
     'indexed' => 
     array (
       'alias' => 'indexed',
@@ -232,8 +209,8 @@ $xpdo_meta_map['idImageClose']= array (
     'Embedding' => 
     array (
       'class' => 'idImageEmbedding',
-      'local' => 'pid',
-      'foreign' => 'pid',
+      'local' => 'hash',
+      'foreign' => 'hash',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),

@@ -2,9 +2,8 @@
 
 include_once 'setting.inc.php';
 
-$_lang['idimage'] = 'Id Image';
+$_lang['idimage'] = 'ID image';
 $_lang['idimage_menu_desc'] = 'Похожие товары';
-$_lang['idimage'] = 'Id Image';
 $_lang['idimage_system_settings'] = 'Системные настройки';
 $_lang['idimage_system_settings_desc'] = 'Системные настройки Id Image';
 $_lang['idimage_clouds'] = 'Cloud';

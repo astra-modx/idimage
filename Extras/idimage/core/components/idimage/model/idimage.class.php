@@ -2,8 +2,10 @@
 
 use IdImage\Actions;
 use IdImage\Exceptions\ExceptionJsonModx;
+use IdImage\Indexer;
 use IdImage\Sender;
 use IdImage\Support\Query;
+use IdImage\Support\SimilarExtractor;
 
 include_once MODX_CORE_PATH.'components/idimage/vendor/autoload.php';
 
@@ -57,8 +59,10 @@ class idImage
             'limit_indexed' => $this->modx->getOption('idimage_limit_indexed', $config, 100, true),
             'limit_show_similar_products' => $this->modx->getOption('idimage_limit_show_similar_products', $config, 5, true),
             'limit_attempt' => $this->modx->getOption('idimage_limit_attempt', $config, 20, true),
+            'limit_task' => $this->modx->getOption('idimage_limit_task', $config, 1000, true),
             'enable' => (bool)$this->modx->getOption('idimage_enable', $config, false),
             'indexed_service' => (bool)$this->modx->getOption('idimage_indexed_service', $config, false),
+            'indexed_type' => (string)$this->modx->getOption('idimage_indexed_type', $config, false),
             'default_thumb' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAKUlEQVR42mNgGAWjYBSMglEwCIOhGEENEBsDgmrAAGQ9gP4HAEKaBUxFSYd7AAAAAElFTkSuQmCC',
         ], $config);
 
@@ -216,7 +220,7 @@ class idImage
 
     public function limitTask()
     {
-        return 1000;
+        return (int)$this->config['limit_task'] ?? 1000;
     }
 
 
@@ -276,4 +280,38 @@ class idImage
 
         return $this->config[$key];
     }
+
+    protected ?\IdImage\Indexer $indexer = null;
+
+    public function indexer()
+    {
+        if (is_null($this->indexer)) {
+            $this->indexer = new Indexer($this);
+        }
+
+        return $this->indexer;
+    }
+
+    protected ?\IdImage\Support\SimilarExtractor $extractor = null;
+
+    public function extractor()
+    {
+        if (is_null($this->extractor)) {
+            $this->extractor = new SimilarExtractor($this);
+        }
+
+        return $this->extractor;
+    }
+
+    public function settingKeys()
+    {
+        $values = [
+            'indexed_type' => 'index_all',
+            'token' => '',
+            'maximum_products_found' => '',
+        ];
+
+        return $values;
+    }
+
 }

@@ -1,5 +1,7 @@
 <?php
 
+use IdImage\Support\xPDOQueryIdImage;
+
 if (!class_exists('idImageProductTaskProcessor')) {
     include_once __DIR__.'/../task.class.php';
 }
@@ -11,13 +13,17 @@ class idImageProductIndexedProcessor extends idImageProductTaskProcessor impleme
         return 'indexed';
     }
 
-    public function withProgressIds()
+    public function criteria(xPDOQueryIdImage $query): void
     {
-        $query = $this->query()->closesEmbedding();
+        // Только активные
+        $query->where([
+            'idImageClose.status' => idImageClose::STATUS_COMPLETED,
+            'idImageClose.active' => true,
+        ]);
 
-        return $query->ids();
+        // Только если есть Embedding
+        $query->innerJoin('idImageEmbedding', 'Embedding', 'Embedding.hash = idImageClose.hash');
     }
-
 
 }
 

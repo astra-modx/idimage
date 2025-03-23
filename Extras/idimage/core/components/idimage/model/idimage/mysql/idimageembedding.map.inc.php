@@ -10,28 +10,22 @@ $xpdo_meta_map['idImageEmbedding']= array (
   ),
   'fields' => 
   array (
-    'pid' => NULL,
-    'hash' => NULL,
+    'hash' => '',
     'data' => NULL,
     'updatedon' => 0,
     'createdon' => 0,
+    'pid' => NULL,
   ),
   'fieldMeta' => 
   array (
-    'pid' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '10',
-      'attributes' => 'unsigned',
-      'phptype' => 'integer',
-      'null' => false,
-    ),
     'hash' => 
     array (
-      'dbtype' => 'varchar',
-      'precision' => '32',
+      'dbtype' => 'char',
+      'precision' => '40',
       'phptype' => 'string',
-      'null' => false,
+      'null' => true,
+      'default' => '',
+      'index' => 'index',
     ),
     'data' => 
     array (
@@ -55,14 +49,37 @@ $xpdo_meta_map['idImageEmbedding']= array (
       'null' => false,
       'default' => 0,
     ),
+    'pid' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'phptype' => 'integer',
+      'null' => true,
+    ),
   ),
   'indexes' => 
   array (
+    'hash' => 
+    array (
+      'alias' => 'hash',
+      'primary' => false,
+      'unique' => true,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'hash' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
+    ),
     'pid' => 
     array (
       'alias' => 'pid',
       'primary' => false,
-      'unique' => true,
+      'unique' => false,
       'type' => 'BTREE',
       'columns' => 
       array (
@@ -77,19 +94,11 @@ $xpdo_meta_map['idImageEmbedding']= array (
   ),
   'aggregates' => 
   array (
-    'Product' => 
-    array (
-      'class' => 'msProduct',
-      'local' => 'pid',
-      'foreign' => 'id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
-    ),
     'Close' => 
     array (
       'class' => 'idImageClose',
-      'local' => 'pid',
-      'foreign' => 'pid',
+      'local' => 'hash',
+      'foreign' => 'hash',
       'cardinality' => 'one',
       'owner' => 'foreign',
     ),

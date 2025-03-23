@@ -11,9 +11,9 @@ class idimageActiveGetListProcessor extends modObjectProcessor
         $statuses = idImageTask::$statusMap;
 
         $array = [];
-        foreach ($statuses as $key) {
+        foreach ($statuses as $key => $name) {
             $array[] = [
-                'name' => $key,
+                'name' => $name,
                 'value' => $key,
             ];
         }

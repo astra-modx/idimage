@@ -2,9 +2,6 @@
 
 include_once 'setting.inc.php';
 
-$_lang['idimage'] = 'Id Image';
-
-
 $_lang['idimage_navbar_create_product_title'] = '<h3>Товаров</h3';
 
 $_lang['idimage_navbar_indexed_title'] = '<h3>Индексация</h3';

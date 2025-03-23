@@ -7,19 +7,14 @@ use IdImage\Entites\TaskEntity;
  */
 class idImageClose extends xPDOSimpleObject
 {
-
-    const STATUS_QUEUE = 1;
-    const STATUS_INVALID = 3;
-    const STATUS_FAILED = 4;
-    const STATUS_COMPLETED = 5;
-    const STATUS_NOT_FOUND_SIMILAR = 8;
+    const STATUS_INVALID = 1;
+    const STATUS_FAILED = 2;
+    const STATUS_COMPLETED = 3;
 
     static $statusMap = [
-        self::STATUS_QUEUE => 'queue',
         self::STATUS_FAILED => 'failed',
         self::STATUS_COMPLETED => 'completed',
         self::STATUS_INVALID => 'invalid',
-        self::STATUS_NOT_FOUND_SIMILAR => 'similar_not_found',
     ];
 
 
@@ -31,33 +26,14 @@ class idImageClose extends xPDOSimpleObject
             $this->set('createdon', time());
         }
 
-
-        if (!$this->isNew() && $this->isDirty('hash')) {
-            // remove thumb or hash changed
-            $this->removeThumbnail();
-        }
-
-
-        $upload = false;
         if ($this->isNew() || $this->isDirty('hash')) {
-
-            $criteria = [
-                'pid' => $this->get('pid'),
-                'hash' => $this->get('hash'),
-            ];
-
             // если hash изменился, по ключам pid и hash ничего не найдено
             // то необходимо загрузить изображение в сервис
-            if ($this->xpdo->getCount('idImageEmbedding', $criteria) === 0) {
-                $upload = true;
+            // Сравнение hash чтобы понять надо загружать изображение по новой в сервис или нет
+            if (!$this->embedding()) {
+                $this->createTask = true;
+                $this->taskUpload();
             }
-        }
-
-
-        if ($upload) {
-            $this->set('upload', false);
-            $this->taskUpload();
-            $this->createTask = true;
         }
 
         // Создаем задание для создания векторов
@@ -78,10 +54,12 @@ class idImageClose extends xPDOSimpleObject
             return null;
         }
 
-        $sizes = @getimagesize($imagePath);
-        $sizes['size'] = filesize($imagePath);
-
-        return md5(json_encode($sizes));
+        return sha1_file($imagePath);
+#
+        #$sizes = @getimagesize($imagePath);
+        #$sizes['size'] = filesize($imagePath);
+#
+        #return md5(json_encode($sizes));
     }
 
     public function link(string $host)
@@ -111,41 +89,19 @@ class idImageClose extends xPDOSimpleObject
         return $this->getOne('Task');
     }
 
-    public function getEmbedding()
-    {
-        if (!$this->embedding()) {
-            return null;
-        }
-
-        return $this->embedding()->getEmbedding();
-    }
-
-    public function embedding(bool $create = false): ?idImageEmbedding
+    public function embedding(): ?idImageEmbedding
     {
         /* @var idImageEmbedding $Embedding */
-        if (!$Embedding = $this->getOne('Embedding')) {
-            if (!$create) {
-                return null;
-            }
-            $Embedding = $this->xpdo->newObject('idImageEmbedding');
-            $Embedding->set('hash', $this->get('hash'));
-            $Embedding->set('pid', $this->get('pid'));
-        }
+        $Embedding = $this->getOne('Embedding');
 
         return $Embedding;
     }
 
-    public function similar(bool $create = false): ?idImageSimilar
+    public function similar(): ?idImageSimilar
     {
         /* @var idImageSimilar $similar */
-        if (!$similar = $this->getOne('Similar')) {
-            if (!$create) {
-                return null;
-            }
-            $similar = $this->xpdo->newObject('idImageSimilar');
-            $similar->set('pid', $this->get('pid'));
-        }
 
+        $similar = $this->getOne('Similar');
         return $similar;
     }
 
@@ -174,15 +130,6 @@ class idImageClose extends xPDOSimpleObject
         return $products;
     }
 
-    public function getProducts()
-    {
-        if (!$similar = $this->similar(false)) {
-            return null;
-        }
-
-        return $similar->getProducts();
-    }
-
 
     public function service(): idImage
     {
@@ -204,9 +151,21 @@ class idImageClose extends xPDOSimpleObject
     }
 
 
+    public function getTargetFilename()
+    {
+        return $this->get('hash').'.jpg';
+    }
+
     public function getTargetPath()
     {
-        return MODX_ASSETS_PATH.'images/idimage/'.$this->get('pid').'.jpg';
+        // Уникальны ключ, отслеживается ли что то изменилось то картинка не будет найдена
+        // запуститься генерация превью
+        return MODX_ASSETS_PATH.'images/idimage/'.$this->getTargetFilename();
+    }
+
+    public function getTargetUrl()
+    {
+        return MODX_ASSETS_URL.'images/idimage/'.$this->getTargetFilename();
     }
 
     public function existsThumbnail()
@@ -217,15 +176,13 @@ class idImageClose extends xPDOSimpleObject
     public function removeThumbnail()
     {
         if ($this->existsThumbnail()) {
-            $this->set('upload', false);
-
             return unlink($this->getTargetPath());
         }
 
         return false;
     }
 
-    public function generateThumbnail(bool $reset = true)
+    public function generateThumbnail()
     {
         $source = $this->getPicturePath();
 
@@ -244,10 +201,6 @@ class idImageClose extends xPDOSimpleObject
             $this->setErrors($msg);
 
             return $msg;
-        }
-
-        if ($reset) {
-            $this->set('upload', false); // flag that image is uploaded
         }
 
         return true;
@@ -321,7 +274,7 @@ class idImageClose extends xPDOSimpleObject
         $task = $this->xpdo->newObject('idImageTask');
         $task->set('pid', $this->get('pid'));
         $task->set('operation', $operation);
-        $task->set('status', idImageTask::STATUS_CREATED);
+        $task->set('status', idImageTask::STATUS_QUEUE);
 
         if (is_int($execute_at)) {
             // Отложенное исполнение
@@ -337,5 +290,14 @@ class idImageClose extends xPDOSimpleObject
     public function taskId()
     {
         return $this->get('task_id') ?? null;
+    }
+
+    public function remove(array $ancestors = [])
+    {
+        if ($this->existsThumbnail()) {
+            unlink($this->getTargetPath());
+        }
+
+        return parent::remove($ancestors);
     }
 }

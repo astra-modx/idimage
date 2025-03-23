@@ -9,53 +9,55 @@
 namespace IdImage;
 
 use IdImage\Abstracts\SenderAbsract;
+use IdImage\Ai\IndexedSimilar;
 use IdImage\Entites\TaskEntity;
 use IdImage\Interfaces\ApiInterfaces;
+use idImageSimilar;
 use idImageTask;
 
 class Sender extends SenderAbsract
 {
-    public function embedding(TaskCollection $collection): bool
-    {
-        return $this->handle(
-            $collection,
-            function (ApiInterfaces $api, TaskCollection $collection) {
-                return $api->embedding($collection);
-            },
-            function (idImageTask $task, TaskEntity $entity) {
-                $response = $entity->getResponse();
-
-                if ($response['status'] === 'pending') {
-                    return idImageTask::STATUS_PENDING;
-                }
-
-                $close = $task->close();
-
-                // Создаем запись для векторов
-                $dataEmbedding = !empty($response['embedding']) ? $response['embedding'] : null;
-
-                if ($dataEmbedding) {
-                    $embedding = $close->embedding(true);
-                    $embedding->set('data', $dataEmbedding);
-                    if (!$embedding->save()) {
-                        throw $this->exception('Не удалось сохранить вектора для изображения taskId: '.$entity->getId());
-                    }
-                }
-
-                return idImageTask::STATUS_COMPLETED;
-            }
-        );
-    }
-
     public function upload(TaskCollection $collection): bool
     {
         return $this->handle(
             $collection,
             function (ApiInterfaces $api, TaskCollection $collection) {
-                return $api->upload($collection);
+                $collection->loadTasks($this->idImage->query()->tasks());
+
+                $collection->each(function (TaskEntity $entity, ?idImageTask $task, $key) use ($collection) {
+                    $error = null;
+                    $imagePath = $entity->getPicturePath();
+
+                    if (!file_exists($imagePath)) {
+                        $Close = $task->close();
+                        $response = $Close->generateThumbnail();
+                        if ($response !== true) {
+                            $error = 'Файл не существует: '.$imagePath;
+                        }
+                    } else {
+                        $size = @getimagesize($imagePath);
+                        if ($size[0] !== 224 || $size[1] !== 224) {
+                            $error = 'Неверный размер изображения, должно быть 224х224';
+                        }
+
+                        if ($size['mime'] !== 'image/jpeg') {
+                            $error = 'Неверный формат изображения, должно быть jpeg';
+                        }
+                    }
+
+                    if ($error) {
+                        $collection->forget($key);
+                        $task->setErrors($error);
+                        $task->save();
+                    }
+                });
+
+                return $api->upload($collection, true);
             },
             function (idImageTask $task, TaskEntity $entity) {
                 $response = $entity->getResponse();
+
+
                 // Получаем только ссылку на изображение
                 if ($response['status'] === 'failed') {
                     $errors = '';
@@ -67,17 +69,42 @@ class Sender extends SenderAbsract
                     throw $this->exception('error upload: '.$errors);
                 }
 
-                if (empty($response['task_id'])) {
-                    throw $this->exception('task empty task_id');
-                }
-
-                // Записываем task по которому будем синхронизироваться
-
 
                 $Close = $task->close();
-                $Close->set('upload', true);
-                $Close->set('task_id', $response['task_id']);
-                $Close->save();
+
+                // Записываем task по которому будем синхронизироваться
+                /*   $task = $response['task_id'] ?? null;
+                   if (empty($task)) {
+                       throw $this->exception('task empty task_id');
+                   }
+                   if (strlen($task) != 32) {
+                       throw $this->exception('task_id должно быть длиной 32 символов');
+                   }
+                   $Close->set('task_id', $response['task_id']);
+
+
+                   if (!$Close->save()) {
+                       throw $this->exception('Не удалось сохранить task_id: '.$Close->get('id'));
+                   }
+                */
+
+
+                // Создаем запись для векторов
+                $dataEmbedding = !empty($response['embedding']) ? $response['embedding'] : null;
+                if ($dataEmbedding) {
+                    // Создаем
+                    if (!$embedding = $Close->embedding()) {
+                        $embedding = $this->idImage->modx->newObject('idImageEmbedding');
+                        $embedding->set('pid', $Close->get('pid')); // Помечаем чтобы от какого товара загрузили
+                        $embedding->set('hash', $Close->get('hash'));
+                    }
+
+                    $embedding->set('data', $dataEmbedding);
+                    if (!$embedding->save()) {
+                        throw $this->exception('Не удалось сохранить вектора для изображения taskId: '.$entity->getId());
+                    }
+                }
+
 
                 // Если удалось загрузить ставим статус на CREATED для добавления в очередь на обработку
                 return idImageTask::STATUS_COMPLETED;
@@ -94,13 +121,36 @@ class Sender extends SenderAbsract
                 if ($this->idImage->isIndexedService()) {
                     return $api->similar($collection);
                 } else {
-                    $IndexedProducts = new IndexedProducts($this->idImage);
+                    $indexed = $this->idImage->indexer();
 
-                    return $IndexedProducts->run($collection->pids());
+                    // Все товары
+                    $results = $indexed::comparison(
+                        $this->idImage,
+                        $indexed->indexerTypeDefault(), //  тип индексации
+                        $indexed->similar(),
+                        $collection->pids()
+                    );
+
+                    return $indexed->response($results);
                 }
             },
             function (idImageTask $task, TaskEntity $entity) {
                 $response = $entity->getResponse();
+
+                $offer_id = (int)$response['offer_id'] ?? null;
+                if (empty($offer_id)) {
+                    throw $this->exception('Не удалось получить offer_id');
+                }
+
+                if ($offer_id != $entity->getOfferId()) {
+                    throw $this->exception('Не совпадает offer_id c entity'.$entity->getOfferId().' return '.$offer_id);
+                }
+
+
+                if ($task->get('pid') !== $offer_id) {
+                    throw $this->exception('Не совпадает pid c entity'.$task->get('pid').' return '.$offer_id);
+                }
+
                 if ($response['status'] === 'pending') {
                     return idImageTask::STATUS_PENDING;
                 }
@@ -116,8 +166,15 @@ class Sender extends SenderAbsract
                 }
 
                 // Получаем результаты индексации похожих товаров
-                $close = $task->close();
-                $similar = $close->similar(true);
+
+
+                /* @var idImageSimilar $similar */
+                if (!$similar = $this->idImage->modx->getObject('idImageSimilar', ['pid' => $offer_id])) {
+                    $similar = $this->idImage->modx->newObject('idImageSimilar');
+                    $similar->set('pid', $offer_id);
+                }
+
+
                 $min_scope = (int)$dataSimilar['min_scope'] ?? 0;
                 $total = (int)$dataSimilar['total'] ?? 0;
                 $compared = (int)$dataSimilar['compared'] ?? 0;

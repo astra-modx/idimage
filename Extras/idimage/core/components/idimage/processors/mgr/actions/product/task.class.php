@@ -14,7 +14,11 @@ abstract class idImageProductTaskProcessor extends idImageActionsProcessor imple
 
     public function withProgressIds()
     {
-        return $this->query()->closes()->where($this->criteria())->ids();
+        $query = $this->query()->closes();
+        $this->criteria($query);
+        $query->groupby('idImageClose.id');
+
+        return $query->ids();
     }
 
     /**

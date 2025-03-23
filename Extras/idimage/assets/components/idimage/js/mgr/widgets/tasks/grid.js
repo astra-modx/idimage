@@ -89,19 +89,15 @@ Ext.extend(idimage.grid.Tasks, idimage.grid.Default, {
                 cls: 'primary-button',
                 menu: [
 
-                    this.actionMenu('product/task/upload', 'icon-upload'),
-                    this.actionMenu('product/task/embedding', 'icon-upload'),
-                    this.actionMenu('product/task/indexed', 'icon-refresh'),
-                    '-',
                     this.actionMenu('task/destroy', 'icon-trash action-red')
                 ]
             },
 
-            this.actionMenu('task/send', 'icon-send'),
+            this.actionMenu('task/upload', 'icon-upload'),
+            this.actionMenu('task/indexed', 'icon-refresh'),
 
             {
-                xtype: 'idimage-combo-filter-task-status',
-                name: 'status',
+                xtype: 'idimage-combo-filter-task-operation',
                 width: 210,
                 custm: true,
                 clear: true,
@@ -120,7 +116,8 @@ Ext.extend(idimage.grid.Tasks, idimage.grid.Default, {
             },
 
             {
-                xtype: 'idimage-combo-filter-task-operation',
+                xtype: 'idimage-combo-filter-task-status',
+                name: 'status',
                 width: 210,
                 custm: true,
                 clear: true,

@@ -5,9 +5,8 @@
     <object class="idImageClose" table="idimage_closes" extends="xPDOSimpleObject">
         <field key="pid" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false"/>
         <field key="picture" dbtype="varchar" precision="500" phptype="string" null="false"/>
-        <field key="hash" dbtype="varchar" precision="32" phptype="string" null="true"/>
+        <field key="hash" dbtype="char" precision="40" phptype="string" null="true" default="" index="index"/>
         <field key="status" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="1"/>
-        <field key="upload" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
         <field key="indexed" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
         <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="1"/>
         <field key="errors" dbtype="text" phptype="json" null="true"/>
@@ -26,9 +25,7 @@
         <index alias="active" name="active" primary="false" unique="false" type="BTREE">
             <column key="active" length="" collation="A" null="false"/>
         </index>
-        <index alias="upload" name="upload" primary="false" unique="false" type="BTREE">
-            <column key="upload" length="" collation="A" null="false"/>
-        </index>
+
         <index alias="indexed" name="indexed" primary="false" unique="false" type="BTREE">
             <column key="indexed" length="" collation="A" null="false"/>
         </index>
@@ -38,24 +35,26 @@
         </index>
 
         <aggregate alias="Product" class="msProduct" local="pid" foreign="id" cardinality="one" owner="foreign"/>
-        <aggregate alias="Embedding" class="idImageEmbedding" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
+        <aggregate alias="Embedding" class="idImageEmbedding" local="hash" foreign="hash" cardinality="one" owner="foreign"/>
         <aggregate alias="Similar" class="idImageSimilar" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
 
         <composite alias="Task" class="idImageTask" local="pid" foreign="pid" cardinality="many" owner="local"/>
     </object>
 
     <object class="idImageEmbedding" table="idimage_embeddings" extends="xPDOSimpleObject">
-        <field key="pid" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false"/>
-        <field key="hash" dbtype="varchar" precision="32" phptype="string" null="false"/>
+        <field key="hash" dbtype="char" precision="40" phptype="string" null="true" default="" index="index"/>
         <field key="data" dbtype="text" phptype="json" null="true"/>
         <field key="updatedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
         <field key="createdon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
+        <field key="pid" dbtype="int" precision="10" phptype="integer" null="true"/>
 
-        <index alias="pid" name="pid" primary="false" unique="true" type="BTREE">
+        <index alias="hash" name="hash" primary="false" unique="true" type="BTREE">
+            <column key="hash" length="" collation="A" null="false"/>
+        </index>
+        <index alias="pid" name="pid" primary="false" unique="false" type="BTREE">
             <column key="pid" length="" collation="A" null="false"/>
         </index>
-        <aggregate alias="Product" class="msProduct" local="pid" foreign="id" cardinality="one" owner="foreign"/>
-        <aggregate alias="Close" class="idImageClose" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
+        <aggregate alias="Close" class="idImageClose" local="hash" foreign="hash" cardinality="one" owner="foreign"/>
     </object>
 
     <object class="idImageSimilar" table="idimage_similars" extends="xPDOSimpleObject">
@@ -79,8 +78,7 @@
 
     <object class="idImageTask" table="idimage_tasks" extends="xPDOSimpleObject">
         <field key="pid" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false"/>
-        <field key="status" dbtype="varchar" precision="32" phptype="string" null="false"/>
-
+        <field key="status" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="true" default="1"/>
         <field key="operation" dbtype="varchar" precision="32" phptype="string" null="false"/>
         <field key="errors" dbtype="text" phptype="json" null="true"/>
         <field key="attempt" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0"/>
@@ -89,6 +87,10 @@
         <field key="updatedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
         <field key="createdon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0"/>
         <field key="execute_at" dbtype="int" precision="20" phptype="timestamp" null="true"/>
+
+        <index alias="status" name="status" primary="false" unique="false" type="BTREE">
+            <column key="status" length="" collation="A" null="false"/>
+        </index>
 
         <index alias="pid" name="pid" primary="false" unique="false" type="BTREE">
             <column key="pid" length="" collation="A" null="false"/>
@@ -102,10 +104,7 @@
             <column key="operation" length="" collation="A" null="false"/>
         </index>
 
-
         <aggregate alias="Close" class="idImageClose" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
-        <aggregate alias="Embedding" class="idImageEmbedding" local="pid" foreign="pid" cardinality="one" owner="foreign"/>
     </object>
-
 
 </model>

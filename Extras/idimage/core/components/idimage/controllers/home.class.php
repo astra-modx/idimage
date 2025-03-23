@@ -68,7 +68,6 @@ class idimageHomeManagerController extends modExtraManagerController
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/tasks/windows.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/settings/form.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/navbar.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/help/panel.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/home.panel.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/sections/home.js');
 
@@ -81,9 +80,11 @@ class idimageHomeManagerController extends modExtraManagerController
         // Stat
         $Stat = new \IdImage\Stat($this->idimage);
         $this->idimage->config['stat'] = $Stat->process()->tpl();
-        $this->idimage->config['snippet'] = $this->snippet();
         $this->idimage->config['context'] = 'web';
         $this->idimage->config['actions'] = $this->actionsController();
+        $this->idimage->config['operationsMap'] = \IdImage\Sender::$operationsMap;
+        $this->idimage->config['task_status_map'] = idImageTask::$statusMap;
+        $this->idimage->config['settings'] = $this->settings();
 
 
         $this->addHtml(
@@ -94,6 +95,29 @@ class idimageHomeManagerController extends modExtraManagerController
         </script>'
         );
     }
+
+    public function settings()
+    {
+
+        $values = $this->idimage->settingKeys();
+
+        $prefix = 'idimage_';
+        /* @var modSystemSetting $object */
+        $q = $this->modx->newQuery('modSystemSetting');
+        $q->where(array(
+            'key:IN' => array_map(function ($key) use ($prefix) {
+                return $prefix.$key;
+            }, array_keys($values)),
+        ));
+        if ($objectList = $this->modx->getCollection('modSystemSetting', $q)) {
+            foreach ($objectList as $object) {
+                $key = str_ireplace($prefix, '', $object->get('key'));
+                $values[$key] = $object->get('value');
+            }
+        }
+        return $values;
+    }
+
 
     public function actionsController()
     {
@@ -113,20 +137,5 @@ class idimageHomeManagerController extends modExtraManagerController
         return '';
     }
 
-    public function snippet()
-    {
-        $tplFile = $this->idimage->config['corePath'].'elements/pages/snippet.tpl';
-        if (!file_exists($tplFile)) {
-            return null;
-        }
-        $tpl = file_get_contents($tplFile);
-
-        $uniqid = uniqid();
-        $chunk = $this->idimage->modx->newObject('modChunk', array('name' => "{tmp}-{$uniqid}"));
-        $chunk->setCacheable(false);
-        $output = $chunk->process([], $tpl);
-
-        return $output;
-    }
 
 }

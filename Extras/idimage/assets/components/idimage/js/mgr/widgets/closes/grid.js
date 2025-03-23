@@ -53,7 +53,7 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
 
     getFields: function () {
         return [
-            'id', 'pid', 'task_id', 'upload', 'exists_thumbnail','similar_exists','embedding_exists', 'pagetitle', 'similar', 'embedding', 'hash', 'images', 'total', 'status', 'picture', 'tags', 'errors', 'createdon', 'updatedon', 'active', 'actions'
+            'id', 'pid', 'task_id', 'exists_thumbnail', 'similar_exists', 'picture_thumb', 'embedding_exists', 'pagetitle', 'similar', 'embedding', 'hash', 'images', 'total', 'status', 'picture', 'tags', 'errors', 'createdon', 'updatedon', 'active', 'actions'
         ];
     },
 
@@ -67,30 +67,45 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
                 sortable: true,
                 renderer: idimage.utils.resourceLinkProduct
             },
-            {header: _('idimage_pid'), dataIndex: 'pid', width: 70, sortable: true},
-            {header: _('idimage_task_id'), dataIndex: 'task_id', width: 70, sortable: true},
-            {header: _('idimage_upload'), dataIndex: 'upload', width: 75, renderer: idimage.utils.renderBoolean, sortable: true},
-            {header: _('idimage_embedding_exists'), dataIndex: 'embedding_exists', width: 75, renderer: idimage.utils.renderBoolean, sortable: true},
-            {header: _('idimage_similar_exists'), dataIndex: 'similar_exists', width: 75, renderer: idimage.utils.renderBoolean, sortable: true},
-            {header: _('idimage_exists_thumbnail'), dataIndex: 'exists_thumbnail', width: 75, renderer: idimage.utils.renderBoolean},
-            {header: _('idimage_status'), dataIndex: 'status', width: 70, sortable: true, hidden: true, renderer: idimage.utils.statusClose},
+            {hidden: true, header: _('idimage_picture'), dataIndex: 'picture', width: 70, sortable: true, renderer: idimage.utils.renderImage},
+            {
 
-            {header: _('idimage_picture'), dataIndex: 'picture', width: 70, sortable: true, renderer: idimage.utils.renderImage},
+                header: _('idimage_picture_thumb'),
+                dataIndex: 'picture_thumb',
+                width: 70,
+                sortable: true,
+                renderer: idimage.utils.renderImage
+            },
             {
                 header: _('idimage_close_images'),
                 dataIndex: 'images',
                 width: 250,
                 renderer: idimage.utils.renderImages
             },
+            {hidden: true, header: _('idimage_pid'), dataIndex: 'pid', width: 70, sortable: true},
+            {hidden: true, header: _('idimage_task_id'), dataIndex: 'task_id', width: 70, sortable: true},
+            {
+                hidden: true,
+                header: _('idimage_embedding_exists'),
+                dataIndex: 'embedding_exists',
+                width: 75,
+                renderer: idimage.utils.renderBoolean,
+                sortable: true
+            },
+            {hidden: true, header: _('idimage_similar_exists'), dataIndex: 'similar_exists', width: 75, renderer: idimage.utils.renderBoolean, sortable: true},
+            {hidden: true, header: _('idimage_exists_thumbnail'), dataIndex: 'exists_thumbnail', width: 75, renderer: idimage.utils.renderBoolean},
+            {hidden: true, header: _('idimage_status'), dataIndex: 'status', width: 70, sortable: true, renderer: idimage.utils.statusClose},
+
+
             {
                 header: _('idimage_close_errors'),
-                dataIndex: 'errors', sortable: true, width: 70, hidden: true, renderer: idimage.utils.jsonDataError
+                dataIndex: 'errors', sortable: true, width: 70, renderer: idimage.utils.jsonDataError
             },
-            {header: _('idimage_total'), dataIndex: 'total', sortable: true, width: 70, hidden: true},
-            {header: _('idimage_hash'), dataIndex: 'hash', sortable: true, width: 70, hidden: true},
-            {header: _('idimage_createdon'), dataIndex: 'createdon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
-            {header: _('idimage_updatedon'), dataIndex: 'updatedon', width: 75, renderer: idimage.utils.formatDate, hidden: true},
-            {header: _('idimage_active'), dataIndex: 'active', width: 75, renderer: idimage.utils.renderBoolean, hidden: true},
+            {hidden: true, header: _('idimage_total'), dataIndex: 'total', sortable: true, width: 70},
+            {hidden: true, header: _('idimage_hash'), dataIndex: 'hash', sortable: true, width: 70},
+            {hidden: true, header: _('idimage_createdon'), dataIndex: 'createdon', width: 75, renderer: idimage.utils.formatDate},
+            {hidden: true, header: _('idimage_updatedon'), dataIndex: 'updatedon', width: 75, renderer: idimage.utils.formatDate},
+            {hidden: true, header: _('idimage_active'), dataIndex: 'active', sortable: true, width: 75, renderer: idimage.utils.renderBoolean},
             {
                 header: _('idimage_grid_actions'),
                 dataIndex: 'actions',
@@ -108,20 +123,50 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
                 text: '<i class="icon icon-cogs"></i> ' + _('idimage_actions_dropdown'),
                 cls: 'primary-button',
                 menu: [
-                   // '-',
+
+                    this.actionMenu('product/task/upload', 'icon-upload'),
+                    //this.actionMenu('product/task/embedding', 'icon-upload'),
+                    this.actionMenu('product/task/indexed', 'icon-refresh'),
+                    '-',
+                    // '-',
                     this.actionMenu('product/destroy', 'icon-trash action-red'),
                 ]
             },
             //this.actionMenu('task/upload', 'icon-upload'),
 
+            this.actionMenu('product/creation', 'icon-plus action-green'),
+
+            /* {
+                 text: '<i class="icon icon-plus"></i> ' + _('idimage_navbar_create_product_btn'),
+                 handler: this.assignSelected,
+                 scope: this
+             },*/
+
 
             {
-                text: '<i class="icon icon-plus"></i> ' + _('idimage_navbar_create_product_btn'),
-                handler: this.assignSelected,
-                scope: this
+                xtype: 'idimage-combo-filter-active',
+                name: 'active',
+                width: 210,
+                custm: true,
+                clear: true,
+                addall: true,
+                value: '',
+                baseParams: {
+                    action: 'mgr/misc/active/getlist',
+                    combo: true,
+                    addall: true
+                },
+                listeners: {
+                    select: {
+                        fn: this._filterByCombo,
+                        scope: this
+                    },
+                    afterrender: {
+                        fn: this._filterByCombo,
+                        scope: this
+                    }
+                }
             },
-
-
             {
                 xtype: 'idimage-combo-filter-similar',
                 name: 'similar',
@@ -234,10 +279,7 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
     enableClose: function () {
         this.action('enable')
     }
-    ,
-    thumbnailClose: function () {
-        this.action('action/thumbnail')
-    }
+
     ,
     uploadClose: function () {
         this.action('action/upload')
@@ -245,6 +287,29 @@ Ext.extend(idimage.grid.Closes, idimage.grid.Default, {
     ,
     embeddingClose: function () {
         this.action('action/embedding')
+    }
+    ,
+    indexedClose: function () {
+        this.action('action/indexed')
+    }
+    ,
+    checkClose: function () {
+        this.action('action/check')
+    }
+    ,
+    thumbnailRemoveClose: function () {
+        this.action('action/thumbnail/remove')
+    },
+    thumbnailCreateClose: function () {
+        this.action('action/thumbnail/create')
+    }
+    ,
+    similarRemoveClose: function () {
+        this.action('action/similar/remove')
+    }
+    ,
+    embeddingRemoveClose: function () {
+        this.action('action/embedding/remove')
     }
     ,
 

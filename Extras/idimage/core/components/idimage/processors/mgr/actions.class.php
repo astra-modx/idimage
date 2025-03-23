@@ -75,7 +75,7 @@ abstract class idImageActionsProcessor extends modProcessor
             return $this->success('', $data);
         }
         if (!$ids = $this->ids()) {
-            return $this->success('upload', [
+            return $this->success($this->modx->lexicon('success'), [
                 'total' => 0,
             ]);
         }

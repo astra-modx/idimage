@@ -22,14 +22,12 @@ abstract class SenderAbsract
 {
     public idImage $idImage;
 
-    const ACTION_EMBEDDING = 'embedding';
-    const ACTION_UPLOAD = 'upload';
-    const ACTION_INDEXED = 'indexed';
+    const OPERATION_UPLOAD = 'upload';
+    const OPERATION_INDEXED = 'indexed';
 
-    static $actionsMap = [
-        self::ACTION_EMBEDDING,
-        self::ACTION_UPLOAD,
-        self::ACTION_INDEXED,
+    static $operationsMap = [
+        self::OPERATION_UPLOAD,
+        self::OPERATION_INDEXED,
     ];
 
     /**
@@ -38,9 +36,8 @@ abstract class SenderAbsract
     protected array $statuses;
 
     protected array $limits = [
-        self::ACTION_UPLOAD => 20,
-        self::ACTION_EMBEDDING => 1000,
-        self::ACTION_INDEXED => 100,
+        self::OPERATION_UPLOAD => 20,
+        self::OPERATION_INDEXED => 100,
     ];
 
     public function __construct(\idImage $idImage)
@@ -49,7 +46,7 @@ abstract class SenderAbsract
         $this->statuses = idImageTask::$statusMap;
         if ($this->idImage->isIndexedService()) {
             // Лимит на получения данных от сервиса индексации
-            $this->limits[self::ACTION_INDEXED] = 1000;
+            $this->limits[self::OPERATION_INDEXED] = 1000;
         }
     }
 
@@ -66,7 +63,7 @@ abstract class SenderAbsract
     {
         // Группируем
 
-        $map = self::$actionsMap;
+        $map = self::$operationsMap;
         $operations = [];
         foreach ($map as $k) {
             $operations[$k] = [];
@@ -180,7 +177,7 @@ abstract class SenderAbsract
         $operation = $entity->getOperation();
         try {
             $status = $handle($task, $entity);
-            if (!is_string($status)) {
+            if (!is_int($status)) {
                 $status = idImageTask::STATUS_FAILED;
                 $error = 'Ответ должен быть строкой';
             }
@@ -189,7 +186,8 @@ abstract class SenderAbsract
             $status = idImageTask::STATUS_FAILED;
         }
 
-        if (!in_array($status, $this->statuses)) {
+
+        if (!array_key_exists($status, $this->statuses)) {
             throw new ExceptionJsonModx('Неизвестный статус: '.$status.' taskId: '.$task->get('id').' operation: '.$operation);
         }
 

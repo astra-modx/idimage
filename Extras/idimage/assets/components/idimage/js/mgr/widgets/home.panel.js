@@ -35,18 +35,15 @@ idimage.panel.Home = function (config) {
         },
 
         {
-            title: _('idimage_tab_help'),
+            title: _('idimage_tab_setting'),
             layout: 'anchor',
             items: [
                 {
-                    html: _('idimage_tab_help_desc'),
+                    html: _('idimage_tab_setting_desc'),
                     bodyCssClass: 'panel-desc',
-                }, {
-                    xtype: 'idimage-panel-stat',
-                    cls: 'main-wrapper',
                 },
                 {
-                    xtype: 'idimage-panel-help',
+                    xtype: 'idimage-form-setting-update',
                     cls: 'main-wrapper',
                 }
             ]

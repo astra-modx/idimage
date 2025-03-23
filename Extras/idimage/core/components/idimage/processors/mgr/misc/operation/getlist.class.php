@@ -8,7 +8,7 @@ class idimageActiveGetListProcessor extends modObjectProcessor
     /** {@inheritDoc} */
     public function process()
     {
-        $actions = \IdImage\Sender::$actionsMap;
+        $actions = \IdImage\Sender::$operationsMap;
         $array = [];
 
         foreach ($actions as $k => $v) {

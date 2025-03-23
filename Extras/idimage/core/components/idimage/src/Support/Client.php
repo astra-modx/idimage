@@ -35,6 +35,7 @@ class Client
     {
         $this->apiUrl = $modx->getOption('idimage_api_url', null, null);
         $this->token = $modx->getOption('idimage_token', null, null);
+
         if (empty($this->token)) {
             throw new ExceptionJsonModx('Token not set, setting idimage_token');
         }

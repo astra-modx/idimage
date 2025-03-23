@@ -11,13 +11,16 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
         return $this->idImage->limitCreation();
     }
 
+    /**
+     * Ограничение на выборку товаров через Options
+     * @param $query
+     * @return void
+     */
     public function fromCategories($query)
     {
-        $categories = $this->getProperty('categories');
-        if (!empty($categories)) {
+        if ($categories = $this->query()->optionCategories()) {
             $ctx = 'web';
             #$contexts = array_map('trim', explode(',',  'web'));
-            $categories = $this->modx->fromJSON($categories);
             /* @var $pdoFetch pdoFetch */
             $pdoFetch = $this->modx->getService('pdoFetch');
 
@@ -38,9 +41,23 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
     {
         $query = $this->query()->filesCriteria();
         $this->fromCategories($query);
-        $ids = $query->ids('msProduct.id as id');
+        $ids = $query->ids();
+
+        // Отключение не действующих товаров
+
+        if ($ids) {
+            $this->disableNotActive($ids);
+        }
 
         return $ids;
+    }
+
+    public function disableNotActive(array $ids)
+    {
+        $disableIds = implode(',', $ids);
+        $table = $this->modx->getTableName('idImageClose');
+        $sql = "UPDATE {$table} SET active = '0' WHERE pid  NOT IN ({$disableIds})";
+        $this->modx->exec($sql);
     }
 
     /**
@@ -54,32 +71,52 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
             $created_thumbnail = 0;
             $task_upload = 0;
 
+            // todo надо как то сравнивать текущие состояние товаров с close, и удалять отключенные товары
+
             // Выбираем все товары с изображениями
-            $files = $this->query()->filesCriteria()->where(['id:IN' => $ids]);
+            $files = $this->query()->filesCriteria()->where(['msProduct.id:IN' => $ids]);
             $files->collection(function (array $row) use (&$created, &$updated, &$created_thumbnail, &$task_upload) {
+                /* @var idImageClose $Close */
+
+
+                $hash = $row['hash'];
+
+                $pid = (int)$row['id'];
                 // путь до изображения
                 $imagePath = MODX_BASE_PATH.ltrim($row['image'], '/');
 
                 if (!file_exists($imagePath)) {
-                    // Пропускаем если отсутствуете файлы
+                    $criteria = [
+                        'pid' => $pid,
+                        'active' => true,
+                    ];
+                    if ($Close = $this->idImage->modx->getObject('idImageClose', $criteria)) {
+                        $Close->set('active', false);
+                        $Close->save();
+                    }
+
                     return false;
                 }
 
-                $pid = (int)$row['id'];
                 $picture = str_ireplace(MODX_BASE_PATH, '', $imagePath);
-
-                /* @var idImageClose $Close */
+                $status = idImageClose::STATUS_COMPLETED;
                 if (!$Close = $this->idImage->modx->getObject('idImageClose', ['pid' => $pid])) {
                     $Close = $this->idImage->modx->newObject('idImageClose');
                     $Close->set('pid', $pid);
-                    $Close->set('status', idImageClose::STATUS_QUEUE);
                 }
 
-                $hash = $Close->createHash($imagePath);
+                $hash = $hash ?? $Close->createHash($imagePath);
+                if (strlen($hash) !== 40) {
+                    $status = idImageClose::STATUS_FAILED;
+                    $Close->setErrors('hash is invalid, '.$pid.' '.$imagePath.' is not 40 chars');
+                } else {
+                    $Close->set('hash', $hash);
+                }
 
                 // Создаем новый превью при условии
                 $Close->set('picture', $picture);
-                $Close->set('hash', $hash);
+                $Close->set('active', true);
+                $Close->set('status', $status);
 
                 // Проверка наличия векторов
                 // Если вектора есть то ставим метку что изобаржение загружено
@@ -90,8 +127,6 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
                         $updated++;
                     }
                 }
-
-
 
                 if (!$Close->save()) {
                     throw new \IdImage\Exceptions\ExceptionJsonModx('Failed to save Close object: '.$pid);

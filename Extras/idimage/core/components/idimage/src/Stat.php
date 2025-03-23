@@ -48,7 +48,7 @@ class Stat
             'total' => $this->idimage->query()->closes()->count(),
             'total_tasks' => $this->idimage->query()->tasks()->count(),
             'total_tasks_pending' => $this->idimage->query()->tasks()->where([
-                'status:IN' => [idImageTask::STATUS_CREATED, idImageTask::STATUS_PENDING],
+                'status:IN' => [idImageTask::STATUS_QUEUE, idImageTask::STATUS_PENDING],
             ])->count(),
             'total_tasks_completed' => $this->idimage->query()->tasks()->where([
                 'status' => idImageTask::STATUS_COMPLETED,
@@ -74,7 +74,8 @@ class Stat
         $path = $this->idimage->config['corePath'];
 
         $tasks = [
-            'task.php' => 'Запуск очереди заданий',
+            'upload.php' => 'Задания для загрузки изображения',
+            'indexed.php' => 'Задания для индексации',
             'creation.php' => 'Создание товаров и проверка новых изображений',
         ];
         $crontabs = [];
