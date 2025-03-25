@@ -139,6 +139,35 @@ idimage.utils.resourceLink = function (value, id, blank) {
         value
     );
 };
+idimage.utils.resourceLinkProduct = function (value, id, r) {
+    if (!value) {
+        return '';
+    } else if (!id) {
+        return value;
+    }
+
+    var pid = r.data.pid
+    var max = r.data.max_scope || '-';
+    var min = r.data.min_scope || '-';
+    var search = r.data.search_scope || '-';
+    var total = r.data.total || '-';
+    var exists_thumbnail = r.data.exists_thumbnail || '-';
+    var embedding_exists = r.data.embedding_exists || '-';
+    var similar_exists = r.data.similar_exists || '-';
+
+    var ball = String.format(_('idimage_close_ball'), max, min, search, total);
+    var state = String.format(_('idimage_close_state'), exists_thumbnail, embedding_exists, similar_exists);
+
+    return String.format(
+        '<a href="?a=resource/update&id={0}" class="ms2-link" target="{1}">{2}</a><br>' +
+        '<span class="idimage-product-id">Product ID: {3}</span><div class="idimage-ball">' + ball + '</div>' +
+        '<div class="idimage-state">' + state + '</div>',
+        pid,
+        '_blank',
+        value,
+        pid
+    );
+};
 
 idimage.utils.statusClose = function (value) {
     var status = idimage.config.status_map[value]
@@ -148,11 +177,20 @@ idimage.utils.statusClose = function (value) {
     );
 };
 
-idimage.utils.statusServiceClose = function (value) {
-    var status = idimage.config.status_service_map[value]
+idimage.utils.statusTask = function (value, col, row) {
+    var status_name = idimage.config.task_status_map[value]
+
+    var msg = row.data.msg || ''
+    var can_be_launched = row.data.can_be_launched || ''
+    if (msg) {
+        var color = value === 'failed' ? 'red' : 'green'
+        msg = String.format('<br><span class="idimage-status-msg ' + color + '">{0}</span>', msg);
+    }
     return String.format(
-        '<span class="idimage-status idimage-status-color-{0}">{0}</span>',
-        status
+        '<span class="idimage-status idimage-status-color-{0}">{0}</span>{1}{2}',
+        status_name,
+        msg,
+        can_be_launched
     );
 };
 
@@ -162,6 +200,53 @@ idimage.utils.jsonDataTags = function (value) {
 };
 
 idimage.utils.jsonDataError = function (value) {
-    v = value ?  JSON.stringify(value) : '';
+    v = value ? JSON.stringify(value) : '';
     return v !== '' ? '<span class="red">' + v + '</span>' : '<span class="idimage-gray">---</span>';
 };
+
+idimage.utils.formatPrice = function (value) {
+    return new Intl.NumberFormat('ru-RU', {
+        style: 'currency',
+        currency: 'RUB'
+    }).format(value);
+};
+
+idimage.utils.default_thumb = '<div class="idimage-similar-wrapper"><div class="idimage-similar-image"><div class="idimage-placeholder">{0}</div></div></div>';
+
+idimage.utils.renderImage = function (value, row, r) {
+    var hash = r.data.hash || ''
+    if (Ext.isEmpty(value)) {
+        value = String.format(idimage.utils.default_thumb, 'Превью');
+    } else {
+        if (!/\/\//.test(value)) {
+            if (!/^\//.test(value)) {
+                value = '/' + value;
+            }
+        }
+        value = '<img src="' + value + '?hash=' + hash + '" />'
+    }
+    var pid = r.data.pid
+    return String.format('<a class="idimage-image-link" href="/index.php?id=' + pid + '" target="_blank">{0}</a>', value);
+};
+
+idimage.utils.renderImages = function (images) {
+
+    var output = [];
+    var out
+    var probability
+    for (var i = 0; i < images.length; i++) {
+        var r = images[i];
+        if (r.image) {
+            out = String.format('<a class="idimage-image-link" href="/index.php?id={1}" target="_blank"><img src="{0}" /></a>', r.image, r.pid)
+            probability = String.format('<div class="idimage-similar-probability" title="{1}">{0}%</div>', r.probability, _('idimage_probability'))
+            output.push('<div class="idimage-similar-wrapper"><div class="idimage-similar-image">' + out + '</div>' + probability + '</div>')
+        } else {
+            output.push(String.format(idimage.utils.default_thumb, 'Похожие'));
+        }
+        //String.format('<a class="idimage-image-link" href="/index.php?id=' + pid + '" target="_blank"><img src="{0}" /></a>', value)
+    }
+
+    return '<div class="idimage-similar-images">' + output.join('') + '</div>';
+};
+
+

@@ -1,90 +1,59 @@
 <?php
 
+use IdImage\Ai\Similar;
+
 /**
  * Демонстрация контроллера
  */
 class CrontabControllerTests extends modCrontabController
 {
 
-
     public function process()
     {
+        $pids = [40];
+
         /* @var idImage $idImage */
         $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
-        $Indexed = $idImage->actions()->indexed()->item()->entity();
-        dd($Indexed);
 
-        dd($Indexed->active());
-
-        dd($Catalog->toArray());
-
-        /* @var idImageIndexed $Indexed */
-        $Indexed = $this->modx->getObject('idImageIndexed', 7);
-        $Entity = $Indexed->entity()->fromArray($Indexed->toArray());
-
-        $path = MODX_CORE_PATH.'cache/idimage/versions/';
+        $indexed = $idImage->indexer();
 
 
-        try {
-            $data = $Entity->downloader()->read($path);
+        // Все товары
+        $indexedType = $indexed->indexFirstLevelCategory();
+        $similar = $indexed->similar();
+        // Индексация по родительской категории
+        #$IndexedType = $indexed->indexByParentCategory();
+        // Индексация товаров первого уровня
+        #$IndexedType = $indexed->indexFirstLevelCategory();
 
-            dd(count($data));
-        } catch (Exception $e) {
-            dd($e->getMessage());
-        }
+        // Запускаем сравнение товаров
+        $results = $indexed::comparison(
+            $idImage,
+            $indexedType,
+            $similar,
+            $pids
+        );
 
+        $response = $indexed->response($results);
+        dd($response);
 
-        dd($data);
-
-
-        /*  $Entity = $Indexed->entity()
-              ->setDownloadLink($Indexed->get('download_link'))
-              ->setVersion($Indexed->get('version'))
-              ->setRun($Indexed->get('run'))
-              ->setLaunch($Indexed->get('launch'))
-              ->setCompleted($Indexed->get('completed'))
-              ->setUpload($Indexed->get('upload'))
-              ->setSize($Indexed->get('size'))
-              ->setImages($Indexed->get('images'))
-              ->setCloses($Indexed->get('closes'))
-              ->setSealed($Indexed->get('sealed'))
-              ->setStartAt($Indexed->get('start_at'))
-              ->setFinishedAt($Indexed->get('finished_at'))
-              ->setUploadAt($Indexed->get('upload_at'));*/
+        // Индексация всего каталога
+        #$productIndexer->indexAll();
 
 
-        dd($version);
-
-        /*  $response = $idImage->runProcessor('mgr/actions/creation', [
-              'steps' => true,
-          ]);
-  */
-
-        $response = $idImage->runProcessor('mgr/actions/upload', [
-            'ids' => [2257, 2258],
-        ]);
-
-        dd($response->response);
+        // Индексация категории первого уровня
+        #$indexedFirstLevelCategory = $productIndexer->indexByParentCategory();
 
 
-        $files = $idImage->query()->files();
-        dd($files->toArray());
+        // Выводим результаты
+        echo 'Индексируем все товары: ';
+        print_r($allProducts);
 
+        echo 'Индексируем по родительской категории: ';
+        print_r($indexedByParentCategory);
 
-        dd($ids);
-
-        $total = $idImage->handler()->creation($files, function (idImageClose $close) {
-            dd($close->toArray());
-        });
-
-
-        dd($files->count());
-
-
-        $Query = $idImage->handler()->creation();
-        dd(22);
-
-        dd($Query->closes()->count());
+        echo 'Индексируем категорию первого уровня: ';
+        print_r($indexedFirstLevelCategory);
     }
 
 }

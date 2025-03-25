@@ -115,10 +115,12 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
     },
     total: 0,
     getListeners: function () {
+
         return {
             beforerender: function (grid) {
                 var store = grid.getStore()
                 store.on('load', function (res) {
+                    idImageState()
                     if (res.reader && res.reader['jsonData']) {
                         grid.total = res.reader['jsonData']['total'];
                         var el = document.getElementById(grid.config.id + '-total_info')
@@ -317,11 +319,16 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
     },
 
     actionMenu: function (action, icon, one, cls) {
-        var lex = action.replace('/', '_'); // Заменяет первый слэш
+        var lex = action.replace(/\//g, '_'); // Заменяет все слеши
+
 
         var k = 'idimage_actions_' + lex;
 
         var label = _(k);
+
+        if (label === undefined) {
+            console.warn('lexicon not found: ' + k);
+        }
 
         label = label === undefined ? action : label;
 
@@ -336,13 +343,15 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         if (cls) {
             clsd = clsd + ' ' + cls;
         }
+
         return {
             cls: clsd,
-            text: icon + '' + label,
+            text: icon + ' ' + label,
             handler: handlerFunction,
             scope: this
         };
     },
+
 
     actions: function (name) {
 
@@ -385,6 +394,7 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
     progress: null,
 
     actionsCall: function (controller) {
+        controller = controller.replace('mgr/actions/', '');
 
         if (this.iterations && this.iterations[this.iterationNext] && this.iterations[this.iterationNext].length > 0) {
 
@@ -406,34 +416,77 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
         } else {
             idimage.progress.hide()
             this.refresh()
+
+            this.actionsProgressNext(controller)
+        }
+    },
+
+    actionsProgressNext: function (name) {
+
+        var nextTask;
+        switch (name) {
+            case 'product/task/indexed':
+                nextTask = 'task/indexed'
+                break;
+            case 'product/task/upload':
+                nextTask = 'task/upload'
+                break;
+            default:
+                break;
+        }
+
+        if (nextTask) {
+            this.actionsProgress(nextTask)
+            /* Ext.MessageBox.show({
+                 title: title,
+                 msg: desc,
+                 width: 500,
+                 buttons: {
+                     yes: _('idimage_process_task_btn_yes'),
+                     cancel: _('idimage_process_task_btn_cancel'),
+                 },
+                 fn: function (e) {
+
+                     // Обработает только выбранные записи со страницы
+                     if (e == 'yes') {
+
+                         return false
+                     }
+
+                     // Будут обрабатываться все найденные ресрурсы с учетом фильтров
+                     if (e == 'no') {
+                         console.log('Отмена')
+                     }
+                 },
+                 icon: Ext.MessageBox.QUESTION
+             })*/
         }
     },
 
     actionsProgress: function (controller) {
 
         var grid = this;
-        var ids = this._getSelectedIds();
+        // var ids = this._getSelectedIds();
 
-        var total = ids.length;
+        //var total = ids.length;
 
         var text = _('idimage_actions_confirm_text')
 
-        if (!total) {
-            total = this.total
-        }
-
-        var lex = controller.replace('/', '_'); // Заменяет первый слэш
+        /* if (!total) {
+             total = this.total
+         }*/
+        var lex = controller.replace(/\//g, '_'); // Заменяет все слеши
 
         var label = _('idimage_actions_' + lex);
 
         text += '<span class="idimage_actions_window_info">' + _('actions') + ': <b>' + label + '</b></span>'
 
 
-        if (controller !== 'indexed/products') {
-            if (total > 0) {
-                text += '<span class="idimage_actions_window_info">' + _('idimage_actions_selected_records') + ': <b>' + total + '</b></span>'
-            }
-        }
+        /*  if (controller !== 'indexed/products') {
+              if (total > 0) {
+                  text += '<span class="idimage_actions_window_info">' + _('idimage_actions_selected_records') + ': <b>' + total + '</b></span>'
+              }
+          }*/
 
         var desc_key = 'idimage_actions_' + lex + '_desc';
         console.log(desc_key);
@@ -451,10 +504,9 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
                     steps: true
                 }
 
-                if (total > 0) {
-                    params.ids = Ext.util.JSON.encode(ids)
-                }
-
+                /* if (total > 0) {
+                     params.ids = Ext.util.JSON.encode(ids)
+                 }*/
                 idimage.progress = Ext.MessageBox.wait('', _('please_wait'))
                 grid.actionsAjax(params,
                     function (grid, response) {
@@ -488,7 +540,6 @@ Ext.extend(idimage.grid.Default, MODx.grid.Grid, {
             listeners: {
                 success: {
                     fn: function (response) {
-                        idImageState()
                         callback(this, response);
                         //this.refresh()
                     }, scope: this

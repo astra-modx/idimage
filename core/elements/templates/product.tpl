@@ -9,21 +9,27 @@
         <div class="row">
             <div class="col-md-12">
 
-                {var $ids = $modx->runSnippet('idImageClose', [
-                'pid' => $modx->resource->id,
-                'min_scope' => 65
-                ])}
 
-                {$ids}
-                {if $ids}
-                    {$modx->runSnippet('msProducts', [
-                        'tpl' => '@FILE chunks/catalog/product.row.tpl',
-                        'resources' => $ids,
-                        'sortby' => "FIELD(msProduct.id, {$ids})",
-                        'parents' => 0,
-                    ])}
 
-                {/if}
+{$modx->runSnippet('idImageSimilar', [
+    'min_scope' => 65
+])}
+
+{if $modx->getPlaceholder('idimage.ids')}
+   {$modx->runSnippet('msProducts', [
+       'tpl' => '@FILE chunks/catalog/product.row.tpl',
+       'resources' => $ids,
+       'sortby' => "FIELD(msProduct.id, {$ids})",
+       'parents' => 0,
+   ])}
+{/if}
+                <br>
+                [[!msProducts?
+                    &resources=`[[+idimage.ids]]`
+                    &sortby=`FIELD(msProduct.id, [[+idimage.ids]])`
+                    &tpl=`@FILE chunks/catalog/product.row.tpl`
+                    &parents=`0`
+                ]]
             </div>
         </div>
     </div>

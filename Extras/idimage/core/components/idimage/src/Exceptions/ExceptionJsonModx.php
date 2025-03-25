@@ -17,13 +17,15 @@ class ExceptionJsonModx extends Exception
     {
         parent::__construct($message, $code, $previous);
 
-        // Если запрос требует JSON, то отправляем JSON с ошибкой через MODX
-        global $modx;
+        if (!empty($_SERVER['HTTP_MODAUTH'])) {
+            // Если запрос требует JSON, то отправляем JSON с ошибкой через MODX
+            global $modx;
 
-        // Отправляем JSON через MODX
-        @header('Content-Type: application/json');
-        $response = $modx->error->failure($message);
-        echo json_encode($response, JSON_UNESCAPED_UNICODE);
-        exit; // Завершаем выполнение скрипта после отправки JSON
+            // Отправляем JSON через MODX
+            @header('Content-Type: application/json');
+            $response = $modx->error->failure($message);
+            echo json_encode($response, JSON_UNESCAPED_UNICODE);
+            exit; // Завершаем выполнение скрипта после отправки JSON
+        }
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use IdImage\Exceptions\ExceptionJsonModx;
+
 abstract class idImageActionsProcessor extends modProcessor
 {
     public $languageTopics = ['idimage:manager'];
@@ -19,32 +21,6 @@ abstract class idImageActionsProcessor extends modProcessor
         return $this->idImage;
     }
 
-    /* @var idImageIndexed $Indexed */
-    /* @var idImageIndexed $Indexed */
-    protected $Indexed;
-
-    public function indexed()
-    {
-        if (is_null($this->Indexed)) {
-            $this->Indexed = $this->idImage->indexed();
-        }
-
-        return $this->Indexed;
-    }
-
-    public function calculationSteps($query, $chunk)
-    {
-        $ids = $query->where([
-            'status:!=' => idImageClose::STATUS_PROCESSING,
-        ])->ids();
-        $total = count($ids);
-        $ids = array_chunk($ids, $chunk);
-
-        return [
-            'iterations' => $ids,
-            'total' => $total,
-        ];
-    }
 
     public function ids()
     {
@@ -69,30 +45,51 @@ abstract class idImageActionsProcessor extends modProcessor
         return $this->idimage()->query();
     }
 
+    protected $stat = null;
 
-    public function withProgressBar($callback)
+    public function setStat(array $stat)
+    {
+        $this->stat = $stat;
+
+        return $this;
+    }
+
+    public function getStat(): ?array
+    {
+        return $this->stat;
+    }
+
+    public function withProgressBar(Closure $callback)
     {
         if ($this->setCheckbox('steps')) {
             if (!$ids = $this->ids()) {
                 $ids = $this->withProgressIds();
             }
 
-            return $this->success('', [
-                'total' => count($ids),
-                'iterations' => array_chunk($ids, $this->stepChunk()),
-            ]);
+
+            $data = [
+                'total' => is_array($ids) ? count($ids) : 0,
+                'iterations' => (!empty($ids) && is_array($ids)) ? array_chunk($ids, $this->stepChunk()) : null,
+            ];
+
+            return $this->success('', $data);
         }
         if (!$ids = $this->ids()) {
-            return $this->success('upload', [
+            return $this->success($this->modx->lexicon('success'), [
                 'total' => 0,
             ]);
         }
 
         $total = $callback($ids);
 
-        return $this->success('upload', [
+        $data = [
             'total' => $total,
-        ]);
+        ];
+        if ($stat = $this->getStat()) {
+            $data['stat'] = $stat;
+        }
+
+        return $this->success($this->modx->lexicon('success'), $data);
     }
 
 
@@ -121,5 +118,14 @@ abstract class idImageActionsProcessor extends modProcessor
         $sql = "UPDATE {$table} SET {$field} = {$value} WHERE id IN ({$ids})";
 
         return $this->modx->exec($sql);
+    }
+
+    public function canToken()
+    {
+        if (!$this->idImage->option('enable')) {
+            throw new ExceptionJsonModx($this->modx->lexicon('idimage_error_disabled_sync'));
+        }
+
+        $this->idimage()->canToken();
     }
 }

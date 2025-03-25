@@ -12,47 +12,24 @@ class idImageStatProcessor extends modProcessor
         /* @var idImage $idImage */
         $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
 
-        $Indexed = $idImage->indexed();
 
-        $Entity = $Indexed->api()->entity();
-
-        /* @var idImageIndexed $Indexed */
-        if (!$Indexed = $this->modx->getObject('idImageIndexed', ['code' => $Entity->code()])) {
-            $Indexed = $this->modx->newObject('idImageIndexed');
-            $Indexed->set('code', $Entity->code());
+        try {
+            $balance = $idImage->api()->ai()->balance();
+        } catch (Exception $e) {
+            $balance = 0;
         }
 
-        $Indexed->set('name', $Entity->name());
-        $Indexed->set('active', $Entity->active());
-        $Indexed->set('upload_api', $Entity->uploadApi());
 
+        $Stat = new \IdImage\Stat($idImage);
+        $Stat->process();
 
-        if (!$Indexed->save()) {
-            return $this->failure('Unable to save version');
-        }
+        $data = $Stat->toArray();
+        $data = array_merge($data, [
+            'status' => 'ok',
+            'balance' => $balance,
+        ]);
 
-        if ($Entity->version() > 0) {
-            $Version = $Indexed->version();
-
-            // Если версия поднялась то создаем новую версию
-            if ($Version->get('version') < $Entity->version()) {
-                $Version = $this->modx->newObject('idImageVersion');
-                $Version->set('indexed_id', $Indexed->get('id'));
-                $Indexed->addOne($Version);
-            }
-
-            $Version->fromArray($Entity->toArray());
-            $Version->set('use_version', true);
-
-            if (!$Version->save()) {
-                return $this->failure('Unable to save version');
-            }
-
-            // Деактивируем остальные версии
-            $Version->deactivate();
-        }
-
-        return $this->success('', $Entity->toArray());
+        return $this->success('', $data);
     }
 
 

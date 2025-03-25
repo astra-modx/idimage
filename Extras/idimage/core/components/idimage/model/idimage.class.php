@@ -1,7 +1,11 @@
 <?php
 
 use IdImage\Actions;
+use IdImage\Exceptions\ExceptionJsonModx;
+use IdImage\Indexer;
+use IdImage\Sender;
 use IdImage\Support\Query;
+use IdImage\Support\SimilarExtractor;
 
 include_once MODX_CORE_PATH.'components/idimage/vendor/autoload.php';
 
@@ -34,6 +38,7 @@ class idImage
         $corePath = MODX_CORE_PATH.'components/idimage/';
         $assetsUrl = MODX_ASSETS_URL.'components/idimage/';
 
+
         $this->config = array_merge([
             'corePath' => $corePath,
             'modelPath' => $corePath.'model/',
@@ -44,13 +49,22 @@ class idImage
             'assetsUrl' => $assetsUrl,
             'cssUrl' => $assetsUrl.'css/',
             'jsUrl' => $assetsUrl.'js/',
-            'mode_upload' => $this->modx->getOption('idimage_mode_upload', $config, 'picture'),
-            'path_versions' => MODX_CORE_PATH.'cache/idimage/versions/',
+            'minimum_probability_score' => $this->modx->getOption('idimage_minimum_probability_score', $config, 70, true),
+            'maximum_products_found' => $this->modx->getOption('idimage_maximum_products_found', $config, 50, true),
+            'root_parent' => $this->modx->getOption('idimage_root_parent', $config, 0, true),
             'site_url' => $this->modx->getOption('idimage_site_url', $config, null),
-            'cloud' => $this->modx->getOption('idimage_cloud', $config, false),
-            'extract_path' => $this->modx->getOption('idimage_extract_path', $config, MODX_CORE_PATH.'cache/idimage/indexed', true),
+            'send_file' => $this->modx->getOption('idimage_send_file', $config, false),
+            'limit_upload' => $this->modx->getOption('idimage_limit_upload', $config, 10, true),
+            'limit_creation' => $this->modx->getOption('idimage_limit_creation', $config, 1000, true),
+            'limit_indexed' => $this->modx->getOption('idimage_limit_indexed', $config, 100, true),
+            'limit_show_similar_products' => $this->modx->getOption('idimage_limit_show_similar_products', $config, 5, true),
+            'limit_attempt' => $this->modx->getOption('idimage_limit_attempt', $config, 20, true),
+            'limit_task' => $this->modx->getOption('idimage_limit_task', $config, 1000, true),
+            'enable' => (bool)$this->modx->getOption('idimage_enable', $config, false),
+            'indexed_service' => (bool)$this->modx->getOption('idimage_indexed_service', $config, false),
+            'indexed_type' => (string)$this->modx->getOption('idimage_indexed_type', $config, false),
+            'default_thumb' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAKUlEQVR42mNgGAWjYBSMglEwCIOhGEENEBsDgmrAAGQ9gP4HAEKaBUxFSYd7AAAAAElFTkSuQmCC',
         ], $config);
-
 
         if (empty($this->config['site_url'])) {
             $this->config['site_url'] = $this->modx->getOption('site_url');
@@ -58,8 +72,18 @@ class idImage
 
         $this->modx->addPackage('idimage', $this->config['modelPath']);
         $this->modx->lexicon->load('idimage:default');
-
         $this->modx->loadClass('idImageClose');
+        $this->modx->loadClass('idImageTask');
+    }
+
+    public function siteUrl()
+    {
+        return rtrim($this->config['site_url'], '/');
+    }
+
+    public function isSendFile(): bool
+    {
+        return (boolean)$this->config['send_file'] ?? false;
     }
 
     public function hasToken()
@@ -72,38 +96,19 @@ class idImage
         return idImageClose::$statusMap;
     }
 
-    public function statusMapService()
+    public function statusMapTask()
     {
-        return idImageClose::$statusServiceMap;
+        return idImageTask::$statusMap;
     }
 
-    public function siteUrl()
+    public function minimumProbabilityScore(): int
     {
-        return rtrim($this->config['site_url'], '/');
+        return $this->config['minimum_probability_score'] ?? 70;
     }
 
-    public function validateSiteUrl()
+    public function maximumProductsFound(): int
     {
-        $siteUrl = $this->siteUrl();
-        $parsedUrl = parse_url($siteUrl);
-
-        if (!$parsedUrl || !isset($parsedUrl['host'])) {
-            return 'Not local address';
-        }
-
-        $host = strtolower($parsedUrl['host']);
-
-        // Проверяем, является ли хост локальным
-        if ($host === 'localhost' || $host === '127.0.0.1') {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function isCloudUpload()
-    {
-        return (bool)$this->config['cloud'];
+        return $this->config['maximum_products_found'] ?? 50;
     }
 
     /**
@@ -114,7 +119,7 @@ class idImage
      * @param  string  $action  Path to processor
      * @param  array  $data  Data to be transmitted to the processor
      *
-     * @return mixed The result of the processor
+     * @return mixed|modProcessorResponse The result of the processor
      */
     public function runProcessor($action = '', $data = array())
     {
@@ -171,30 +176,142 @@ class idImage
         return $this->api;
     }
 
-    public function phpThumb()
+    public function makeThumbnail(string $source, string $target): string
     {
-        if (is_null($this->phpThumb)) {
-            $this->phpThumb = new \IdImage\Support\PhpThumb($this->modx);
-        }
-
-        return $this->phpThumb;
+        return \IdImage\Support\PhpThumb::makeThumbnail($this->modx, $source, $target);
     }
 
-    /**
-     * @return idImageIndexed
-     */
-    public function indexed()
+    public function balance()
     {
-        $q = $this->modx->newQuery('idImageIndexed');
-        $q->limit(1);
-        $q->where([
-            'Version.use_version' => true,
-        ]);
-        $q->innerJoin('idImageVersion', 'Version', 'Version.indexed_id = idImageIndexed.id');
-        if (!$Indexed = $this->modx->getObject('idImageIndexed', $q)) {
-            $Indexed = $this->modx->newObject('idImageIndexed');
+        $Response = $this->api()->ai()->balance()->send();
+        if ($Response->isFail()) {
+            $Response->exception();
         }
 
-        return $Indexed;
+        return $Response->json('balance');
     }
+
+    public function canToken()
+    {
+        if (!$this->hasToken()) {
+            throw new ExceptionJsonModx($this->modx->lexicon('idimage_token_not_set'), 401);
+        }
+    }
+
+    public function rootParent()
+    {
+        return $this->config['root_parent'] ?? 0;
+    }
+
+    public function limitUpload()
+    {
+        $limit = (int)$this->config['limit_upload'] ?? 10;
+        if ($limit > 20) {
+            $limit = 20;
+        }
+
+        return 30;
+    }
+
+    public function limitCreation()
+    {
+        return (int)$this->config['limit_creation'] ?? 50;
+    }
+
+    public function limitTask()
+    {
+        return (int)$this->config['limit_task'] ?? 1000;
+    }
+
+
+    public function limitIndexed()
+    {
+        return (int)$this->config['limit_indexed'] ?? 100;
+    }
+
+    public function isIndexedService()
+    {
+        return $this->option('indexed_service');
+    }
+
+
+    public function sender()
+    {
+        return new Sender($this);
+    }
+
+
+    public function taskCollection()
+    {
+        return new \IdImage\TaskCollection($this);
+    }
+
+    public function limitShowSimilarProducts()
+    {
+        return (int)$this->config['limit_show_similar_products'] ?? 5;
+    }
+
+    public function attemptLimit()
+    {
+        $limit = (int)$this->config['limit_attempt'] ?? 100;
+        if ($limit > 100) {
+            $limit = 100;
+        }
+
+        return $limit;
+    }
+
+    public function attemptFailureLimit()
+    {
+        return 3;
+    }
+
+    public function limitPoll()
+    {
+        return 1000;
+    }
+
+    public function option(string $key, $default = null)
+    {
+        // indexed_service
+        if (!array_key_exists($key, $this->config)) {
+            return $default;
+        }
+
+        return $this->config[$key];
+    }
+
+    protected ?\IdImage\Indexer $indexer = null;
+
+    public function indexer()
+    {
+        if (is_null($this->indexer)) {
+            $this->indexer = new Indexer($this);
+        }
+
+        return $this->indexer;
+    }
+
+    protected ?\IdImage\Support\SimilarExtractor $extractor = null;
+
+    public function extractor()
+    {
+        if (is_null($this->extractor)) {
+            $this->extractor = new SimilarExtractor($this);
+        }
+
+        return $this->extractor;
+    }
+
+    public function settingKeys()
+    {
+        $values = [
+            'indexed_type' => 'index_all',
+            'token' => '',
+            'maximum_products_found' => '',
+        ];
+
+        return $values;
+    }
+
 }

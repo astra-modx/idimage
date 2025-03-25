@@ -6,18 +6,21 @@ idimage.form.UpdateSetting = function (config) {
 
     Ext.applyIf(config, {
         cls: 'container form-with-labels main-wrapper idimage_buttons_settings'
-        , labelAlign: 'left'
         , autoHeight: true
         , title: _('search_criteria')
         , labelWidth: 300
         , url: idimage.config.connector_url
         , items: this.getFields(config)
-        , style: {margin: '15px 30px'}
-        , buttonAlign: 'top'
+        , style: {margin: '15px 15px'}
         , defaults: {
             anchor: '80%'
         },
+        labelAlign: 'top',
+        buttonAlign: 'left',
         listeners: {},
+        baseParams: {
+            action: 'mgr/setting'
+        },
 
     })
     idimage.form.UpdateSetting.superclass.constructor.call(this, config)
@@ -46,59 +49,78 @@ Ext.extend(idimage.form.UpdateSetting, MODx.FormPanel, {
 
     getFields: function (config) {
         return [
+
             {
-                layout: 'form',
+                layout: 'column',
+                border: false,
+                anchor: '100%',
+                cls: 'main-wrapper',
+                labelAlign: 'top',
+                buttonAlign: 'left',
+                style: 'padding: 0 0 0 7px',
                 items: [
                     {
-                        xtype: 'displayfield',
-                        style: {margin: '0px 0 15px 0px', color: '#666666'},
-                        hideLabel: true,
-                        name: 'transport_desc',
-                        anchor: '70%',
-                        id: config.id + '-transport_desc',
-                        //html: atob(idimage.config.html),
-                    },
+                        columnWidth: 0.4,
+                        layout: 'form',
+                        defaults: {msgTarget: 'under'},
+                        border: false,
+                        style: {margin: '0'},
+                        items: [
 
-                ]
+
+                            {
+                                xtype: 'idimage-combo-filter-indexed-type',
+                                name: 'indexed_type',
+                                value: idimage.config.settings.indexed_type,
+                                width: '99%',
+                                fieldLabel: _('idimage_indexed_type'),
+                                allowBlank: false,
+                            },
+                            {
+                                style: 'margin: 5px 0 0 0px',
+                                html: _('setting_idimage_indexed_type_desc'),
+                            },
+                            {
+                                xtype: 'textfield',
+                                name: 'token',
+                                value: idimage.config.settings.token,
+                                width: '99%',
+                                fieldLabel: _('setting_idimage_token'),
+                                help: _('setting_idimage_token'),
+                                allowBlank: false,
+                                description: _('setting_idimage_token_desc'),
+                            },
+                            {
+                                style: 'margin: 5px 0 0 0px',
+                                html: _('setting_idimage_token_desc'),
+                            },
+
+                            {
+                                xtype: 'button',
+                                style: 'margin: 25px 0 0 2px',
+                                text: '<i class="icon icon-edit"></i> &nbsp;' + _('idimage_setting_submit'),
+                                handler: function () {
+                                    this.submit(this)
+                                }, scope: this
+                            },
+
+                            {
+                                html: '<div id="idimage_help"></div>'
+                            },
+                        ]
+
+                    }]
+            }
+            ,
+            {
+                html: String.format(
+                    idimage.config.stat
+                ),
             },
+
         ]
     },
-    checkAvailability: function () {
 
-        checkAvailability()
-    }
 })
 Ext.reg('idimage-form-setting-update', idimage.form.UpdateSetting)
-
-
-function checkAvailability() {
-
-    MODx.Ajax.request({
-        url: idimage.config.connectorUrl,
-        params: {
-            action: 'mgr/catalog/check',
-        },
-        listeners: {
-            success: {
-                fn: function (r) {
-                    if (r.success) {
-                        MODx.msg.status({
-                            title: _('success')
-                            , message: 'Соединение установлено'
-                        })
-                    }
-
-                }, scope: this
-            },
-            failure: {
-                fn: function (r) {
-                    MODx.msg.status({
-                        title: _('error')
-                        , message: r.message
-                    })
-                }, scope: this
-            }
-        }
-    })
-}
 

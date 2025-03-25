@@ -25,7 +25,7 @@ class idimageHomeManagerController extends modExtraManagerController
      */
     public function getLanguageTopics()
     {
-        return ['idimage:manager', 'idimage:default'];
+        return ['idimage:manager', 'idimage:default', 'idimage:help', 'idimage:navbar', 'idimage:tabs', 'idimage:actions', 'idimage:filters'];
     }
 
 
@@ -57,17 +57,17 @@ class idimageHomeManagerController extends modExtraManagerController
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/idimage.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/utils.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/combo.js');
+        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/category.tree.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/default.cyclic.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/default.grid.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/default.window.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/closes/grid.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/closes/windows.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/clouds/grid.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/indexeds/grid.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/indexeds/windows.js');
+        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/tasks/stat.js');
+        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/tasks/grid.js');
+        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/tasks/windows.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/settings/form.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/sync/panel.js');
-
+        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/navbar.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/home.panel.js');
         $this->addJavascript($this->idimage->config['jsUrl'].'mgr/sections/home.js');
 
@@ -75,16 +75,16 @@ class idimageHomeManagerController extends modExtraManagerController
 
         $this->idimage->config['date_format'] = $this->modx->getOption('idimage_date_format', null, '%d.%m.%y <span class="gray">%H:%M</span>');
         $this->idimage->config['status_map'] = $this->idimage->statusMap();
-        $this->idimage->config['status_service_map'] = $this->idimage->statusMapService();
-        $this->idimage->config['cloud'] = $this->idimage->isCloudUpload();
-
-
-        $this->idimage->config['indexed'] = $this->idimage->indexed()->toArray();
+        $this->idimage->config['status_map_task'] = $this->idimage->statusMapTask();
 
         // Stat
         $Stat = new \IdImage\Stat($this->idimage);
         $this->idimage->config['stat'] = $Stat->process()->tpl();
-        $this->idimage->config['snippet'] = $this->snippet();
+        $this->idimage->config['context'] = 'web';
+        $this->idimage->config['actions'] = $this->actionsController();
+        $this->idimage->config['operationsMap'] = \IdImage\Sender::$operationsMap;
+        $this->idimage->config['task_status_map'] = idImageTask::$statusMap;
+        $this->idimage->config['settings'] = $this->settings();
 
 
         $this->addHtml(
@@ -96,6 +96,37 @@ class idimageHomeManagerController extends modExtraManagerController
         );
     }
 
+    public function settings()
+    {
+
+        $values = $this->idimage->settingKeys();
+
+        $prefix = 'idimage_';
+        /* @var modSystemSetting $object */
+        $q = $this->modx->newQuery('modSystemSetting');
+        $q->where(array(
+            'key:IN' => array_map(function ($key) use ($prefix) {
+                return $prefix.$key;
+            }, array_keys($values)),
+        ));
+        if ($objectList = $this->modx->getCollection('modSystemSetting', $q)) {
+            foreach ($objectList as $object) {
+                $key = str_ireplace($prefix, '', $object->get('key'));
+                $values[$key] = $object->get('value');
+            }
+        }
+        return $values;
+    }
+
+
+    public function actionsController()
+    {
+        return [
+            'product_creation' => 'mgr/actions/product/creation',
+        ];
+    }
+
+
     /**
      * @return string
      */
@@ -106,20 +137,5 @@ class idimageHomeManagerController extends modExtraManagerController
         return '';
     }
 
-    public function snippet()
-    {
-        $tplFile = $this->idimage->config['corePath'].'elements/pages/snippet.tpl';
-        if (!file_exists($tplFile)) {
-            return null;
-        }
-        $tpl = file_get_contents($tplFile);
-
-        $uniqid = uniqid();
-        $chunk = $this->idimage->modx->newObject('modChunk', array('name' => "{tmp}-{$uniqid}"));
-        $chunk->setCacheable(false);
-        $output = $chunk->process([], $tpl);
-
-        return $output;
-    }
 
 }

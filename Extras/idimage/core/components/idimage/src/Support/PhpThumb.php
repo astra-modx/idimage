@@ -8,19 +8,14 @@
 
 namespace IdImage\Support;
 
-
-use Closure;
 use Exception;
 use modPhpThumb;
 use modX;
 
 class PhpThumb
 {
-    private modX $modx;
-
-    public function __construct(modX $modx)
+    public static function makeThumbnail(modX $modx, string $source, string $target, array $options = []): string
     {
-        $this->modx = $modx;
         if (!class_exists('modPhpThumb')) {
             if (file_exists(MODX_CORE_PATH.'model/phpthumb/modphpthumb.class.php')) {
                 /** @noinspection PhpIncludeInspection */
@@ -29,42 +24,26 @@ class PhpThumb
                 $modx->getService('phpthumb', 'modPhpThumb');
             }
         }
-    }
-
-    /* public function upload(idImageClose $Close, $check = false)
-     {
-         try {
-             // Готовим изображение
-             $this->makeThumbnail($imagePath, function ($path) use ($Close) {
-                 // Отправляем изображения в сервис
-                 $response = $this->idImage->client()->upload((string)$Close->pid, $path)->send();
-                 $this->fromResult($Close, $response);
-             });
-         } catch (Exception $e) {
-             $Close->set('status', idImageClose::STATUS_FAILED);
-         }
-
-         return $Close->save();
-     }*/
 
 
-    public function makeThumbnail(string $path, Closure $callback, array $options = [])
-    {
+        $tmpPath = dirname($target);
+        if (!is_dir($tmpPath)) {
+            if (!mkdir($tmpPath, 0777, true)) {
+                throw new Exception('Failed to create cache folder');
+            }
+        }
+
         $options = array_merge([
             'w' => 224,
             'h' => 224,
-            'q' => 50,
-            'zc' => 'T',
-            'bg' => '000000',
+            'q' => 70,
+            'zc' => '0',
+            'bg' => 'FFFFFF',
             'f' => 'jpg',
         ], $options);
-        $content = file_get_contents($path);
-
-
-        $phpThumb = new modPhpThumb($this->modx);
+        $content = file_get_contents($source);
+        $phpThumb = new modPhpThumb($modx);
         $phpThumb->initialize();
-
-
         $tf = tempnam(MODX_BASE_PATH, 'idimage_');
         file_put_contents($tf, $content);
         $phpThumb->setSourceFilename($tf);
@@ -74,17 +53,12 @@ class PhpThumb
         }
 
         $output = false;
+
         if ($phpThumb->GenerateThumbnail() && $phpThumb->RenderOutput()) {
-            $this->modx->log(
-                modX::LOG_LEVEL_INFO,
-                '[miniShop2] phpThumb messages for .'.print_r($phpThumb->debugmessages, true)
-            );
+            //$modx->log(modX::LOG_LEVEL_INFO,'[miniShop2] phpThumb messages for .'.print_r($phpThumb->debugmessages, true));
             $output = $phpThumb->outputImageData;
         } else {
-            $this->modx->log(
-                modX::LOG_LEVEL_ERROR,
-                '[miniShop2] Could not generate thumbnail for '.print_r($phpThumb->debugmessages, true)
-            );
+            $modx->log(modX::LOG_LEVEL_ERROR, '[miniShop2] Could not generate thumbnail for '.print_r($phpThumb->debugmessages, true));
         }
 
         if (file_exists($phpThumb->sourceFilename)) {
@@ -92,20 +66,12 @@ class PhpThumb
         }
         @unlink($tf);
 
-        $pathTmp = MODX_BASE_PATH.'assets/tests.jpg';
-        file_put_contents($pathTmp, $output);
+
+        //$newFileName = uniqid('file_', true).'.jpg'; // Генерируем уникальное имя
+        //$filePathTmp = $tmpPath.$newFileName; // Полный путь к файлу
+        file_put_contents($target, $output);
         unset($output);
 
-        try {
-            $callback($pathTmp);
-        } catch (Exception $e) {
-            if (file_exists($pathTmp)) {
-                unlink($pathTmp);
-            }
-
-            throw $e;
-        }
-
-        return true;
+        return $target;
     }
 }

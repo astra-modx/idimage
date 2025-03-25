@@ -7,6 +7,8 @@ use IdImage\Api\Queue;
 use IdImage\Api\Indexed;
 use IdImage\Support\Client;
 use idImageClose;
+use idImageTask;
+use NumberFormatter;
 
 /**
  * Created by Andrey Stepanenko.
@@ -33,35 +35,69 @@ class Stat
         $data = [
             'enable' => !empty($modx->getOption('idimage_enable')),
             'token' => !empty($modx->getOption('idimage_token')),
-            'cloud' => $this->idimage->isCloudUpload(),
-            'validate_site_url' => $this->idimage->validateSiteUrl(),
-            'zip' => (class_exists('ZipArchive') && extension_loaded('zip')),
             'php' => version_compare(PHP_VERSION, '7.4.0', '>='),
             'php_current' => phpversion(),
         ];
 
+        $query = $this->idimage->query();
+
+
+        $files = $query->filesCriteria()->count();
+
         $stat = [
             'total' => $this->idimage->query()->closes()->count(),
-            'queue' => $this->idimage->query()->closes()->where(['status' => idImageClose::STATUS_QUEUE])->count(),
-            'send' => $this->idimage->query()->closes()->where(['status' => idImageClose::STATUS_PROCESSING])->count(),
-            'error' => $this->idimage->query()->closes()->where(['status' => idImageClose::STATUS_FAILED])->count(),
-            'completed' => $this->idimage->query()->closes()->where(['status' => idImageClose::STATUS_COMPLETED])->count(),
-            'closes' => $this->idimage->query()->closes()->where([
-                'status' => idImageClose::STATUS_COMPLETED,
-                'total:!=' => 0,
+            'total_tasks' => $this->idimage->query()->tasks()->count(),
+            'total_tasks_pending' => $this->idimage->query()->tasks()->where([
+                'status:IN' => [idImageTask::STATUS_QUEUE, idImageTask::STATUS_PENDING],
             ])->count(),
-            'cloud_queue' => 0,
-            'cloud_upload' => 0,
+            'total_tasks_completed' => $this->idimage->query()->tasks()->where([
+                'status' => idImageTask::STATUS_COMPLETED,
+            ])->count(),
+            'total_tasks_error' => $this->idimage->query()->tasks()->where(['status' => idImageTask::STATUS_FAILED])->count(),
+            'total_files' => $files,
+            'total_error' => $query->closes()->where(['status' => idImageClose::STATUS_FAILED])->count(),
+            'total_completed' => $query->closes()->where(['status' => idImageClose::STATUS_COMPLETED])->count(),
+            'total_embedding' => $query->embeddings()->count(),
+            'total_similar' => $query->similar()->where(['total:!=' => 0])->count(),
         ];
-        if ($this->idimage->isCloudUpload()) {
-            $stat['cloud_queue'] = $this->idimage->query()->closes()->where(['upload' => false])->count();
-            $stat['cloud_upload'] = $this->idimage->query()->closes()->where(['upload' => true])->count();
-        }
 
         $data['stat'] = $stat;
+        $data['crontabs'] = implode(PHP_EOL, $this->crontabs());
         $this->data = $data;
 
         return $this;
+    }
+
+    public function crontabs()
+    {
+        $bin = $this->phpBin();
+        $path = $this->idimage->config['corePath'];
+
+        $tasks = [
+            'upload.php' => 'Задания для загрузки изображения',
+            'indexed.php' => 'Задания для индексации',
+            'creation.php' => 'Создание товаров и проверка новых изображений',
+        ];
+        $crontabs = [];
+        foreach ($tasks as $file => $name) {
+            $cmd = sprintf('%s %scli/%s', $bin, $path, $file);
+            $crontabs[] = '# '.$name.PHP_EOL.$cmd.PHP_EOL;
+        }
+
+        return $crontabs;
+    }
+
+    public function phpBin()
+    {
+        if (php_sapi_name() === 'cli') {
+            // путь до интерпретатора PHP в командной строке
+            $php_executable = PHP_BINARY;
+        } else {
+            // путь до интерпретатора PHP в веб-сервере
+            $php_executable = PHP_BINDIR.'/php';
+        }
+
+        return $php_executable;
     }
 
     public function tpl()

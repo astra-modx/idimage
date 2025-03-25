@@ -17,8 +17,9 @@ class Client
     /* @var null|array $data */
     private $data = null;
 
-    /* @var string $token */
-    private $token;
+    /**
+     * @var null|string
+     */
 
     /* @var string $apiUrl */
     private $apiUrl;
@@ -29,10 +30,12 @@ class Client
     private $headers = [];
     private $method = 'post';
 
+
     public function __construct(modX $modx)
     {
-        $this->token = $modx->getOption('idimage_token', null, null);
         $this->apiUrl = $modx->getOption('idimage_api_url', null, null);
+        $this->token = $modx->getOption('idimage_token', null, null);
+
         if (empty($this->token)) {
             throw new ExceptionJsonModx('Token not set, setting idimage_token');
         }
@@ -57,27 +60,26 @@ class Client
             ]);
     }
 
-    public function delete(string $url, $params = null)
+    public function file(string $url, $imagePath, $data = null)
     {
-        return $this->setMethod('delete')
-            ->setHeaders([
-                'Content-Type: application/json',
-            ])
-            ->setData($params)
-            ->setUrl($url);
-    }
+        $size = @getimagesize($imagePath);
+        if ($size[0] !== 224 || $size[1] !== 224) {
+            throw new ExceptionJsonModx('Неверный размер изображения, должно быть 224х224');
+        }
 
-    public function upload(string $url, string $offerId, $imagePath)
-    {
+        if ($size['mime'] !== 'image/jpeg') {
+            throw new ExceptionJsonModx('Неверный формат изображения, должно быть jpeg');
+        }
+
+        $data = $data ?? [];
+        $data['image'] = new CURLFile($imagePath, 'image/jpeg', basename($imagePath));
+
         return $this
             ->setUrl($url)
             ->setHeaders([
                 'Accept: application/json',
             ])
-            ->setData([
-                'offer_id' => $offerId,
-                'image' => new CURLFile($imagePath, 'image/jpeg', basename($imagePath)),
-            ]);
+            ->setData($data);
     }
 
     public function toArray()
@@ -96,8 +98,10 @@ class Client
         $url = $this->getUrl();
         $headers = $this->getHeaders();
 
+
+        $token = $this->token;
         $headers = array_merge($headers, [
-            'Authorization: Bearer '.$this->token,
+            'Authorization: Bearer '.$token,
         ]);
 
         $upload = false;
@@ -168,7 +172,7 @@ class Client
         return $this;
     }
 
-    protected function setHeaders(array $headers)
+    public function setHeaders(array $headers)
     {
         $this->headers = $headers;
 

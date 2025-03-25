@@ -21,6 +21,15 @@
 
 }
 
+.idimage-status-msg {
+    display: block;
+    max-width: 250px;
+    margin-top: 5px;
+    word-wrap: break-word; /* Перенос длинных слов */
+    overflow-wrap: break-word; /* Альтернативный вариант */
+    white-space: normal; /* Разрешает перенос строк */
+}
+
 
 .idimage-status {
     color: #5cb85c;
@@ -41,6 +50,11 @@
 .idimage-status.error {
     color: darkred;
     border: 1px solid darkred;
+}
+
+.idimage-status.retry {
+    color: #e7d15f;
+    border: 1px solid #e7d15f;
 }
 
 
@@ -161,12 +175,13 @@
 }
 
 .idimage-availability .idimage-availability-name {
-    width: 250px;
+    width: 200px;
+    margin-bottom: 5px;
     display: inline-block;
 }
 
 
-.idimage-status-color-queue,.idimage-status-color-start {
+.idimage-status-color-queue, .idimage-status-color-start {
     color: darkblue;
     border-color: darkblue;
 }
@@ -176,9 +191,24 @@
     border-color: green;
 }
 
+.idimage-status-color-pending {
+    color: #0c40ec;
+    border-color: #0c40ec;
+}
+
 .idimage-status-color-failed {
     color: red;
     border-color: red;
+}
+
+.idimage-status-color-attempt {
+    color: red;
+    border-color: red;
+}
+
+.idimage-status-color-retry {
+    color: #b845e5;
+    border-color: #b845e5;
 }
 
 .idimage-status-color-created, .idimage-status-color-clear, .idimage-status-color-unknown {
@@ -192,12 +222,22 @@
     border-color: #985f0d;
 }
 
+.idimage-status-color-similar_not_found {
+    color: #4c5169;
+    border-color: #4c5169;
+}
+
 .idimage-status-color-unknown {
     color: gray;
     border-color: gray;
 }
 
 .idimage-status-color-invalid {
+    color: red;
+    border-color: red;
+}
+
+.idimage-status-color-fail {
     color: red;
     border-color: red;
 }
@@ -247,4 +287,90 @@
 
 .text-warning {
     color: #f10f0f;
+}
+
+.idimage-product-id {
+    color: #666;
+    margin-top: 5px;
+    display: block;
+}
+
+.idimage-image-link img {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.idimage-navbar-title h3 {
+    margin-bottom: 0;
+}
+
+.idimage-navbar-text {
+    min-height: 70px;
+    margin-top: 15px;
+}
+
+.idimage-row-help h2 {
+    margin: 20px 0;
+}
+
+.idimage-navbar h3 {
+    margin-bottom: 10px;
+}
+
+.idimage-similar-images {
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px; /* Добавляет небольшой отступ между изображениями */
+}
+
+.idimage-similar-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100px;
+    max-height: 100px;
+    min-width: 100px;
+    min-height: 100px;
+    margin: 5px;
+    border: 1px solid #ddd;
+    background-color: #eee; /* Серый фон */
+    overflow: hidden;
+}
+
+.idimage-similar-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Чтобы изображение полностью умещалось без обрезки */
+}
+
+
+.idimage-placeholder {
+    position: absolute;
+    color: #d5d5d5;
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
+    display: block; /* Скрыто по умолчанию */
+}
+
+.idimage-similar-probability {
+    position: absolute;
+    top: -10px;
+    left: 5px;
+    text-align: center;
+    right: 5px;
+    font-size: 11px;
+}
+
+.idimage-similar-wrapper {
+    position: relative;
+}
+
+.idimage-ball {
+    color: #ccc;
+}
+
+.idimage-text-warning {
+    color: red;
 }

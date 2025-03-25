@@ -11,16 +11,14 @@ class idImageStatProcessor extends modProcessor
     {
         /* @var idImage $idImage */
         $idImage = $this->modx->getService('idimage', 'idImage', MODX_CORE_PATH.'components/idimage/model/');
-
-
         $Stat = new \IdImage\Stat($idImage);
-
         $Stat->process();
-
-        return $this->success('', [
+        $data = $Stat->toArray();
+        $data = array_merge($data, [
             'tpl' => $Stat->tpl(),
-            'stat' => $Stat->toArray(),
         ]);
+
+        return $this->success('', $data);
     }
 
 

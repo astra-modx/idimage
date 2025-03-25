@@ -26,35 +26,58 @@ class xPDOQueryIdImage extends xPDOQuery_mysql
 
     public function each($callback)
     {
+        $i = 0;
         $collection = $this->xpdo->getCollection($this->_class, $this);
         foreach ($collection as $object) {
             $callback($object);
+            $i++;
         }
+        $this->totalIteration = $i;
 
         return $this;
     }
 
     public function collection(Closure $callback)
     {
+        $i = 0;
         if ($this->prepare() && $this->stmt->execute()) {
             while ($row = $this->stmt->fetch(PDO::FETCH_ASSOC)) {
                 $callback($row);
+                $i++;
             }
         }
+        $this->totalIteration = $i;
 
         return $this;
     }
 
+    protected $totalIteration = 0;
+
+    public function totalIteration()
+    {
+        return $this->totalIteration;
+    }
 
     public function ids($field = 'id', $addSelect = true)
     {
         $ids = [];
         if ($addSelect) {
+            if (!empty($this->query['from']['joins'])) {
+                $field = $this->_class.'.'.$field. ' as '.$field;
+            }
             $this->select($field);
         }
+
+        if (strripos($field, 'as ') !== false) {
+            if (preg_match('/\bas\s+(\w+)/i', $field, $matches)) {
+                $field = $matches[1];
+            }
+        }
+
         if ($this->prepare() && $this->stmt->execute()) {
             while ($row = $this->stmt->fetch(PDO::FETCH_ASSOC)) {
-                $ids[] = (int)$row[$field];
+                $value = $row[$field];
+                $ids[] = $field == 'id' ? (int)$value : $value;
             }
         }
 

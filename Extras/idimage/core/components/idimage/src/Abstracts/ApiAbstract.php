@@ -28,25 +28,6 @@ abstract class ApiAbstract
         $this->client = $client;
     }
 
-    protected function _entity(string $class)
-    {
-        if (!$this->query) {
-            $this->item();
-        }
-
-        $Response = $this->response();
-        if (!$Response->isOk()) {
-            $Response->exception();
-        }
-        $json = $Response->json();
-
-        if (empty($json)) {
-            throw new ExceptionJsonModx('Ошибка чтения данных: '.$Response->getContent());
-        }
-
-        return new $class($json);
-    }
-
     protected function response()
     {
         $Response = $this->send();
@@ -86,9 +67,6 @@ abstract class ApiAbstract
                 break;
             case 'post':
                 $query = $this->client->post($uri, $data);
-                break;
-            case 'delete':
-                $query = $this->client->delete($uri, $data);
                 break;
             default:
                 break;

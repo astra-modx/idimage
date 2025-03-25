@@ -1,7 +1,5 @@
-{var $closes= 'idimage_closes' | placeholder}
-{var $probability = $closes[$id]}
-
-
+{var $similar= 'idimage.probability' | placeholder}
+{var $probability = $similar[$id]}
 <div class="ms2_product mb-5 mb-md-3" itemtype="http://schema.org/Product" itemscope>
     <meta itemprop="description" content="{$description = $description ?: $pagetitle}">
     <meta itemprop="name" content="{$pagetitle}">
@@ -11,7 +9,6 @@
         <input type="hidden" name="count" value="1">
         <input type="hidden" name="options" value="[]">
         <div class="col-md-2 text-center text-md-left">
-            {$probability}
             <a href="{$id | url}">
                 {if $thumb?}
                     <img src="{$thumb}" class="mw-100" alt="{$pagetitle}" title="{$pagetitle}" itemprop="image"/>
@@ -52,6 +49,7 @@
                     {/if}
                 </div>
                 {if $introtext}
+                    probability : <span class="badge badge-danger">{$probability}</span>
                     <div class="mt-2 text-center text-md-left">
                         <small>{$introtext | truncate : 200}</small>
                     </div>

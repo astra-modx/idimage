@@ -62,6 +62,13 @@ class Response
 
     protected $decoded;
 
+    public function setDecoded(array $data)
+    {
+        $this->decoded = $data;
+
+        return $this;
+    }
+
     public function json($key = null, $default = null)
     {
         if (!$this->decoded) {
