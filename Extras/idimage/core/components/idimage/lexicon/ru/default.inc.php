@@ -30,6 +30,6 @@ $_lang['idimage_received_all'] = 'Вектора';
 $_lang['idimage_similar'] = 'Есть похожие';
 $_lang['idimage_insimilar'] = 'Нет похожих';
 $_lang['idimage_similar_all'] = 'Похожие';
-$_lang['idimage_balance_text'] = 'На счету: ';
+$_lang['idimage_balance_text'] = 'Осталось запросов: ';
 $_lang['idimage_token_not_set'] = 'Не указан параметр "<b>'.$_lang['setting_idimage_token'].'</b>".<br> Скопируйте токен из личного кабинета <a 
     href="https://idimage.ru/account/info" target="_blank">idimage.ru</a> и вставьте его в <a href="/manager/?a=system/settings&ns=idimage" target="_blank">системные настройки</a>';

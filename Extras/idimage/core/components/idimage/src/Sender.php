@@ -9,7 +9,6 @@
 namespace IdImage;
 
 use IdImage\Abstracts\SenderAbsract;
-use IdImage\Ai\IndexedSimilar;
 use IdImage\Entites\TaskEntity;
 use IdImage\Interfaces\ApiInterfaces;
 use idImageSimilar;

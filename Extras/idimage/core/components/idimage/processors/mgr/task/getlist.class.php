@@ -73,11 +73,13 @@ class idImageTaskGetListProcessor extends modObjectGetListProcessor
         $array = $object->toArray();
 
         $errors = $object->getErrors();
-        $array['error'] = !empty($errors['msg']) ? $errors['msg'] : json_encode($errors);
-        if ($object->get('status') !== idImageTask::STATUS_COMPLETED) {
-            $array['error'] = null;
+        $error = '';
+        if (!empty($errors)) {
+            if ($object->get('status') !== idImageTask::STATUS_COMPLETED) {
+                $error = (string)json_encode($errors);
+            }
         }
-
+        $array['error'] = $error;
 
         $array['can_be_launched'] = !$object->isExecute()
             ? $this->modx->lexicon('idimage_can_be_launched', ['execute' => $object->executeTime()])

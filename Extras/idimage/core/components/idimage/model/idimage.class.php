@@ -210,7 +210,7 @@ class idImage
             $limit = 20;
         }
 
-        return $limit;
+        return 30;
     }
 
     public function limitCreation()

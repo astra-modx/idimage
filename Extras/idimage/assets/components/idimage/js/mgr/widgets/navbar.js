@@ -44,7 +44,6 @@ idimage.panel.Navbar = function (config) {
                                     },
 
 
-
                                 ]
                             },
                             {
@@ -121,14 +120,14 @@ idimage.panel.Navbar = function (config) {
                                         width: '99%',
                                         allowBlank: true,
                                     },
-                                  /*  {
-                                        xtype: 'displayfield',
-                                        name: 'total_error',
-                                        readOnly: true,
-                                        value: '---',
-                                        width: '99%',
-                                        allowBlank: true,
-                                    },*/
+                                    /*  {
+                                          xtype: 'displayfield',
+                                          name: 'total_error',
+                                          readOnly: true,
+                                          value: '---',
+                                          width: '99%',
+                                          allowBlank: true,
+                                      },*/
 
 
                                 ]
@@ -265,7 +264,7 @@ function apiBalance() {
                 fn: function (r) {
                     progress.hide()
                     if (r.success) {
-                        MODx.msg.alert(_('success'), _('idimage_balance_text') + idimage.utils.formatPrice(r.object.balance))
+                        MODx.msg.alert(_('success'), _('idimage_balance_text') + r.object.balance)
                     }
 
                 }, scope: this
