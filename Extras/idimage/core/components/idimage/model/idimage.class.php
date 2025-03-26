@@ -27,6 +27,9 @@ class idImage
     /* @var \IdImage\Support\PhpThumb $phpThumb */
     protected $phpThumb = null;
 
+    /* @var string $version версия приложения для регистрации js */
+    public $version = 0;
+
 
     /**
      * @param  modX  $modx
@@ -145,10 +148,150 @@ class idImage
     {
         switch ($event->name) {
             case 'OnHandleRequest':
-            case 'OnLoadWebDocument':
+
+                break;
+            case 'OnDocFormRender':
+                if ($scriptProperties['mode'] !== 'upd') {
+                    return false;
+                }
+
+                /** @var modResource $resource */
+                $resource = $scriptProperties['resource'];
+                if ($resource->get('class_key') != 'msProduct') {
+                    return false;
+                }
+
+                $this->modx->controller->addLexiconTopic('idimage:manager');
+                $this->modx->controller->addLexiconTopic('idimage:tabs');
+                $this->modx->controller->addLexiconTopic('idimage:gallery');
+
+
+                $this->loadVersion();
+                $this->addCss('mgr/main.css');
+                $this->addCss('mgr/help.css');
+                $this->addJavascript('mgr/idimage.js');
+                $this->addJavascript('mgr/misc/utils.js');
+                $this->addJavascript('mgr/misc/combo.js');
+                $this->addJavascript('mgr/misc/category.tree.js');
+                $this->addJavascript('mgr/misc/default.cyclic.js');
+                $this->addJavascript('mgr/misc/default.grid.js');
+                $this->addJavascript('mgr/misc/default.window.js');
+                $this->addJavascript('mgr/widgets/closes/grid.js');
+                $this->addJavascript('mgr/widgets/closes/windows.js');
+
+
+                $this->addJavascript('mgr/widgets/gallery/gallery.form.js');
+                $this->addJavascript('mgr/widgets/gallery/gallery.panel.js');
+                $this->addJavascript('mgr/widgets/gallery/gallery.toolbar.js');
+                $this->addJavascript('mgr/widgets/gallery/gallery.view.js');
+                $this->addJavascript('mgr/widgets/gallery/gallery.window.js');
+                $this->addJavascript('mgr/widgets/customtab.js');
+
+                $config = $this->config;
+                $config['record'] = [
+                    'id' => $resource->get('id'),
+                ];
+                $config['init_tab'] = false;
+                $config['pageSize'] = 100;
+
+                $close_id = null;
+                $closeData = [
+                    'active' => $this->modx->lexicon('no'),
+                    'maximum_products_found' => $this->option('maximum_products_found').' '.$this->modx->lexicon('idimage_gallery_unit'),
+                    'minimum_probability_score' => $this->option('minimum_probability_score').'%',
+                    'embedding_exists' => $this->modx->lexicon('no'),
+                    'similar_exists' => $this->modx->lexicon('no'),
+                ];
+
+                /* @var idImageClose $close */
+                if ($close = $this->modx->getObject('idImageClose', ['pid' => $resource->get('id')])) {
+                    $close_id = $close->get('id');
+                    $closeData['embedding_exists'] = $this->modx->lexicon($close->isEmbedding() ? 'yes' : 'no');
+                    $closeData['similar_exists'] = $this->modx->lexicon($close->isSimilar() ? 'yes' : 'no');
+                    $closeData['active'] = $this->modx->lexicon($close->get('active') ? 'yes' : 'no');
+                }
+
+                $config['close'] = $closeData;
+                $config['close_id'] = $close_id;
+
+                $this->addHtml(
+                    '<script type="text/javascript">
+                        idimage.config = '.json_encode($config).';
+                        idimage.config.connector_url = "'.$this->config['connectorUrl'].'";
+                        </script>'
+                );
+
+                // Reg button ms2gallery
+                /*    $this->addHtml('
+                                    <script type="text/javascript">
+                                    // <![CDATA[
+                                    Ext.ComponentMgr.onAvailable(\'minishop2-gallery-page-toolbar\', function () {
+
+
+                                    console.log(idimage);
+                                        //if (!msGallerySearch.config.disable_minishop2) {
+                                         //   msGallerySearch.minishop2 = true
+                                          //  msGallerySearchToolbarMiniShop2 = new msGallerySearch.toolbar.Minishop()
+                                       // }
+                                    })
+                                    // ]]>
+                                </script>');*/
+                /** @var modResource $resource */
+                /*$templates = array_map('trim', explode(',', $this->modx->getOption('ms2gallery_disable_for_templates')));
+
+                $disable = $mode == 'new' ||
+                    ($templates[0] != '' && in_array($resource->get('template'), $templates)) ||
+                    ($resource->class_key == 'msProduct' &&
+                        $this->modx->getOption('ms2gallery_disable_for_ms2', null, true) &&
+                        !$this->modx->getOption('ms2gallery_sync_ms2', null, false)
+                    );*/
                 break;
         }
+
+        return true;
     }
+
+    public function loadVersion()
+    {
+        $signature = 'idimage';
+
+        /* @var transport.modTransportPackage $object */
+        $q = $this->modx->newQuery('transport.modTransportPackage');
+        $q->where(array(
+            'package_name' => $signature,
+        ));
+        $q->sortby('installed', 'DESC');
+        if ($package = $this->modx->getObject('transport.modTransportPackage', $q)) {
+            $version = $package->get(array('version_major', 'version_minor', 'version_patch'));
+            $this->version = implode('.', $version);
+        }
+    }
+
+    /**
+     * @param  string  $src
+     */
+    public function addHtml($src)
+    {
+        $this->modx->controller->addHtml($src);
+    }
+
+    /**
+     * @param  string  $src
+     */
+    public function addCss($src)
+    {
+        $this->modx->controller->addCss($this->config['cssUrl'].$src.'?version='.$this->version);
+    }
+
+
+    /**
+     * @param  string  $src
+     */
+    public function addJavascript($src)
+    {
+        $this->modx->controller->addJavascript($this->config['jsUrl'].$src.'?version='.$this->version);
+    }
+
 
     public function hash(string $path)
     {
@@ -312,6 +455,29 @@ class idImage
         ];
 
         return $values;
+    }
+
+    protected $optionsCache = [
+        xPDO::OPT_CACHE_KEY => 'default/idimage',
+        xPDO::OPT_CACHE_HANDLER => 'xPDOFileCache',
+    ];
+    protected $cacheProductsIndexed = 'idimage_total_products_indexed';
+
+
+    public function setTotalProductsIndexed(int $count)
+    {
+        $data = [
+            'total' => $count,
+        ];
+
+        return $this->modx->getCacheManager()->set($this->cacheProductsIndexed, $data, 10000, $this->optionsCache);
+    }
+
+    public function getTotalProductsIndexed()
+    {
+        $data = $this->modx->getCacheManager()->get($this->cacheProductsIndexed, $this->optionsCache);
+
+        return $data['total'] ?? 0;
     }
 
 }

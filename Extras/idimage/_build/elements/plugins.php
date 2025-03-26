@@ -5,7 +5,8 @@ return [
         'file' => 'idimage',
         'description' => '',
         'events' => [
-            'OnManagerPageInit' => [],
+            'OnDocFormRender' => [],
+            'OnHandleRequest' => [],
         ],
     ],
 ];

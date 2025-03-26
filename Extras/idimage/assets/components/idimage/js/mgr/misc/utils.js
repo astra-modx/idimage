@@ -250,3 +250,16 @@ idimage.utils.renderImages = function (images) {
 };
 
 
+
+
+idimage.utils.formatSize = function (size) {
+    if (size >= 1048576) {
+        size = Math.round(size / 1048576).toFixed(2) + ' Mb';
+    } else if (size >= 1024) {
+        size = Math.round(size / 1024) + ' Kb';
+    } else {
+        size += ' B';
+    }
+
+    return size;
+};

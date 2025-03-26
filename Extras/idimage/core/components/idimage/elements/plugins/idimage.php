@@ -3,6 +3,7 @@
 /* @var array $scriptProperties */
 switch ($modx->event->name) {
     case 'OnHandleRequest':
+    case 'OnDocFormRender':
         /* @var idimage $idimage*/
         $idimage = $modx->getService('idimage', 'idimage', $modx->getOption('idimage_core_path', $scriptProperties, $modx->getOption('core_path') . 'components/idimage/') . 'model/');
         if ($idimage instanceof idimage) {

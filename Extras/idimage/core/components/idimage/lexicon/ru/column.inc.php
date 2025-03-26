@@ -26,7 +26,7 @@ $_lang['idimage_close_pid'] = 'Товар';
 $_lang['idimage_close_errors'] = 'Ошибки';
 $_lang['idimage_close_attempt'] = 'Попытки';
 $_lang['idimage_close_images'] = 'Похожие изображения';
-$_lang['idimage_probability'] = 'Вероятность схожести';
+$_lang['idimage_probability'] = 'Вероятность схожести %';
 $_lang['idimage_close_ball'] = 'Похожих: {0} шт.';
 $_lang['idimage_close_state'] = 'Изображение создано: {0}<br>Вектора: {1}<br>Похожие: {2}';
 

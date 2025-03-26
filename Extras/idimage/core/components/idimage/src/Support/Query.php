@@ -4,8 +4,10 @@ namespace IdImage\Support;
 
 use idImage;
 use IdImage\Sender;
+use idImageClose;
 use idImageTask;
 use msOption;
+use msProduct;
 use PDO;
 
 /**
@@ -32,6 +34,7 @@ class Query
     {
         $query = $this->create('msProduct');
         $query->select('File.id as file_id,File.product_id as id, File.url as image, File.path as path, File.hash as hash');
+        $query->select('msProduct.published as published, msProduct.deleted as deleted');
         //$query->leftJoin('idImageClose', 'Close', 'Close.pid = msProductFile.product_id');
         $query->innerJoin('msProductFile', 'File', 'File.product_id = msProduct.id');
 
@@ -109,6 +112,21 @@ class Query
         return $this->create('idImageEmbedding')->select($this->idImage->modx->getSelectColumns('idImageEmbedding', 'idImageEmbedding', ''));
     }
 
+
+    /**
+     * Вернет кол-во товаров доступных для поиска
+     * @return mixed
+     */
+    public function productIndexedCount()
+    {
+        $query = $this->create('idImageClose');
+        $query->innerJoin('msProduct', 'Product', 'Product.id = idImageClose.pid');
+        $query->innerJoin('idImageEmbedding', 'Embedding', 'Embedding.hash = idImageClose.hash');
+
+        return $query->count();
+    }
+
+
     public function indexeds()
     {
         return $this->create('idImageIndexed');
@@ -147,4 +165,44 @@ class Query
     }
 
 
+    /**
+     * @param  int  $id
+     * @param $product_id
+     * @return idImageClose|object|string|null
+     */
+    public function getCloseOrCreate(int $id, $product_id = null)
+    {
+        /* @var idImageClose $Close */
+        if (!$Close = $this->idImage->modx->getObject('idImageClose', $id)) {
+            try {
+                if (!$product_id) {
+                    return $this->idImage->modx->lexicon('idimage_error_close_not_found');
+                }
+
+                $response = $this->idImage->runProcessor('mgr/actions/product/creation', [
+                    'ids' => [$product_id],
+                ]);
+                if ($response->isError()) {
+                    return $response->getMessage();
+                }
+                if (!$Close = $this->idImage->modx->getObject('idImageClose', ['pid' => $product_id])) {
+                    return $this->idImage->modx->lexicon('idimage_error_close_not_found');
+                }
+            } catch (\Exception $e) {
+                return $e->getMessage();
+            }
+        }
+
+
+        /* @var msProduct $product */
+        if ($product = $this->idImage->modx->getObject('msProduct', $product_id)) {
+            $active = ($product->get('published') && !$product->get('deleted'));
+            if ($Close->get('active') !== $active) {
+                $Close->set('active', $active);
+                $Close->save();
+            }
+        }
+
+        return $Close;
+    }
 }

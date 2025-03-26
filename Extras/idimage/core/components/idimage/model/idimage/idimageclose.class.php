@@ -97,12 +97,22 @@ class idImageClose extends xPDOSimpleObject
         return $Embedding;
     }
 
+    public function isEmbedding()
+    {
+        return !empty($this->embedding());
+    }
+
+
     public function similar(): ?idImageSimilar
     {
         /* @var idImageSimilar $similar */
 
         $similar = $this->getOne('Similar');
         return $similar;
+    }
+    public function isSimilar()
+    {
+        return !empty($this->similar());
     }
 
 

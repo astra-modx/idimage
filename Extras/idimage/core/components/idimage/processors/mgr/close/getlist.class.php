@@ -121,7 +121,6 @@ class idImageCloseGetListProcessor extends modObjectGetListProcessor
         $array['similar_exists'] = (bool)$array['similar_exists'];
         $array['embedding_exists'] = (bool)$array['embedding_exists'];
 
-
         $extractor = $this->idImage->extractor();
         if ($similar = $object->similar()) {
             $extractor->load($similar)->best();

@@ -6,6 +6,8 @@ class idImageCloseActionEmbeddingRemoveProcessor extends modProcessor
 
     public function process()
     {
+        /** @var idimage $idimage */
+        $idimage = $this->modx->getService('idimage');
         $id = (int)$this->getProperty('id');
 
 

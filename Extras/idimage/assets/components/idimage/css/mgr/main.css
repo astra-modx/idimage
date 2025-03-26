@@ -146,3 +146,63 @@ a.idimage-btn.disabled, fieldset[disabled] a.idimage-btn { pointer-events: none 
 .idimage_actions_window_info{
     display: block; padding-left: 41px
 }
+
+.idimage-gallery-thumb {
+    width: 150px;
+    height: 150px;
+    max-width: 150px;
+    max-height: 150px
+}
+.idimage-gallery-thumb img{
+    width: 150px;
+    height: 150px;
+    max-width: 150px;
+    max-height: 150px
+}
+
+
+.idimage-type-original {
+    clear: both;
+    display: block;
+    margin-right: 100%;
+    margin-left: 7px;
+}
+
+.idimage-type-similar {
+
+}
+
+.idimage-close-thumb-wrap {
+    width: 200px;
+    height: 195px;
+    max-width: 200px;
+    max-height: 195px;
+    padding: 0;
+    margin: 0 55px 0 0;
+}
+.idimage-close-thumb-wrap .idimage-similar-image{
+    width: 150px;
+    height: 150px;
+    max-width: 150px;
+    max-height: 150px
+}
+.idimage-close-thumb img {
+    border: 1px solid #ddd;
+}
+
+.idimage-placeholder-hide {
+    display: none !important;
+}
+.idimage-image-hide{
+    display: none;
+}
+.idimage-close-thumb img {
+    width: 150px;
+    height: 150px;
+    max-width: 150px;
+    max-height: 150px
+}
+
+.idimage-close-thumb-wrap .x-hide-label{
+    padding-top: 0 !important;
+}

@@ -7,7 +7,7 @@ $_lang['idimage_tasks'] = 'Задания';
 
 
 # products
-$_lang['idimage_tab_products'] = 'Товары';
+$_lang['idimage_tab_products'] = 'Похожие товары';
 $_lang['idimage_tab_products_desc'] = 'Здесь показаны созданные товары с изображениями. Товары будут использоваться для получения векторов из сервиса idimage.ru, и дальнейшей индексации для поиск среди похожих товаров';
 
 

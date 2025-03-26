@@ -106,6 +106,9 @@ class Indexer
             ];
         }
 
+        // Сохраняем количество товаров доступных для сравнения
+        $idImage->setTotalProductsIndexed($idImage->query()->productIndexedCount());
+
         return $results;
     }
 

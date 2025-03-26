@@ -78,6 +78,10 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
             $files->collection(function (array $row) use (&$created, &$updated, &$created_thumbnail, &$task_upload) {
                 /* @var idImageClose $Close */
 
+                $published = (bool)$row['published'];
+                $deleted = (bool)$row['deleted'];
+                $active = ($published && !$deleted);
+
 
                 $hash = $row['hash'];
 
@@ -115,7 +119,7 @@ class idImageProductCreationProcessor extends idImageActionsProcessor implements
 
                 // Создаем новый превью при условии
                 $Close->set('picture', $picture);
-                $Close->set('active', true);
+                $Close->set('active', $active);
                 $Close->set('status', $status);
 
                 // Проверка наличия векторов

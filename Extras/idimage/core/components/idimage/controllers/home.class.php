@@ -52,26 +52,27 @@ class idimageHomeManagerController extends modExtraManagerController
      */
     public function loadCustomCssJs()
     {
-        $this->addCss($this->idimage->config['cssUrl'].'mgr/main.css');
-        $this->addCss($this->idimage->config['cssUrl'].'mgr/help.css');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/idimage.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/utils.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/combo.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/category.tree.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/default.cyclic.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/default.grid.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/misc/default.window.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/closes/grid.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/closes/windows.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/tasks/stat.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/tasks/grid.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/tasks/windows.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/settings/form.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/navbar.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/widgets/home.panel.js');
-        $this->addJavascript($this->idimage->config['jsUrl'].'mgr/sections/home.js');
+        $this->idimage->loadVersion();
+        $this->idimage->addCss('mgr/main.css');
+        $this->idimage->addCss('mgr/help.css');
+        $this->idimage->addJavascript('mgr/idimage.js');
+        $this->idimage->addJavascript('mgr/misc/utils.js');
+        $this->idimage->addJavascript('mgr/misc/combo.js');
+        $this->idimage->addJavascript('mgr/misc/category.tree.js');
+        $this->idimage->addJavascript('mgr/misc/default.cyclic.js');
+        $this->idimage->addJavascript('mgr/misc/default.grid.js');
+        $this->idimage->addJavascript('mgr/misc/default.window.js');
+        $this->idimage->addJavascript('mgr/widgets/closes/grid.js');
+        $this->idimage->addJavascript('mgr/widgets/closes/windows.js');
+        $this->idimage->addJavascript('mgr/widgets/tasks/stat.js');
+        $this->idimage->addJavascript('mgr/widgets/tasks/grid.js');
+        $this->idimage->addJavascript('mgr/widgets/tasks/windows.js');
+        $this->idimage->addJavascript('mgr/widgets/settings/form.js');
+        $this->idimage->addJavascript('mgr/widgets/navbar.js');
+        $this->idimage->addJavascript('mgr/widgets/home.panel.js');
+        $this->idimage->addJavascript('mgr/sections/home.js');
 
-        $this->addJavascript(MODX_MANAGER_URL.'assets/modext/util/datetime.js');
+        $this->idimage->addJavascript(MODX_MANAGER_URL.'assets/modext/util/datetime.js');
 
         $this->idimage->config['date_format'] = $this->modx->getOption('idimage_date_format', null, '%d.%m.%y <span class="gray">%H:%M</span>');
         $this->idimage->config['status_map'] = $this->idimage->statusMap();
@@ -98,7 +99,6 @@ class idimageHomeManagerController extends modExtraManagerController
 
     public function settings()
     {
-
         $values = $this->idimage->settingKeys();
 
         $prefix = 'idimage_';
@@ -115,6 +115,7 @@ class idimageHomeManagerController extends modExtraManagerController
                 $values[$key] = $object->get('value');
             }
         }
+
         return $values;
     }
 
